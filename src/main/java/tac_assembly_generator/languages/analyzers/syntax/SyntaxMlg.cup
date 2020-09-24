@@ -1,0 +1,136 @@
+//cup -parser "SyntaxMlgAnalyzer" -symbols "SimbolosMlg" "SyntaxMlg.cup"
+package tac_assembly_generator.languages.analyzers.syntax;
+
+import java_cup.runtime.Symbol;
+import java.util.ArrayList;
+
+ parser code {:
+    
+
+    public boolean error;
+    public boolean errorRecuperable;
+
+     public void syntax_error(Symbol s){
+        String lexema = s.value.toString();
+        int fila = s.right;
+        int columna = s.left;
+        System.out.println("Error Sintactico Recuperado\n");
+        System.out.println("\t \tLexema: "+ lexema+"\n");
+        System.out.println("\t \tFila: "+ fila+"\n");
+        System.out.println("\t \tColumna: "+ columna+"\n");
+
+    }
+
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
+        try{
+            String lexema = s.value.toString();
+            int fila = s.right;
+            int columna = s.left;
+        System.out.println("Error Sintactico Recuperado\n");
+        System.out.println("\t \tLexema: "+ lexema+"\n");
+        System.out.println("\t \tFila: "+ fila+"\n");
+        System.out.println("\t \tColumna: "+ columna+"\n");
+
+        } catch (Exception ex) {
+            
+         }
+    }
+:}
+
+
+
+
+terminal VB_SEPERATOR, ERROR;
+
+// Terminals Common*/
+terminal EQUAL, PARENTESIS_A, PARENTESIS_B, PLUS, MINUS, MULTIPLICATION, DIVISION, LINE_BREAK;
+
+
+// Terminals Visual Basic */
+terminal JAVA_SEPERATOR, INTEGER_TYPE_VB, FLOAT_TYPE_VB, CHAR_TYPE_VB, DIM_VB;
+
+// Terminals Java */
+terminal PY_SEPERATOR, INTEGER_TYPE_J, FLOAT_TYPE_J, CHAR_TYPE_J;
+
+// Terminals Python*/
+terminal PROGRAM_SEPERATOR;
+
+
+    
+//Non-terminals */
+non terminal Inicio, VB, JAVA, PYTHON,
+VBCode, JavaCode, PythonCode;
+
+start with Inicio;
+Inicio 		::= VB Java Python  Programa 
+                |error;
+/*
+    VB
+*/
+VB 			::= VB_SEPERATOR VbCode 
+				|error;
+
+
+VbCode     ::= FunctionVB VbCode  
+                | Sub_VB VbCode
+		        |
+                |error VbCode;  
+FunctionVB	::= FUNCTION_VB ID PAREBNTHESIS_A Parameters PAREBNTHESIS_B AS_VB TypeVb InstructionsFunctionVb END_FUNCTION;
+Sub_VB      ::= SUB_VB ID PAREBNTHESIS_A Parameters PAREBNTHESIS_B InstructionsFunctionVb END_SUB; 
+
+InstructionsFunctionVb::= LnInstructionsVb InstructionsFunctionVb 
+                            |LnInstructionsVb
+                            |RETURN_VB Values 
+                            |RETURN_VB;
+LnInstructionsVb::= InputVb 
+				|OutputVb 
+				|CycleVb 
+				|Declaration 
+				|Assignment 
+                |Condition
+				|
+				|error;
+InputVb			::= INTINPUT_VB PAREBNTHESIS_A STRING PAREBNTHESIS_B
+					|FLOATINPUT_VB PAREBNTHESIS_A STRING PAREBNTHESIS_B
+					| CHARINPUT_VB PAREBNTHESIS_A STRING PAREBNTHESIS_B ;
+	
+OutputVb		::=CONSOLE_VB POINT WRITE_VB PAREBNTHESIS_A Value PAREBNTHESIS_B
+					CONSOLE_VB POINT WRITELN_VB PAREBNTHESIS_A Values PAREBNTHESIS_B;
+Values			::= Value AMPERSON Values
+				|Value;
+Value			::=STRING
+				|ID
+				|NUMBER
+				|DECIMAL;
+
+CycleVb         ::= ForVb
+                    |WhileVb
+                    |DoWhileVb;
+
+ForVb           ::= FOR_VB id AS_VB TypeVb EQUAL NumberValue TO_VB NumberValue Step InstructionsFunctionVb NEXT_VB NextVb;
+Step            ::=
+NextVb          ::=
+NumberValue::=   ID
+				|NUMBER
+				|DECIMAL;
+WhileVb         ::=
+DoWhileVb       ::=
+Declaration     ::=
+Assignment      ::=
+Condition       ::=        
+/*
+    JAVA
+*/
+Java 			::= JAVA_SEPERATOR JavaCode 
+				|error;
+/*
+    Python
+*/
+Python 	::= PYTHON_SEPERATOR PythonCode
+				|error;
+/*
+    C
+*/
+
+Programa ::=PROGRAMA_SEPERATOR LIBRERIAS MAIN
+				|error;

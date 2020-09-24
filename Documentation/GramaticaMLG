@@ -1,0 +1,111 @@
+//VB
+N: { }
+//VB
+T:  { }
+
+S:  {Inicio}
+
+Inicio 		::= VB Java Python  Programa 
+                |error;
+VB 			::= VB_SEPERATOR VbCode 
+				|error;
+
+
+VbCode     ::= FunctionVB VbCode  
+                | Sub_VB VB_Code
+		|
+                |error;  
+FunctionVB	::= FUNCTION_VB ID PAREBNTHESIS_A Parameters PAREBNTHESIS_B AS_VB TypeVb LnInstructionsVb END_FUNCTION;
+LnInstructionsVb::= InputVb LnInstructionsVb
+				|OutputVb LnInstructionsVb
+				|CycleVb LnInstructionsVb
+				|Declaration LnInstructionsVb
+				|Assignment LnInstructionsVb
+				|
+				|error;
+InputVb			::= INTINPUT_VB PAREBNTHESIS_A String PAREBNTHESIS_B
+					|FLOATINPUT_VB PAREBNTHESIS_A String PAREBNTHESIS_B
+					| CHARINPUT_VB PAREBNTHESIS_A String PAREBNTHESIS_B ;
+String			::= QUOTATION_MARKS Id QUOTATION_MARKS
+					QUOTATION_MARKS QUOTATION_MARKS;
+	
+OutputVb		::=CONSOLE_VB POINT WRITE_VB PAREBNTHESIS_A Value PAREBNTHESIS_B
+					CONSOLE_VB POINT WRITELN_VB PAREBNTHESIS_A Values PAREBNTHESIS_B;
+Values			::= Value AMPERSON Values
+				|Value;
+Value			::=String
+				|Id
+				|Number
+				|Decimal;
+
+CycleVb
+
+
+Java 			::= JAVA_SEPERATOR JavaCode 
+				|error;
+Python 	::= PYTHON_SEPERATOR PythonCode
+				|error;
+Programa ::=PROGRAMA_SEPERATOR LIBRERIAS MAIN
+				|error;
+
+
+INFO   ::= INFO_NO_OBL nombre dosPuntos CADENA_ESPACIOS puntoYComa INFO_NO_OBL 
+INFO_NO_OBL  ::=  version dosPuntos NumeroVersion puntoYComa INFO_NO_OBL 
+                        |autor dosPuntos CADENA_ESPACIOS puntoYComa INFO_N
+			|lanzamiento dosPuntos Entero puntoYComa INFO_NO_OBL
+			|extension dosPuntos Cadena puntoYComa INFO_NO_OBL 
+			|;
+CADENA_ESPACIOS ::= Cadena CADENA_ESPACIOS
+                    |Cadena
+FUENTE		::= Fuente;
+EXPRESIONES     ::= Cadena igual EXP puntoYComa EXPRESIONES
+                        | ampersand igual EXP puntoYComa EXPRESIONES
+			|
+EXP             ::= EXPRESION_OP
+
+SALTOS 		::= blanco
+			|saltoDeLinea 
+			|tab 
+EXPRESION_OP    ::= EXPRESION_OP EXPRESION 
+                        | EXPRESION_OP op EXPRESION  
+EXPRESION	::=   parentesisA EXPRESION_OP parentesisC EX 
+			|numeros EX
+			|letras EX
+			|Cadena
+                        |corcheteA STRS corcheteC 
+
+STRS::= STR2 STRS
+        |STR2
+STR2             ::= Cadena 
+                    |SALTOS
+                    |asterisco
+                    |qMark 
+                    |suma
+   
+STR             ::= Cadena 
+                    |SALTOS 
+                    |asterisco
+                    |qMark 
+                    |suma
+                    |AGRUPACION_A 
+                    |AGRUPACION_C 
+EX 		::= asterisco
+			|qMark 
+			|suma
+			|;
+AGRUPACION_A    ::= parentesisA 
+                    |corcheteA
+AGRUPACION_C    ::= parentesisC 
+                    |corcheteC 
+SIMBOLOS        ::= sTerminal CADENAS puntoYComa SIMBOLOS
+                    |no sTerminal CADENAS puntoYComa SIMBOLOS
+                    |;
+CADENAS         ::= Cadena coma CADENAS 
+GRAMATICA       ::= Cadena dosPuntos dosPuntos PRODS CODIGO  GRAMATICA 
+                    |Cadena dosPuntos dosPuntos PRODS CODIGO 
+PRODS           ::= Cadena dosPuntos Cadena PRODS    
+                    |Cadena PRODS 
+                    |
+CODIGO          ::=Codigo
+                    |puntoYComa
+
