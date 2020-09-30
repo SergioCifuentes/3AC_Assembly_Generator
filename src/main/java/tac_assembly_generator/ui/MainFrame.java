@@ -268,6 +268,9 @@ public class MainFrame extends javax.swing.JFrame {
         backgroundLbl.setVisible(true);
 
     }
+    public void showTAC(tac_assembly_generator.TAC.TAC tac){
+        fileManager.showTAC(tabs.getSelectedIndex(),tac);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem exitMenuItem;

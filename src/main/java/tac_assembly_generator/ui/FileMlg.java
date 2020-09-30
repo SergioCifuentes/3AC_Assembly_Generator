@@ -14,6 +14,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.plaf.BorderUIResource;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.InsetsUIResource;
+import tac_assembly_generator.TAC.TAC;
 
 /**
  *
@@ -74,6 +75,10 @@ public class FileMlg extends javax.swing.JPanel {
         optScroll.setRowHeaderView(lnOpt);
         LineNumber lnAssy = new LineNumber(assemblerText);
         assemblerScroll.setRowHeaderView(lnAssy);
+    }
+    
+    public   void showTAC(TAC tac){
+        this.tACText.setText(tac.getTac());
     }
 
     /**

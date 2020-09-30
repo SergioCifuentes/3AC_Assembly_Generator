@@ -19,6 +19,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import tac_assembly_generator.TAC.TAC;
 
 /**
  *
@@ -156,5 +157,9 @@ public class FileManager {
         newMlg.addMlgText(readFile(file));
         frame.addFileMlg(newMlg);
 
+    }
+
+    public void showTAC(int selectedIndex, TAC tac) {
+        files.get(selectedIndex).showTAC(tac);
     }
 }
