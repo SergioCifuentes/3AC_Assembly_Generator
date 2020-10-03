@@ -9,6 +9,7 @@ import tac_assembly_generator.files.FileManager;
 import java.awt.event.WindowEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JTextPane;
 
 /**
  *
@@ -272,6 +273,9 @@ public class MainFrame extends javax.swing.JFrame {
         fileManager.showTAC(tabs.getSelectedIndex(),tac);
     }
 
+    public JTextPane getOutputPannel(){
+        return fileManager.getTextPane(tabs.getSelectedIndex());
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu generateMenu;

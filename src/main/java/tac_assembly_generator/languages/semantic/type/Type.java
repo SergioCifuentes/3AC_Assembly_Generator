@@ -32,4 +32,15 @@ public class Type {
         return father;
     }
     
+    public boolean isFather(Type type){
+        if (father==null) {
+            return false;
+        }else{
+            if (father==type) {
+                return true;
+            }else{
+                return father.isFather(type);
+            }
+        }
+    }
 }

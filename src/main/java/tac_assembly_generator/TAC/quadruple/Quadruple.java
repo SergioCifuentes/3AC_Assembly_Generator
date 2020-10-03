@@ -1,0 +1,30 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package tac_assembly_generator.TAC.quadruple;
+
+import tac_assembly_generator.languages.semantic.Tuple;
+
+/**
+ *
+ * @author sergio
+ */
+public class Quadruple {
+    private int op;
+    private Object arg1;
+    private Object arg2;
+    private String result;
+
+    public Quadruple(int op, Object arg1, Object arg2, String result) {
+        this.op = op;
+        this.arg1 = arg1;
+        this.arg2 = arg2;
+        this.result = result;
+    }
+    
+     
+    
+    
+}

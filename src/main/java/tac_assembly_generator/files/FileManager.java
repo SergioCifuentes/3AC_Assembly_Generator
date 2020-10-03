@@ -19,6 +19,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JTextPane;
 import tac_assembly_generator.TAC.TAC;
 
 /**
@@ -50,6 +51,10 @@ public class FileManager {
 
     public ArrayList<FileMlg> getFiles() {
         return files;
+    }
+    
+    public JTextPane getTextPane(int index){
+        return files.get(index).getOptText();
     }
 
     public void openFile(MainFrame frame) {

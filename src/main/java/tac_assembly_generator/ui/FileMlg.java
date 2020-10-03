@@ -9,6 +9,7 @@ import tac_assembly_generator.languages.LanguageManager;
 import tac_assembly_generator.ui.backend.LineNumber;
 import java.awt.Color;
 import java.io.File;
+import javax.swing.JTextPane;
 import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
 import javax.swing.plaf.BorderUIResource;
@@ -38,6 +39,10 @@ public class FileMlg extends javax.swing.JPanel {
         addLines();
         languageManager= new LanguageManager(this);
 
+    }
+
+    public JTextPane getOptText() {
+        return optText;
     }
 
     public LanguageManager getLanguageManager() {

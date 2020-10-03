@@ -5,22 +5,17 @@
  */
 package tac_assembly_generator.languages.semantic;
 
-import java.util.ArrayList;
-
 /**
  *
  * @author sergio
  */
-public class SymbolTable {
-    private ArrayList<Tuple> symbols;
+public class Ambit {
+    private int id;
+    private Ambit father;
 
-    public SymbolTable() {
-        symbols= new ArrayList<>();
+    public Ambit(int id, Ambit father) {
+        this.id = id;
+        this.father = father;
     }
-    
-    public void insertTuple(Tuple tuple){
-        symbols.add(tuple);
-    }
-    
     
 }

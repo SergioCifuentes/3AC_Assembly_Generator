@@ -5,11 +5,15 @@ import java_cup.runtime.Symbol;
 import java.util.ArrayList;
 import tac_assembly_generator.languages.semantic.verification.TestManager;
 import tac_assembly_generator.TAC.TranslateControlerTAC;
+import tac_assembly_generator.TAC.quadruple.Operation;
+import tac_assembly_generator.TAC.quadruple.Quadruple;
+import tac_assembly_generator.languages.semantic.type.Type;
+import tac_assembly_generator.languages.semantic.type.TypeManager;
  parser code {:
     
 
-public boolean Syntaxerror;
-    public boolean SyntaxerrorRecuperable;
+public boolean SyntaxError;
+    public boolean SyntaxRecoverableError;
     public TestManager testManager;
     public TranslateControlerTAC translateControlerTAC;
 
@@ -124,12 +128,13 @@ Getch, Input, FuntionCall, FuntionIDs, ParametersC, ValueC, BoolValueC,
 OpBoolC, ArrayVal;
 
 start with Inicio;
-Inicio 		::= VB Java Python  Programa {:System.out.println("FIN Inicio");:}
-                |error;
+Inicio 		::= VB Java Python  Programa {:System.out.println("FIN Inicio");:};
+                
 /*
     VB
 */
-VB 			::= VB_SEPERATOR VbCode;
+VB 			::= VB_SEPERATOR VbCode {:sma.testManager.switchNextTypes();:};
+                
 
 
 VbCode     ::= FunctionVB VbCode  
@@ -189,11 +194,19 @@ NumberValue::= NumberValue PLUS  Number2
 Number2     ::=Number2 MULTIPLICATION  Number3
                 | Number2 DIVISION  Number3
                 | Number2 MOD  Number3
-                | Number3;
-Number3     ::=NUMBER
-                |DECIMAL
-                |ID
-                |PARENTHESIS_A NumberValue PARENTHESIS_B;
+                | Number3:asst {:RESULT=asst;:};
+Number3     ::=NUMBER:val{: Type type =sma.testManager.getTypeManager().operateTypes(TypeManager.INTEGER_TYPE,null);
+                            Quadruple quadruple=sma.translateControlerTAC.creatTempQuad(Operation.EQUAL,val,null,null);
+		                    RESULT=new SynthesizedOpAsst(quadruple,type);:}
+
+                |DECIMAL:val{:Type type =sma.testManager.getTypeManager().operateTypes(TypeManager.FLOAT_TYPE,null);
+                            Quadruple quadruple=sma.translateControlerTAC.creatTempQuad(Operation.EQUAL,val,null,null);
+		                    RESULT=new SynthesizedOpAsst(quadruple,type);:}
+                |CHAR :val{:Type type =sma.testManager.getTypeManager().operateTypes(TypeManager.CHAR_TYPE,null);
+                            Quadruple quadruple=sma.translateControlerTAC.creatTempQuad(Operation.EQUAL,val,null,null);
+		                    RESULT=new SynthesizedOpAsst(quadruple,type);:}
+                |ID:val{::}
+                |PARENTHESIS_A NumberValue PARENTHESIS_B {::};
         
          
 
@@ -219,14 +232,14 @@ ExBoolVb          ::=EQUAL
 DoWhileVb       ::= DO  InstructionsFunctionVb LOOP_VB WHILE OpBool;
 
 DeclarationVb     ::= DIM_VB DeTypeVb;
-DeTypeVb        ::= IdsVb AS_VB Type AssiVb COMMA DeTypeVb 
-                    |IdsVb AS_VB Type AssiVb;
-Type          ::=INTEGER_TYPE
-                    |FLOAT_TYPE
-                    |CHAR_TYPE;                   
-IdsVb           ::= IdsVb COMMA  ID AssiVb{::}  
-                    |ID AssiVb{::}; 
-AssiVb            ::= EQUAL ValueVb
+DeTypeVb        ::= IdsVb AS_VB Type:type AssiVb COMMA DeTypeVb {:sma.testManager.insertPreTuplesToSymbolTable((Integer)type,null);:}
+                    |IdsVb AS_VB Type:type AssiVb {:sma.testManager.insertPreTuplesToSymbolTable((Integer)type,null);:};
+Type          ::=INTEGER_TYPE{:RESULT=TypeManager.INTEGER_TYPE;:}
+                    |FLOAT_TYPE {:RESULT=TypeManager.FLOAT_TYPE;:}
+                    |CHAR_TYPE{:RESULT=TypeManager.CHAR_TYPE;:};                   
+IdsVb           ::= IdsVb COMMA  ID:id AssiVb:val{:sma.testManager.insertPreTuple(id,null,val,null,((java_cup.runtime.Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));:}  
+                    |ID:id AssiVb:val{:sma.testManager.insertPreTuple(id,null,val,null,((java_cup.runtime.Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));:}; 
+AssiVb            ::= EQUAL ValueVb:val {:RESULT = val;:}
                     |{:System.out.println("ASSI VACIO");:};
 
 AssignmentVb      ::=ID EQUAL ValueVb;
@@ -246,7 +259,7 @@ CasesVb         ::= CASE_VB ValueVb InstructionsFunctionVb CasesVb
 /*
     JAVA
 */
-Java 			::= JAVA_SEPERATOR JavaCode{:System.out.println("FIN JAVA");:};
+Java 			::= JAVA_SEPERATOR JavaCode {:sma.testManager.switchNextTypes();:};
 
 JavaCode::=JavaCode ClaseJ
             |ClaseJ;
@@ -349,13 +362,13 @@ OpBoolJ::= OpBoolJ OpLogic BoolValueJ
 /*
     Python
 */
-Python 	::= PYTHON_SEPERATOR PythonCode {:System.out.println("FIN PY");:};
+Python 	::= PYTHON_SEPERATOR PythonCode {:sma.testManager.switchNextTypes();:};
 PythonCode::=;
 /*
     C
 */
 
-Programa ::=PROGRAM_SEPERATOR Library Constantes Globals Main  {:System.out.println("FIN MAIN");:};
+Programa ::=PROGRAM_SEPERATOR Library Constantes Globals Main ;
 Library::= Library Include 
             | ;
 Constantes ::= Constantes  Constante SEMICOLON

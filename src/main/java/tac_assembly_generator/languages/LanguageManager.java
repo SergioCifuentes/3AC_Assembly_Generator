@@ -32,7 +32,7 @@ public class LanguageManager {
         
         try {
             TAC tac = new TAC();
-            TestManager tm = new TestManager();
+            TestManager tm = new TestManager(mainframe);
             TranslateControlerTAC controler= new TranslateControlerTAC(tac);
             
             MlgLexicAnalizer mlgLexicAnalizer= new MlgLexicAnalizer(new StringReader(file.getMlgText()));
