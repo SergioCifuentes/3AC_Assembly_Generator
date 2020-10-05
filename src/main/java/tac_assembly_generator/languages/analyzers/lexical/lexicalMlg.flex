@@ -102,7 +102,7 @@ Input_Ignore_Case= ("I"|"i")("N"|"n")("P"|"p")("U"|"u")("T"|"t")
     "\"" [^\"] ~ "\""                                                   { System.out.println("STRING "+yytext()); return new Symbol(SimbolosMlg.STRING, yycolumn,yyline,yytext());}
      "\'' [^\''] "\''                                                   { System.out.println("CHAR "+yytext()); return new Symbol(SimbolosMlg.CHAR, yycolumn,yyline,yytext());}
     ({Letra}|"_")({Letra}|{Digito}|"_")*                                { System.out.println("ID "+yytext()); return new Symbol(SimbolosMlg.ID, yycolumn,yyline,yytext());}
-    ({Digito})+                                             { System.out.println("NUMBER "+yytext()); return new Symbol(SimbolosMlg.ID, yycolumn,yyline,yytext());}
+    ({Digito})+                                             { System.out.println("NUMBER "+yytext()); return new Symbol(SimbolosMlg.NUMBER, yycolumn,yyline,yytext());}
     ({Digito})+"."({Digito})+                               { System.out.println("DECIMAL "+yytext()); return new Symbol(SimbolosMlg.ID, yycolumn,yyline,yytext());}
     {CommentC}                               {tac.addComment(yytext());}
     "="                                                     { System.out.println("EQUAL "+yytext());return new Symbol(SimbolosMlg.EQUAL, yycolumn,yyline,yytext());}

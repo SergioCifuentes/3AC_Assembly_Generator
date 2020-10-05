@@ -24,6 +24,11 @@ public class Type {
         return name;
     }
 
+    @Override
+    public String toString() {
+        return "Type{" + "name=" + name + ", number=" + number + '}';
+    }
+
     public int getNumber() {
         return number;
     }

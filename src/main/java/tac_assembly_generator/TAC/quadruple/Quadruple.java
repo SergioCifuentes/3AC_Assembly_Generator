@@ -23,6 +23,27 @@ public class Quadruple {
         this.arg2 = arg2;
         this.result = result;
     }
+
+    @Override
+    public String toString() {
+        return "Quadruple{" + "op=" + op + ", arg1=" + arg1 + ", arg2=" + arg2 + ", result=" + result + '}';
+    }
+
+    public int getOp() {
+        return op;
+    }
+
+    public Object getArg1() {
+        return arg1;
+    }
+
+    public Object getArg2() {
+        return arg2;
+    }
+
+    public String getResult() {
+        return result;
+    }
     
      
     

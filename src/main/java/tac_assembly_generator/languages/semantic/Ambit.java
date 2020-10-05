@@ -17,5 +17,20 @@ public class Ambit {
         this.id = id;
         this.father = father;
     }
+
+    public Ambit getFather() {
+        return father;
+    }
     
+    public boolean isSon(Ambit ambitSon){
+        if (id==ambitSon.id) {
+            return true;
+        }else{
+            if (ambitSon.father!=null) {
+                return ambitSon.father.isSon(this);
+            }else{
+                return false;
+            }
+        }
+    }
 }

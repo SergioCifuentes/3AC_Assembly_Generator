@@ -5,6 +5,7 @@
  */
 package tac_assembly_generator.languages.semantic;
 
+import java.util.ArrayList;
 import java_cup.runtime.Symbol;
 import tac_assembly_generator.languages.semantic.type.Type;
 
@@ -18,6 +19,7 @@ public class Tuple {
     private Object value;
     private Symbol symbol;
     private Ambit ambit;
+    private ArrayList<Tuple> parameters;
     //0 normal type
     //1 one dimension array ...
     private Integer dimension;
@@ -32,6 +34,15 @@ public class Tuple {
         
     }
 
+    public ArrayList<Tuple> getParameters() {
+        return parameters;
+    }
+
+    public Ambit getAmbit() {
+        return ambit;
+    }
+
+    
     public void setDimension(Integer dimension) {
         this.dimension = dimension;
     }
