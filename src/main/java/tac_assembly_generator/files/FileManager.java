@@ -52,9 +52,17 @@ public class FileManager {
     public ArrayList<FileMlg> getFiles() {
         return files;
     }
-    
-    public JTextPane getTextPane(int index){
+
+    public JTextPane getTextPane(int index) {
         return files.get(index).getOptText();
+    }
+
+    public JTextPane getTACPane(int index) {
+        return files.get(index).gettACText();
+    }
+
+    public JTextPane getOPPane(int index) {
+        return files.get(index).getOPText();
     }
 
     public void openFile(MainFrame frame) {
@@ -164,7 +172,5 @@ public class FileManager {
 
     }
 
-    public void showTAC(int selectedIndex, TAC tac) {
-        files.get(selectedIndex).showTAC(tac);
-    }
+
 }

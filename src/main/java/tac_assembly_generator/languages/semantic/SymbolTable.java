@@ -46,29 +46,31 @@ public class SymbolTable {
     public Type getTypeWithAmbit(String id, Ambit ambit,MainFrame mainFrame,Symbol symbol){
         ArrayList<Tuple> tuplesWithId=new ArrayList<>();
         for (int i = 0; i < symbols.size(); i++) {
-            if (symbols.get(i).getName()==id&&symbols.get(i).getParameters()==null) {
+            if (symbols.get(i).getName().equals(id)&&symbols.get(i).getParameters()==null) {
                 tuplesWithId.add(symbols.get(i));
             }
         }
+
         for (int i = 0; i < tuplesWithId.size(); i++) {
+            
             if (tuplesWithId.get(i).getAmbit().isSon(ambit)) {
              return tuplesWithId.get(i).getType();
             }
         }
-        if (!tuplesWithId.isEmpty()) {
+        if (tuplesWithId.isEmpty()) {
             OutputText.appendToPane(mainFrame.getOutputPannel(),"SEMANTIC ERROR:\n", Color.red, false);
             OutputText.appendToPane(mainFrame.getOutputPannel(),"\t"+id +" no ha sido declarado \n", Color.white, false);
             OutputText.appendToPane(mainFrame.getOutputPannel(),"\t Fila: ", Color.white, false);
-            OutputText.appendToPane(mainFrame.getOutputPannel(),symbol.right+"\n", Color.YELLOW, false);
+            OutputText.appendToPane(mainFrame.getOutputPannel(),(symbol.right+1)+"\n", Color.YELLOW, false);
             OutputText.appendToPane(mainFrame.getOutputPannel(),"\t Columna: ", Color.white, false);
-            OutputText.appendToPane(mainFrame.getOutputPannel(),symbol.left+"\n", Color.YELLOW, false);
+            OutputText.appendToPane(mainFrame.getOutputPannel(),(symbol.left+1)+"\n", Color.YELLOW, false);
         }else{
             OutputText.appendToPane(mainFrame.getOutputPannel(),"SEMANTIC ERROR:\n", Color.red, false);
             OutputText.appendToPane(mainFrame.getOutputPannel(),"\t"+id +" esta fuera de ambito \n", Color.white, false);
             OutputText.appendToPane(mainFrame.getOutputPannel(),"\t Fila: ", Color.white, false);
-            OutputText.appendToPane(mainFrame.getOutputPannel(),symbol.right+"\n", Color.YELLOW, false);
+            OutputText.appendToPane(mainFrame.getOutputPannel(),(symbol.right+1)+"\n", Color.YELLOW, false);
             OutputText.appendToPane(mainFrame.getOutputPannel(),"\t Columna: ", Color.white, false);
-            OutputText.appendToPane(mainFrame.getOutputPannel(),symbol.left+"\n", Color.YELLOW, false);
+            OutputText.appendToPane(mainFrame.getOutputPannel(),(symbol.left+1)+"\n", Color.YELLOW, false);
         }
         return null;
     }

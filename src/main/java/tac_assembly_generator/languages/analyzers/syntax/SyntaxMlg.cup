@@ -132,7 +132,8 @@ OpBoolC, ArrayVal;
 
 start with Inicio;
 Inicio 		::= VB Java Python  Programa {:System.out.println("FIN Inicio");
-                                        sma.translateControlerTAC.printQuads();:};
+                                        sma.translateControlerTAC.printQuads();
+                                        sma.translateControlerTAC.convertQuads();:};
                 
 /*
     VB
@@ -282,6 +283,7 @@ Number3     ::=NUMBER:val{: Type type =sma.testManager.getTypeManager().operateT
                                 Quadruple quadruple=sma.translateControlerTAC.creatTempIdQuad(Operation.EQUAL,val,null,null);
                                 RESULT=new SynthesizedOpAsst(quadruple,type);
                             }else{
+
                                 RESULT=null;
                             }:}
                 |PARENTHESIS_A NumberValue:asst PARENTHESIS_B {:RESULT=asst;:};
@@ -329,7 +331,9 @@ IdsVb           ::= IdsVb COMMA  ID:id AssiVb:val{:sma.testManager.insertPreTupl
 AssiVb            ::= EQUAL ValueVb:val {:RESULT = val;:}
                     |{:System.out.println("ASSI VACIO");:};
 
-AssignmentVb      ::=ID EQUAL ValueVb;
+AssignmentVb      ::=ID:id EQUAL ValueVb:val {:boolean bool= sma.testManager.assigValue(id,val,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
+                                                if(bool){sma.translateControlerTAC.creatTempIdQuadAssign(val,id);
+                                                        sma.translateControlerTAC.acceptAllIdQuas()}:};
 
 ConditionVb        ::= IfVb
                     |SwitchVb;

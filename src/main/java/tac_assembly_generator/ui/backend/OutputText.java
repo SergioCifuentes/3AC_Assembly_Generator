@@ -17,14 +17,16 @@ import javax.swing.text.StyleContext;
  * @author sergio
  */
 public class OutputText {
-        public static void appendToPane(JTextPane tp, String msg, Color c,boolean borrar) {
-            if (borrar) {
-                tp.setText("");
-            }
-            StyleContext sc = StyleContext.getDefaultStyleContext();
+    private static int com=0;
+    public static void appendToPane(JTextPane tp, String msg, Color c, boolean borrar) {
+        if (borrar) {
+            tp.setText("");
+        }
+        StyleContext sc = StyleContext.getDefaultStyleContext();
         AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY,
                 StyleConstants.Foreground, c);
-        aset = sc.addAttribute(aset, StyleConstants.FontFamily, "Value");
+        aset = sc.addAttribute(aset, StyleConstants.FontFamily, "Value"+com);
+        com++;
         aset = sc.addAttribute(aset, StyleConstants.Alignment,
                 StyleConstants.ALIGN_JUSTIFIED);
         int len = tp.getDocument().getLength();

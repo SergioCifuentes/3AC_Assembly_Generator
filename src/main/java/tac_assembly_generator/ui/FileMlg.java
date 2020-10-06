@@ -41,9 +41,19 @@ public class FileMlg extends javax.swing.JPanel {
 
     }
 
+    public JTextPane gettACText() {
+        return tACText;
+    }
+
     public JTextPane getOptText() {
+        return outputText;
+    }
+
+    public JTextPane getOPText() {
         return optText;
     }
+    
+
 
     public LanguageManager getLanguageManager() {
         return languageManager;
@@ -82,9 +92,6 @@ public class FileMlg extends javax.swing.JPanel {
         assemblerScroll.setRowHeaderView(lnAssy);
     }
     
-    public   void showTAC(TAC tac){
-        this.tACText.setText(tac.getTac());
-    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -95,6 +102,7 @@ public class FileMlg extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        optText1 = new javax.swing.JTextPane();
         mlgscroll = new javax.swing.JScrollPane();
         mlgText = new javax.swing.JTextPane();
         tabsGenerated = new javax.swing.JTabbedPane();
@@ -107,6 +115,10 @@ public class FileMlg extends javax.swing.JPanel {
         jTabbedPane2 = new javax.swing.JTabbedPane();
         outputScroll = new javax.swing.JScrollPane();
         outputText = new javax.swing.JTextPane();
+
+        optText1.setBackground(new java.awt.Color(32, 31, 31));
+        optText1.setFont(new java.awt.Font("Monospaced", 0, 13)); // NOI18N
+        optText1.setForeground(new java.awt.Color(255, 255, 255));
 
         setBackground(new java.awt.Color(0, 0, 0));
 
@@ -121,14 +133,13 @@ public class FileMlg extends javax.swing.JPanel {
         tabsGenerated.setForeground(new java.awt.Color(255, 255, 255));
 
         tACText.setBackground(new java.awt.Color(32, 31, 31));
-        tACText.setFont(new java.awt.Font("Monospaced", 0, 13)); // NOI18N
         tACText.setForeground(new java.awt.Color(255, 255, 255));
+        tACText.setMaximumSize(new java.awt.Dimension(1000, 1000));
         tacScroll.setViewportView(tACText);
 
         tabsGenerated.addTab("3AC", tacScroll);
 
         optText.setBackground(new java.awt.Color(32, 31, 31));
-        optText.setFont(new java.awt.Font("Monospaced", 0, 13)); // NOI18N
         optText.setForeground(new java.awt.Color(255, 255, 255));
         optScroll.setViewportView(optText);
 
@@ -189,6 +200,7 @@ public void addMlgText(String mlgText){
     private javax.swing.JScrollPane mlgscroll;
     private javax.swing.JScrollPane optScroll;
     private javax.swing.JTextPane optText;
+    private javax.swing.JTextPane optText1;
     private javax.swing.JScrollPane outputScroll;
     private javax.swing.JTextPane outputText;
     private javax.swing.JTextPane tACText;

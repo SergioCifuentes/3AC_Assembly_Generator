@@ -28,7 +28,7 @@ public class MainFrame extends javax.swing.JFrame {
         FileMlg.uiManage();
         initComponents();
         setBackground();
-        
+
         fileManager.openStarterFile(this);
     }
 
@@ -253,7 +253,7 @@ public class MainFrame extends javax.swing.JFrame {
         generateMenu.setEnabled(en);
         runMenu.setEnabled(en);
         reportMenu.setEnabled(en);
-        
+
     }
 
     /**
@@ -269,13 +269,21 @@ public class MainFrame extends javax.swing.JFrame {
         backgroundLbl.setVisible(true);
 
     }
-    public void showTAC(tac_assembly_generator.TAC.TAC tac){
-        fileManager.showTAC(tabs.getSelectedIndex(),tac);
-    }
 
-    public JTextPane getOutputPannel(){
+ 
+
+    public JTextPane getOutputPannel() {
         return fileManager.getTextPane(tabs.getSelectedIndex());
     }
+
+    public JTextPane getTACPannel() {
+        return fileManager.getTACPane(tabs.getSelectedIndex());
+    }
+
+    public JTextPane getOPPannel() {
+        return fileManager.getOPPane(tabs.getSelectedIndex());
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu generateMenu;

@@ -29,7 +29,9 @@ public class TranslateControlerTAC {
     public TAC getTac() {
         return tac;
     }
-    
+    public void addComment(String comment){
+        currentQuadrupleTable.addQuad(comment);
+    }
     public void createNewQuadrupleBlock(){
         currentQuadrupleTable= new QuadrupleTable(currentQuadrupleTable);
     }
@@ -44,8 +46,17 @@ public class TranslateControlerTAC {
             currentQuadrupleTable=currentQuadrupleTable.getFather();
         }
     }
+    public void convertQuads(){
+        tac.translateQuads(currentQuadrupleTable.getQuadruples());
+    }
+    
     public void rejectCurrentBlock(){
         if (currentQuadrupleTable.getFather()!=null) {
+            for (int i = 0; i < currentQuadrupleTable.getQuadruples().size(); i++) {
+                if (currentQuadrupleTable.getQuadruples().get(i).getClass()==String.class) {
+                    currentQuadrupleTable.getFather().addQuad(currentQuadrupleTable.getQuadruples().get(i));
+                }
+            }
             currentQuadrupleTable=currentQuadrupleTable.getFather();
         }
     }
@@ -107,11 +118,15 @@ public class TranslateControlerTAC {
         creatTempIdQuad(Operation.EQUAL,soa.getQuadruple().getResult(), null, result);
     }
     
+    
     public void nextIdQuad(){
         currentQuadrupleTable.nextIdQuad();
     }
     public void acceptIdQuad(int index){
         currentQuadrupleTable.acceptIdQuad(index);
+    }
+    public void acceptAllIdQuas(){
+        currentQuadrupleTable.acceptAllIdQuas();
     }
     
         public Quadruple operateIdQuadruple(Quadruple q1,Quadruple q2,int op){

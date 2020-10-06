@@ -31,18 +31,17 @@ public class LanguageManager {
     public void generateTAC(MainFrame mainframe){
         
         try {
-            TAC tac = new TAC();
+            TAC tac = new TAC(mainframe);
             TestManager tm = new TestManager(mainframe);
             TranslateControlerTAC controler= new TranslateControlerTAC(tac);
             
             MlgLexicAnalizer mlgLexicAnalizer= new MlgLexicAnalizer(new StringReader(file.getMlgText()));
-            mlgLexicAnalizer.addTac(tac);
+            mlgLexicAnalizer.addTac(controler);   
             SyntaxMlgAnalyzer sma= new SyntaxMlgAnalyzer(mlgLexicAnalizer);
             sma.setTestManager(tm);
             sma.setTranslateControlerTAC(controler);
             sma.parse();
             //error condition
-            mainframe.showTAC(tac);
             
             
         } catch (Exception ex) {

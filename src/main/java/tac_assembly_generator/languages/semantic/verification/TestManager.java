@@ -77,7 +77,7 @@ public class TestManager {
                     OutputText.appendToPane(mainFrame.getOutputPannel(), "SEMANTIC ERROR:\n", Color.red, false);
                     OutputText.appendToPane(mainFrame.getOutputPannel(), "\t No se puede asignar un valor tipo " +so.getType().getName()+" a una variable tipo " +typeManager.getOutputType(typeNumber) + "\n", Color.white, false);
                     OutputText.appendToPane(mainFrame.getOutputPannel(), "\t Fila: ", Color.white, false);
-                    OutputText.appendToPane(mainFrame.getOutputPannel(), symbol.right + "\n", Color.YELLOW, false);
+                    OutputText.appendToPane(mainFrame.getOutputPannel(), (symbol.right+1) + "\n", Color.YELLOW, false);
                 }
                 //cast test
             } else {
@@ -86,7 +86,7 @@ public class TestManager {
                     OutputText.appendToPane(mainFrame.getOutputPannel(), "SEMANTIC ERROR:\n", Color.red, false);
                     OutputText.appendToPane(mainFrame.getOutputPannel(), "\t" + preTupleSymbols.get(i).getName() + " ya ha sido declarado \n", Color.white, false);
                     OutputText.appendToPane(mainFrame.getOutputPannel(), "\t Fila: ", Color.white, false);
-                    OutputText.appendToPane(mainFrame.getOutputPannel(), symbol.right + "\n", Color.YELLOW, false);
+                    OutputText.appendToPane(mainFrame.getOutputPannel(), (symbol.right+1) + "\n", Color.YELLOW, false);
                 } else {
                     preTupleSymbols.get(i).setDimension(dimension);
                     preTupleSymbols.get(i).setType(typeManager.getType(typeNumber));
@@ -115,15 +115,30 @@ public class TestManager {
             OutputText.appendToPane(mainFrame.getOutputPannel(), "SEMANTIC ERROR:\n", Color.red, false);
             OutputText.appendToPane(mainFrame.getOutputPannel(), "\t Tipos " + typeManager.getOutputType(type1) + " & " + typeManager.getOutputType(type2) + " NO pueden ser operados\n", Color.white, false);
             OutputText.appendToPane(mainFrame.getOutputPannel(), "\t Fila: ", Color.white, false);
-            OutputText.appendToPane(mainFrame.getOutputPannel(), symbol.right + "\n", Color.YELLOW, false);
+            OutputText.appendToPane(mainFrame.getOutputPannel(), (symbol.right+1) + "\n", Color.YELLOW, false);
             OutputText.appendToPane(mainFrame.getOutputPannel(), "\t Columna: ", Color.white, false);
-            OutputText.appendToPane(mainFrame.getOutputPannel(), symbol.left + "\n", Color.YELLOW, false);
+            OutputText.appendToPane(mainFrame.getOutputPannel(), (symbol.left+1) + "\n", Color.YELLOW, false);
             return null;
 
         } else {
             return type;
         }
 
+    }
+    
+    public boolean assigValue(String id,Object value, Symbol symbol){
+        System.out.println("============ASS  "+id);
+        Type idType = symbolTable.getTypeWithAmbit(id, ambitControler.getCurrentAmbit(), mainFrame, symbol);
+        if (idType!=null) {
+            if (value!=null) {
+                SynthesizedOpAsst soa= (SynthesizedOpAsst)value;
+                if (soa.getType().equals(idType)||soa.getType().isFather(idType)) {
+                    System.out.println("STRRRRRRRRRRRRRYUE");
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public void insertPreTuple(String name, Integer typeNumber, Object value, Integer dimension, Symbol symbol) {
