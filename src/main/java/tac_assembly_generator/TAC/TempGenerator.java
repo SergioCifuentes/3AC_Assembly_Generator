@@ -12,38 +12,68 @@ import java.util.ArrayList;
  * @author sergio
  */
 public class TempGenerator {
-    private static final int START_POINT=0;
-    private static final String PREFIX="t";
+
+    private static final int START_POINT = 0;
+    private static final String PREFIX_TEMP = "t";
     private int currentTemp;
-    private ArrayList<Integer> recentyRemoves;
+    private static final String PREFIX_TAG = "etv";
+    private int currentTag;
+    private ArrayList<Integer> recentyRemovedTemp;
+    private ArrayList<Integer> recentyRemovedTag;
 
     public TempGenerator() {
-        currentTemp= START_POINT;
-        recentyRemoves= new ArrayList<>();
+        currentTemp = START_POINT;
+        currentTag = START_POINT;
+        recentyRemovedTemp = new ArrayList<>();
+        recentyRemovedTag = new ArrayList<>();
     }
-    public void remove(String temp){
-        int value = Integer.parseInt(temp.replace(PREFIX,""));
-        recentyRemoves.add(value);
+
+    public void removeTemp(String temp) {
+        int value = Integer.parseInt(temp.replace(PREFIX_TEMP, ""));
+        recentyRemovedTemp.add(value);
     }
-    
-    public String generate(){
-        if (currentTemp==START_POINT){
+
+    public String generateTemp() {
+        if (currentTemp == START_POINT) {
             currentTemp++;
-        return PREFIX+ currentTemp;
-        } 
-        if (!recentyRemoves.isEmpty()) {
-            int minor=recentyRemoves.get(0);
-            for (int i = 1; i < recentyRemoves.size(); i++) {
-                if (recentyRemoves.get(i)<minor) {
-                    minor=recentyRemoves.get(i);
+            return PREFIX_TEMP + currentTemp;
+        }
+        if (!recentyRemovedTemp.isEmpty()) {
+            int minor = recentyRemovedTemp.get(0);
+            for (int i = 1; i < recentyRemovedTemp.size(); i++) {
+                if (recentyRemovedTemp.get(i) < minor) {
+                    minor = recentyRemovedTemp.get(i);
                 }
             }
-            recentyRemoves.remove((Object)minor);
-            return PREFIX+minor;
+            recentyRemovedTemp.remove((Object) minor);
+            return PREFIX_TEMP + minor;
         }
         currentTemp++;
-        return PREFIX+currentTemp;
+        return PREFIX_TEMP + currentTemp;
     }
-    
-    
+
+    public void removeTag(String tag) {
+        int value = Integer.parseInt(tag.replace(PREFIX_TAG, ""));
+        recentyRemovedTag.add(value);
+    }
+
+    public String generateTag() {
+        if (currentTag == START_POINT) {
+            currentTag++;
+            return PREFIX_TAG + currentTag;
+        }
+        if (!recentyRemovedTag.isEmpty()) {
+            int minor = recentyRemovedTag.get(0);
+            for (int i = 1; i < recentyRemovedTag.size(); i++) {
+                if (recentyRemovedTag.get(i) < minor) {
+                    minor = recentyRemovedTag.get(i);
+                }
+            }
+            recentyRemovedTag.remove((Object) minor);
+            return PREFIX_TAG + minor;
+        }
+        currentTag++;
+        return PREFIX_TAG + currentTag;
+    }
+
 }

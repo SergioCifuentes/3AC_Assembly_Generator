@@ -8,6 +8,7 @@ import tac_assembly_generator.languages.semantic.verification.TestManager;
 import tac_assembly_generator.TAC.TranslateControlerTAC;
 import tac_assembly_generator.TAC.quadruple.Operation;
 import tac_assembly_generator.TAC.quadruple.Quadruple;
+import tac_assembly_generator.TAC.quadruple.BoolQuad;
 import tac_assembly_generator.languages.semantic.type.Type;
 import tac_assembly_generator.languages.semantic.type.TypeManager;
  parser code {:
@@ -104,13 +105,13 @@ PRINTF, CLRSCR, GETCH, SCAN_F, MAIN ;
 //Non-terminals Common or StartUp*/
 non terminal Inicio, VB, Java, Python,
 VbCode, JavaCode, PythonCode, Programa,VbSeperator,
-OpLogic, Type;
+OpLogic, Type, Public;
 
 //Non-terminals VB*/
-non terminal FunctionVB, FunctionVbHeader, Sub_VB, Parameters, Parameter, InstructionsFunctionVb, LnInstructionsVb, Lines,
+non terminal FunctionVB, FunctionVbHeader, SubVb, SubVbHeader, Parameters, Parameter, InstructionsFunctionVb, InstructionsFunctionVb2, LnInstructionsVb, Lines,
 InputVb, OutputVb, ValuesVb, ValueVb, CycleVb, ForVb, Step, NumberValue,
-Number2, Number3, WhileVb, OpBool, BoolValueVb, ExBoolVb, DoWhileVb, DeclarationVb,
-DeTypeVb, IdsVb, AssiVb, AssignmentVb, ConditionVb, IfVb, ElseVb, ThenVb, SwitchVb,
+Number2, Number3, WhileVb, OpBool, OpBool2, OpBool3, BoolValueVb, ExBoolVb, DoWhileVb, DeclarationVb,
+DeTypeVb, IdsVb, AssiVb, AssignmentVb, ConditionVb, IfVb, IfVbHeader, ElseVb, ThenVb, SwitchVb,
 CasesVb;
 
 //Non-terminals JAVA*/
@@ -133,33 +134,42 @@ OpBoolC, ArrayVal;
 start with Inicio;
 Inicio 		::= VB Java Python  Programa {:System.out.println("FIN Inicio");
                                         sma.translateControlerTAC.printQuads();
-                                        sma.translateControlerTAC.convertQuads();:};
+                                        :};
                 
 /*
     VB
 */
 VB 			::= VbSeperator  VbCode {:sma.testManager.switchNextTypes();
-                                    sma.translateControlerTAC.acceptCurrentBlock();:};
+                                    sma.translateControlerTAC.acceptCurrentBlock();
+                                    :};
                 
 VbSeperator::= VB_SEPERATOR{:sma.translateControlerTAC.createNewQuadrupleBlock();:};
 
 VbCode     ::= FunctionVB VbCode  
-                | Sub_VB VbCode
+                | SubVb VbCode
 		        |
                 |error VbCode; 
  
-FunctionVB	::= FunctionVbHeader InstructionsFunctionVb END_VB FUNCTION_VB {:sma.testManager.finishAmbit();
-                                                                            sma.translateControlerTAC.acceptCurrentBlock();:};
-FunctionVbHeader::= PUBLIC FUNCTION_VB ID PARENTHESIS_A Parameters PARENTHESIS_B AS_VB Type {:sma.testManager.creatFatherAmbit();
-                                                                                            sma.translateControlerTAC.createNewQuadrupleBlock();:}
-                    |FUNCTION_VB ID PARENTHESIS_A Parameters PARENTHESIS_B AS_VB Type {:sma.testManager.creatFatherAmbit();
-                                                                                        sma.translateControlerTAC.createNewQuadrupleBlock();:};
-Sub_VB      ::= PUBLIC SUB_VB ID PARENTHESIS_A Parameters PARENTHESIS_B InstructionsFunctionVb END_VB SUB_VB; 
+FunctionVB	::= FunctionVbHeader InstructionsFunctionVb:ins END_VB FUNCTION_VB {:sma.translateControlerTAC.convertQuads((ArrayList<Object>)ins);:};
+FunctionVbHeader::= Public FUNCTION_VB ID PARENTHESIS_A Parameters PARENTHESIS_B AS_VB Type {:sma.testManager.creatFatherAmbit();
+                                                                                            sma.translateControlerTAC.createNewQuadrupleBlock();
+                                                                                            sma.testManager.insertParameters();:};
+                    
+SubVb      ::=  SubVbHeader InstructionsFunctionVb END_VB SUB_VB {:sma.testManager.finishAmbit();
+                                                                            sma.translateControlerTAC.acceptCurrentBlock();:}; 
+SubVbHeader::= Public SUB_VB ID PARENTHESIS_A Parameters PARENTHESIS_B{:sma.testManager.creatFatherAmbit();
+                                                                                            sma.translateControlerTAC.createNewQuadrupleBlock();
+                                                                                            sma.testManager.insertParameters();:};
+Public::= PUBLIC
+            |;
 Parameters::= Parameter 
             |;
-Parameter   ::= Parameter COMMA ID AS_VB Type{:System.out.println("PERAMENTE");:}
-                | ID AS_VB Type;
-InstructionsFunctionVb::= Lines LnInstructionsVb  
+Parameter   ::= Parameter COMMA ID:id AS_VB Type:type {:sma.testManager.getParameterControl().insertParameter((Integer)type,id,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));:}
+                | ID:id AS_VB Type:type {:sma.testManager.getParameterControl().insertParameter((Integer)type,id,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));:} ;
+InstructionsFunctionVb  ::=InstructionsFunctionVb2{: RESULT=sma.translateControlerTAC.getcurrentQuads();
+                                                    sma.testManager.finishAmbit();
+                                                    sma.translateControlerTAC.acceptCurrentBlock();:};
+InstructionsFunctionVb2::= Lines LnInstructionsVb  
                             |Lines RETURN_VB ValuesVb
                             |Lines RETURN_VB
                             |LnInstructionsVb 
@@ -292,26 +302,50 @@ Number3     ::=NUMBER:val{: Type type =sma.testManager.getTypeManager().operateT
 
 WhileVb         ::= WHILE  OpBool  InstructionsFunctionVb END_VB WHILE;
 
-OpBool::= OpBool OpLogic BoolValueVb
-       |BoolValueVb;
-BoolValueVb       ::=NOT BoolValueVb
-                    |NOT PARENTHESIS_A OpBool PARENTHESIS_B
-                    //|ID 
-                    |TRUE
-                    |FALSE
-                    |NumberValue ExBoolVb Number3;
-OpLogic         ::= OR
-                    |AND;
-ExBoolVb          ::=EQUAL 
-                    |DIFERENT_VB
-                    |GREATER_THAN
-                    |LESS_THAN                    
-                    |GREATER_THAN_EQUAL
-                    |LESS_THAN_EQUAL;
+OpBool::= OpBool:val1 OR OpBool2:val2 {:if(val1!=null &&val2!=null){
+                                            RESULT= sma.translateControlerTAC.getBoolQuadControl().operateBoolQuad(val1,val2,Operation.OP_OR);}
+                                            :}
+
+       |OpBool2 :val{:RESULT=val;:};
+OpBool2::= OpBool2:val1 AND OpBool3:val2 {:if(val1!=null &&val2!=null){
+                                            RESULT= sma.translateControlerTAC.getBoolQuadControl().operateBoolQuad(val1,val2,Operation.OP_AND);}
+                                            :}
+        |OpBool3:val{:RESULT=val;:};
+OpBool3::=NOT  BoolValueVb
+        |BoolValueVb:val {:if(val!=null){
+                   RESULT = sma.translateControlerTAC.getBoolQuadControl().convertQuadToBool(((ArrayList<Object>)val)); 
+        }:};
+BoolValueVb       ::=TRUE {: Type type =sma.testManager.getTypeManager().operateTypes(TypeManager.BOOL_TYPE,null);
+                            Quadruple quadruple=sma.translateControlerTAC.creatTempIdQuad(Operation.EQUAL_BOOL,1,1,null);
+		                    RESULT=sma.translateControlerTAC.getcurrentTempQuads();:}
+                    |FALSE {: Type type =sma.testManager.getTypeManager().operateTypes(TypeManager.BOOL_TYPE,null);
+                            Quadruple quadruple=sma.translateControlerTAC.creatTempIdQuad(Operation.EQUAL_BOOL,0,1,null);
+		                    RESULT=sma.translateControlerTAC.getcurrentTempQuads();:}
+                    |NumberValue:num1 ExBoolVb:exVal Number3:num2 {:if(num1!=null &&num2!=null){ 
+                                                               SynthesizedOpAsst s1= (SynthesizedOpAsst)num1;
+                                                               SynthesizedOpAsst s2= (SynthesizedOpAsst)num2;
+                                                                Type type=sma.testManager.operateBoolType(s1.getType().getNumber(),s2.getType().getNumber(),((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
+                                                                if(type!=null){
+                                                                    Quadruple quadruple=sma.translateControlerTAC.operateIdBoolQuadruple(s1.getQuadruple(),s2.getQuadruple(),(Integer)exVal);
+                                                                    RESULT=sma.translateControlerTAC.getcurrentTempQuads();
+                                                                }else{
+                                                                    RESULT=null;
+                                                                }
+                                                            }else{
+                                                                RESULT=null;
+                                                            }:}
+                    | PARENTHESIS_A OpBool:val PARENTHESIS_B {:RESULT=val;:};
+
+ExBoolVb          ::=EQUAL{:RESULT=Operation.EQUAL_BOOL;:}
+                    |DIFERENT_VB {:RESULT=Operation.DIFERENT;:}
+                    |GREATER_THAN {:RESULT=Operation.GREATER_THAN;:}
+                    |LESS_THAN {:RESULT=Operation.LESS_THAN;:}
+                    |GREATER_THAN_EQUAL {:RESULT=Operation.GREATER_THAN_EQUAL;:}
+                    |LESS_THAN_EQUAL {:RESULT=Operation.LESS_THAN_EQUAL;:};
 
 DoWhileVb       ::= DO  InstructionsFunctionVb LOOP_VB WHILE OpBool;
 
-DeclarationVb     ::= DIM_VB DeTypeVb;
+DeclarationVb     ::= DIM_VB DeTypeVb:val {:RESULT=val;:};
 DeTypeVb        ::=  DeTypeVb COMMA  IdsVb AS_VB Type:type AssiVb {:sma.testManager.insertPreTuplesToSymbolTable((Integer)type,null,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()),sma.translateControlerTAC);:}
                     |IdsVb AS_VB Type:type AssiVb {:sma.testManager.insertPreTuplesToSymbolTable((Integer)type,null,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()),sma.translateControlerTAC);:};
 Type          ::=INTEGER_TYPE{:RESULT=TypeManager.INTEGER_TYPE;:}
@@ -333,12 +367,19 @@ AssiVb            ::= EQUAL ValueVb:val {:RESULT = val;:}
 
 AssignmentVb      ::=ID:id EQUAL ValueVb:val {:boolean bool= sma.testManager.assigValue(id,val,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
                                                 if(bool){sma.translateControlerTAC.creatTempIdQuadAssign(val,id);
-                                                        sma.translateControlerTAC.acceptAllIdQuas()}:};
+                                                        sma.translateControlerTAC.acceptAllIdQuas();}:};
 
 ConditionVb        ::= IfVb
                     |SwitchVb;
 
-IfVb            ::= IF OpBool ThenVb InstructionsFunctionVb ElseVb END_VB IF;
+IfVb            ::= IfVbHeader:ifBool InstructionsFunctionVb:lines ElseVb:elseBool END_VB IF {:BoolQuad bool=(BoolQuad)ifBool;
+                                                                                    if(lines!=null){bool.changeFatherYesBool((ArrayList<Object>)lines);}
+                                                                                    if(elseBool!=null){bool.changeFatherNoBool((ArrayList<Object>)elseBool);}
+                                                                                    sma.translateControlerTAC.addQuadsToCurrent(sma.translateControlerTAC.getBoolQuadControl().convertBoolToQuad(bool));
+                                                                                    :};
+IfVbHeader      ::=IF OpBool:op ThenVb {:sma.testManager.creatSonAmbit();
+                                        sma.translateControlerTAC.createNewQuadrupleBlock();
+                                        RESULT=op;:};
 ElseVb          ::= ELSE  InstructionsFunctionVb
                     | ELSE_IF_VB OpBool ThenVb InstructionsFunctionVb ElseVb
                     |; 

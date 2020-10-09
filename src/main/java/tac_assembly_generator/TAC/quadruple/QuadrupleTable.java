@@ -44,7 +44,7 @@ public class QuadrupleTable {
         quadruples.add(quadruple);
     }
 
-    public void addIdQuad(Quadruple quadruple) {
+    public void addIdQuad(Object quadruple) {
 
         idQuads.get(idQuads.size() - 1).add(quadruple);
 
@@ -61,7 +61,6 @@ public class QuadrupleTable {
     }
 
     public void nextIdQuad() {
-
         idQuads.add(new ArrayList<Object>());
     }
 
@@ -78,4 +77,13 @@ public class QuadrupleTable {
         }
         removeIdQuads();
     }
+
+    public void removeQuads() {
+        quadruples.removeAll(quadruples);
+    }
+
+    public ArrayList<ArrayList<Object>> getIdQuads() {
+        return idQuads;
+    }
+    
 }

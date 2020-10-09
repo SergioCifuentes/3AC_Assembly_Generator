@@ -16,6 +16,7 @@ import tac_assembly_generator.languages.semantic.Tuple;
 import tac_assembly_generator.languages.semantic.type.Type;
 import tac_assembly_generator.languages.semantic.type.TypeManager;
 import tac_assembly_generator.ui.MainFrame;
+import tac_assembly_generator.ui.backend.OutputErrors;
 import tac_assembly_generator.ui.backend.OutputText;
 
 /**
@@ -31,6 +32,7 @@ public class TestManager {
     private TypeManager typeManager;
     private AmbitControler ambitControler;
     private MainFrame mainFrame;
+    private ParameterControl parameterControl;
 
     public TestManager(MainFrame mainFrame) {
         typeManager = new TypeManager();
@@ -41,7 +43,7 @@ public class TestManager {
         semanticRecoverableError = false;
         ambitControler = new AmbitControler();
         this.mainFrame = mainFrame;
-
+        parameterControl= new ParameterControl(typeManager);
     }
 
     public void switchNextTypes() {
@@ -58,6 +60,10 @@ public class TestManager {
 
     public void finishAmbit() {
         ambitControler.finishAmbit();
+    }
+
+    public ParameterControl getParameterControl() {
+        return parameterControl;
     }
 
     public void  insertPreTuplesToSymbolTable(Integer typeNumber, Integer dimension, Symbol symbol,TranslateControlerTAC tAC) {
@@ -108,32 +114,44 @@ public class TestManager {
         return typeManager;
     }
 
+    public void insertParameters(){
+        for (int i = 0; i < parameterControl.getIds().size(); i++) {
+            Tuple findExisting = symbolTable.getTupleWithAmbit(parameterControl.getIds().get(i), ambitControler.getCurrentAmbit());
+            if (findExisting!=null) {
+                OutputErrors.alreadyDeclaredParameter(mainFrame.getOutputPannel(), parameterControl.getIds().get(i), parameterControl.getSymbols().get(i));
+            }else{
+                Tuple tuple= new Tuple(parameterControl.getIds().get(i), parameterControl.getTypes().get(i),null,null, parameterControl.getSymbols().get(i), ambitControler.getCurrentAmbit());
+                    symbolTable.insertTuple(tuple);
+            }
+        }
+        parameterControl.removeParameters();
+    }
+    
     public Type operateType(Integer type1, Integer type2, Symbol symbol) {
         Type type = typeManager.operateTypes(type1, type2);
         if (type == null) {
             //Type Error
-            OutputText.appendToPane(mainFrame.getOutputPannel(), "SEMANTIC ERROR:\n", Color.red, false);
-            OutputText.appendToPane(mainFrame.getOutputPannel(), "\t Tipos " + typeManager.getOutputType(type1) + " & " + typeManager.getOutputType(type2) + " NO pueden ser operados\n", Color.white, false);
-            OutputText.appendToPane(mainFrame.getOutputPannel(), "\t Fila: ", Color.white, false);
-            OutputText.appendToPane(mainFrame.getOutputPannel(), (symbol.right+1) + "\n", Color.YELLOW, false);
-            OutputText.appendToPane(mainFrame.getOutputPannel(), "\t Columna: ", Color.white, false);
-            OutputText.appendToPane(mainFrame.getOutputPannel(), (symbol.left+1) + "\n", Color.YELLOW, false);
-            return null;
-
-        } else {
-            return type;
-        }
+            OutputErrors.typeOpError(mainFrame.getOutputPannel(), typeManager.getOutputType(type1) , typeManager.getOutputType(type2), symbol);
+         }
+        return type;
 
     }
     
+        public Type operateBoolType(Integer type1, Integer type2, Symbol symbol) {
+        Type type = typeManager.operateBoolTypes(type1, type2);
+        if (type == null) {
+            //Type Error
+            OutputErrors.typeOpBoolError(mainFrame.getOutputPannel(), typeManager.getOutputType(type1) , typeManager.getOutputType(type2), symbol);
+        }
+        return type;
+    }
+    
     public boolean assigValue(String id,Object value, Symbol symbol){
-        System.out.println("============ASS  "+id);
         Type idType = symbolTable.getTypeWithAmbit(id, ambitControler.getCurrentAmbit(), mainFrame, symbol);
         if (idType!=null) {
             if (value!=null) {
                 SynthesizedOpAsst soa= (SynthesizedOpAsst)value;
                 if (soa.getType().equals(idType)||soa.getType().isFather(idType)) {
-                    System.out.println("STRRRRRRRRRRRRRYUE");
                     return true;
                 }
             }

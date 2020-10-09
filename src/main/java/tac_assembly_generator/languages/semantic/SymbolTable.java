@@ -31,7 +31,7 @@ public class SymbolTable {
         
         ArrayList<Tuple> tuplesWithId=new ArrayList<>();
         for (int i = 0; i < symbols.size(); i++) {
-            if (symbols.get(i).getName()==id&&symbols.get(i).getParameters()==null) {
+            if (symbols.get(i).getName().equals(id)&&symbols.get(i).getParameters()==null) {
                 tuplesWithId.add(symbols.get(i));
             }
         }

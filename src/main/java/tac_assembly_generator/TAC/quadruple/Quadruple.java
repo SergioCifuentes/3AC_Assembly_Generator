@@ -12,12 +12,12 @@ import tac_assembly_generator.languages.semantic.Tuple;
  * @author sergio
  */
 public class Quadruple {
-    private int op;
+    private Integer op;
     private Object arg1;
     private Object arg2;
     private String result;
 
-    public Quadruple(int op, Object arg1, Object arg2, String result) {
+    public Quadruple(Integer op, Object arg1, Object arg2, String result) {
         this.op = op;
         this.arg1 = arg1;
         this.arg2 = arg2;
@@ -29,7 +29,7 @@ public class Quadruple {
         return "Quadruple{" + "op=" + op + ", arg1=" + arg1 + ", arg2=" + arg2 + ", result=" + result + '}';
     }
 
-    public int getOp() {
+    public Integer getOp() {
         return op;
     }
 

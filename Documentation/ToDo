@@ -1,11 +1,14 @@
 Close file tabs 
 Seperate File Manager Methods
-Comprobador Estatico-> Comprobacion de tipos
-Fix Id for BoolVB
 Improve Ambit Errors
+Dim a=2,b=4 AS integer =4 ->fix
+
+
+Comprobador Estatico-> Comprobacion de tipos
+
 
 Comprobacion de Tipo
-float a = 32+3.2+s;
+float a = 32+3.2+s;s
 32+3.2+s=> float o hijos
 
 Comprobacion de Flujo de Control
