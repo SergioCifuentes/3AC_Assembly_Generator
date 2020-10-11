@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java_cup.runtime.Symbol;
 import tac_assembly_generator.languages.semantic.type.Type;
 import tac_assembly_generator.ui.MainFrame;
+import tac_assembly_generator.ui.backend.OutputErrors;
 import tac_assembly_generator.ui.backend.OutputText;
 
 /**
@@ -52,25 +53,14 @@ public class SymbolTable {
         }
 
         for (int i = 0; i < tuplesWithId.size(); i++) {
-            
-            if (tuplesWithId.get(i).getAmbit().isSon(ambit)) {
+            if (ambit.isSon(tuplesWithId.get(i).getAmbit())) {
              return tuplesWithId.get(i).getType();
             }
         }
         if (tuplesWithId.isEmpty()) {
-            OutputText.appendToPane(mainFrame.getOutputPannel(),"SEMANTIC ERROR:\n", Color.red, false);
-            OutputText.appendToPane(mainFrame.getOutputPannel(),"\t"+id +" no ha sido declarado \n", Color.white, false);
-            OutputText.appendToPane(mainFrame.getOutputPannel(),"\t Fila: ", Color.white, false);
-            OutputText.appendToPane(mainFrame.getOutputPannel(),(symbol.right+1)+"\n", Color.YELLOW, false);
-            OutputText.appendToPane(mainFrame.getOutputPannel(),"\t Columna: ", Color.white, false);
-            OutputText.appendToPane(mainFrame.getOutputPannel(),(symbol.left+1)+"\n", Color.YELLOW, false);
+            OutputErrors.notDeclared(mainFrame.getOutputPannel(), id, symbol);
         }else{
-            OutputText.appendToPane(mainFrame.getOutputPannel(),"SEMANTIC ERROR:\n", Color.red, false);
-            OutputText.appendToPane(mainFrame.getOutputPannel(),"\t"+id +" esta fuera de ambito \n", Color.white, false);
-            OutputText.appendToPane(mainFrame.getOutputPannel(),"\t Fila: ", Color.white, false);
-            OutputText.appendToPane(mainFrame.getOutputPannel(),(symbol.right+1)+"\n", Color.YELLOW, false);
-            OutputText.appendToPane(mainFrame.getOutputPannel(),"\t Columna: ", Color.white, false);
-            OutputText.appendToPane(mainFrame.getOutputPannel(),(symbol.left+1)+"\n", Color.YELLOW, false);
+            OutputErrors.declaredOutOfAmbit(mainFrame.getOutputPannel(), id, symbol);
         }
         return null;
     }

@@ -13,6 +13,8 @@ import tac_assembly_generator.languages.semantic.type.Type;
 import tac_assembly_generator.languages.semantic.type.TypeManager;
 import tac_assembly_generator.TAC.asst.Switch;
 import tac_assembly_generator.languages.semantic.UniquenessTable;
+import tac_assembly_generator.TAC.asst.For;
+import tac_assembly_generator.languages.semantic.SemanticAsstIdQuad;
 
  parser code {:
     
@@ -112,8 +114,8 @@ OpLogic, Type, Public;
 
 //Non-terminals VB*/
 non terminal FunctionVB, FunctionVbHeader, SubVb, SubVbHeader, Parameters, Parameter, InstructionsFunctionVb, InstructionsFunctionVb2, LnInstructionsVb, Lines,
-InputVb, OutputVb, ValuesVb, ValueVb, CycleVb, ForVb, ForVbHeader, ForVbHeaderStart, Step, NumberValue,
-Number2, Number3, WhileVb, WhileVbHeader, OpBool, OpBool2, OpBool3, BoolValueVb, ExBoolVb, DoWhileVb, DeclarationVb,
+InputVb, OutputVb, ValuesVb, ValueVb, CycleVb, ForVb, ForVbHeader, ForVbHeaderStart, For, Step, NumberValue,
+Number2, Number3, WhileVb, WhileVbHeader, OpBool, OpBool2, OpBool3, BoolValueVb, ExBoolVb, DoWhileVb, DoHeader, DeclarationVb,
 DeTypeVb, IdsVb, AssiVb, AssignmentVb, ConditionVb, IfVb, IfVbHeader, ElseVb, ThenVb, SwitchVb, SwitchVbHeader,
 CasesVb, CasesVbHeader, CaseValue;
 
@@ -205,27 +207,36 @@ CycleVb         ::= ForVb
                     |WhileVb
                     |DoWhileVb;
 
-ForVb           ::=  ForVbHeader InstructionsFunctionVb NEXT_VB {::};
+ForVb           ::=  ForVbHeader:f InstructionsFunctionVb:lines NEXT_VB {:if(f!=null){
+                                                                For fo=(For)f;
+                                                                fo.addCode((ArrayList<Object>)lines);
+                                                                sma.translateControlerTAC.addQuadsToCurrent(fo.convertToQuad());
+                                                                }:};
                 
-ForVbHeader           ::= ForVbHeaderStart TO_VB NumberValue Step {:sma.testManager.creatSonAmbit();
-                                        sma.translateControlerTAC.createNewQuadrupleBlock();:};
-ForVbHeaderStart        ::=FOR ID:id AS_VB Type EQUAL NumberValue:val {:boolean bool= sma.testManager.assigValue(id,val,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
+ForVbHeader           ::= ForVbHeaderStart:id TO_VB NumberValue:num Step:step {:if (id!=null) {
+                    SemanticAsstIdQuad saiq= (SemanticAsstIdQuad)id;
+                    SynthesizedOpAsst s1= (SynthesizedOpAsst)num;
+                    Quadruple quadruple=sma.translateControlerTAC.operateIdBoolQuadruple(saiq.getId(),s1.getQuadruple(),Operation.EQUAL_BOOL);
+                    BoolQuad bool =sma.translateControlerTAC.getBoolQuadControl().convertQuadToBool(sma.translateControlerTAC.getcurrentTempQuads());
+                     For f=sma.translateControlerTAC.createForAsst(saiq.getQuads(), (String) step, bool, saiq.getId());
+                    RESULT=f;}:};
+ForVbHeaderStart        ::=For ID:id AS_VB Type EQUAL NumberValue:val {:boolean bool= sma.testManager.assigValue(id,val,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
                                                 if(bool){sma.translateControlerTAC.creatTempIdQuadAssign(val,id);
                                                         sma.translateControlerTAC.acceptAllIdQuas();
                                                         RESULT=id;}:}
-                    |FOR ID:id EQUAL NumberValue:val{:Type type=sma.testManager.getTypeFromST(id,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
+                    |For ID:id EQUAL NumberValue:val{:Type type=sma.testManager.getTypeFromST(id,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
                                                     if(type!=null){
                                                     if(sma.testManager.getTypeManager().isNumerico(type.getNumber())){
-                                                        sma.testManager.creatSonAmbit();
-                                                        sma.translateControlerTAC.createNewQuadrupleBlock();
+                                                        
                                                         boolean bool= sma.testManager.assigValue(id,val,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
                                                         if(bool){sma.translateControlerTAC.creatTempIdQuadAssign(val,id);
-                                                            sma.translateControlerTAC.acceptAllIdQuas();
-                                                            RESULT=id;
+                                                            RESULT=new SemanticAsstIdQuad(id, sma.translateControlerTAC.getcurrentTempQuads());
                                                         }
                                                     }else{
                                                         sma.testManager.callNumericError(id,type,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
                                                     }}:};
+For::= FOR{:sma.testManager.creatSonAmbit();
+                                                        sma.translateControlerTAC.createNewQuadrupleBlock();:};
 Step            ::= STEP_VB CaseValue:value {:RESULT=value;:}
                     | STEP_VB MINUS CaseValue:value{:RESULT="-"+(String)value;:}
                     | STEP_VB PLUS CaseValue:value{:RESULT=value;:}
@@ -371,7 +382,12 @@ ExBoolVb          ::=EQUAL{:RESULT=Operation.EQUAL_BOOL;:}
                     |GREATER_THAN_EQUAL {:RESULT=Operation.GREATER_THAN_EQUAL;:}
                     |LESS_THAN_EQUAL {:RESULT=Operation.LESS_THAN_EQUAL;:};
 
-DoWhileVb       ::= DO  InstructionsFunctionVb LOOP_VB WHILE OpBool;
+DoWhileVb       ::= DoHeader  InstructionsFunctionVb:lines LOOP_VB WHILE OpBool:op {:if(op!=null){
+                                                                                sma.translateControlerTAC.addQuadsToCurrent(sma.translateControlerTAC.creatDoWhile((ArrayList<Object>)lines,(BoolQuad)op));
+                                                                                }:};
+
+DoHeader        ::= DO{:sma.testManager.creatSonAmbit();
+                                        sma.translateControlerTAC.createNewQuadrupleBlock();:};
 
 DeclarationVb     ::= DIM_VB DeTypeVb:val {:RESULT=val;:};
 DeTypeVb        ::=  DeTypeVb COMMA  IdsVb AS_VB Type:type AssiVb {:sma.testManager.insertPreTuplesToSymbolTable((Integer)type,null,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()),sma.translateControlerTAC);:}

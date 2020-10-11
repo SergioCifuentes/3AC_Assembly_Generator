@@ -21,13 +21,17 @@ public class Ambit {
     public Ambit getFather() {
         return father;
     }
-    
-    public boolean isSon(Ambit ambitSon){
-        if (id==ambitSon.id) {
+
+    public int getId() {
+        return id;
+    }
+        
+    public boolean isSon(Ambit ambitFatherbit){
+        if (id==ambitFatherbit.id) {
             return true;
         }else{
-            if (ambitSon.father!=null) {
-                return ambitSon.father.isSon(this);
+            if (father!=null) {
+                return father.isSon(ambitFatherbit);
             }else{
                 return false;
             }

@@ -7,6 +7,7 @@ package tac_assembly_generator.TAC;
 
 import java.util.ArrayList;
 import java_cup.runtime.Symbol;
+import tac_assembly_generator.TAC.asst.For;
 import tac_assembly_generator.TAC.asst.Switch;
 import tac_assembly_generator.TAC.quadruple.*;
 import tac_assembly_generator.languages.analyzers.syntax.SynthesizedOpAsst;
@@ -47,7 +48,9 @@ public class TranslateControlerTAC {
     public Switch getSwitchAsst(){
         return currentQuadrupleTable.getSwitchAsst();
     }
-    
+    public For createForAsst(ArrayList<Object> assigment, String step,BoolQuad quad, String id){
+        return new For(tempGenerator, assigment, step,quad,id);
+    }
 
     public void addComment(String comment) {
         if (currentQuadrupleTable.getIdQuads().isEmpty()) {
@@ -137,12 +140,25 @@ public class TranslateControlerTAC {
         
         ArrayList<Object> obList = new ArrayList<>();
         
+        System.out.println(currentQuadrupleTable.equals(mainQuadrupleTable));
+        
         obList.addAll(currentQuadrupleTable.getQuadruples());
-        System.out.println("GETTING "+obList.size());
+        
         currentQuadrupleTable.removeQuads();
         return obList;
     }
 
+    public ArrayList<Object> creatDoWhile(ArrayList<Object> code, BoolQuad condition){
+        ArrayList<Object> quads= new ArrayList<>();
+        String tag= tempGenerator.generateTag();
+        quads.add(new Quadruple(null,null,null,tag));
+        quads.addAll(code);
+        condition.changeFatherYesBool(new BoolQuad(tag, null, null,null,null), true);
+        quads.addAll(boolQuadControl.convertBoolToQuad(condition));
+        return quads;
+        
+    }
+    
     public Quadruple creatTempQuad(int op, Object arg1, Object arg2, String result) {
         if (result == null) {
             result = tempGenerator.generateTemp();
@@ -198,6 +214,7 @@ public class TranslateControlerTAC {
     }
 
     public void acceptAllIdQuas() {
+        System.out.println("ACCEPTINGGGGGGGGGGGGG   ++"+currentQuadrupleTable.getIdQuads().size());
         for (int i = 0; i < currentQuadrupleTable.getIdQuads().size(); i++) {
             acceptIdQuad(i);
         }
@@ -220,17 +237,25 @@ public class TranslateControlerTAC {
         return creatTempIdQuad(op, q1.getResult(), q2.getResult(), null);
 
     }
+        public Quadruple operateIdBoolQuadruple(String q1, Quadruple q2, int op) {
+        return creatTempIdQuad(op, q1, q2.getResult(), null);
+
+    }
 
     public void removeIdQuads() {
         //remove temperory variables
         currentQuadrupleTable.removeIdQuads();
     }
     public void addQuadsToCurrent(ArrayList<Object> quads){
-        System.out.println("ADD TO ");
+        System.out.println("ADD TO "+quads);
         System.out.println(currentQuadrupleTable);
         System.out.println(currentQuadrupleTable.getFather().equals(mainQuadrupleTable));
+        System.out.println(currentQuadrupleTable.equals(mainQuadrupleTable));
         System.out.println(quads.size());
         currentQuadrupleTable.addQuads(quads);
+    }
+    public void addTempQuadToCurrent(Quadruple quad){
+        currentQuadrupleTable.addIdQuad(quad);
     }
     
 }
