@@ -27,6 +27,7 @@ public class Operation {
     public static final Integer OP_OR = 14;
     public static final Integer OP_NOT = 15;
     public static final int GO_TO = 16;
+    public static final int CASE = 17;
 
     public static String getIntOpOutput(int op) {
         switch (op) {

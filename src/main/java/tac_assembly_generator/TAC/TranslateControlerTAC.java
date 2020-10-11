@@ -6,6 +6,8 @@
 package tac_assembly_generator.TAC;
 
 import java.util.ArrayList;
+import java_cup.runtime.Symbol;
+import tac_assembly_generator.TAC.asst.Switch;
 import tac_assembly_generator.TAC.quadruple.*;
 import tac_assembly_generator.languages.analyzers.syntax.SynthesizedOpAsst;
 
@@ -23,7 +25,7 @@ public class TranslateControlerTAC {
 
     public TranslateControlerTAC(TAC tac) {
         this.tac = tac;
-        mainQuadrupleTable = new QuadrupleTable(null);
+        mainQuadrupleTable = new QuadrupleTable(null,tempGenerator);
         currentQuadrupleTable = mainQuadrupleTable;
         tempGenerator = new TempGenerator();
         boolQuadControl = new BoolQuadControl(tempGenerator);
@@ -36,6 +38,16 @@ public class TranslateControlerTAC {
     public TAC getTac() {
         return tac;
     }
+    public void createSwitchAsst(String id){
+        currentQuadrupleTable.createSwitchAsst(id);
+    }
+    public void createIfAsst(String id){
+        //currentQuadrupleTable.createForAsst();
+    }
+    public Switch getSwitchAsst(){
+        return currentQuadrupleTable.getSwitchAsst();
+    }
+    
 
     public void addComment(String comment) {
         if (currentQuadrupleTable.getIdQuads().isEmpty()) {
@@ -46,8 +58,28 @@ public class TranslateControlerTAC {
         
     }
 
+    public ArrayList<Object> addGotoWhileTags(ArrayList<Object> quads){
+        String temp = tempGenerator.generateTag();
+        quads.add(0, new Quadruple(null, null,null, temp));
+        int cont=0;
+        while (true) {
+            if (cont==quads.size()) {
+                break;
+            }
+            Object qObject= quads.get(quads.size()-1-cont);
+            try {
+                Quadruple aux = (Quadruple) qObject;
+                quads.add(quads.size()-cont-2, new Quadruple(Operation.GO_TO, null, null, temp));
+                break;
+            } catch (Exception e) {
+                cont++;
+            }
+        }
+        return quads;
+    }
+    
     public void createNewQuadrupleBlock() {
-        currentQuadrupleTable = new QuadrupleTable(currentQuadrupleTable);
+        currentQuadrupleTable = new QuadrupleTable(currentQuadrupleTable,tempGenerator);
     }
 
     public void acceptCurrentBlock() {
@@ -59,7 +91,6 @@ public class TranslateControlerTAC {
     }
 
     public void convertQuads(ArrayList<Object> obs) {
-        System.out.println("QUADS TO CONVERT "+obs.size());
         for (int i = 0; i < obs.size(); i++) {
             System.out.println(obs.get(i));
         }
@@ -78,8 +109,6 @@ public class TranslateControlerTAC {
     }
 
     public void printQuads() {
-        System.out.println("SIZE " + mainQuadrupleTable.getQuadruples().size());
-        System.out.println("#  OP  ARGS1  ARGS2 RESULT");
         for (int i = 0; i < mainQuadrupleTable.getQuadruples().size(); i++) {
             Object ob = mainQuadrupleTable.getQuadruples().get(i);
             if (ob.getClass() == Quadruple.class) {

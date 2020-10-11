@@ -11,6 +11,9 @@ import tac_assembly_generator.TAC.quadruple.Quadruple;
 import tac_assembly_generator.TAC.quadruple.BoolQuad;
 import tac_assembly_generator.languages.semantic.type.Type;
 import tac_assembly_generator.languages.semantic.type.TypeManager;
+import tac_assembly_generator.TAC.asst.Switch;
+import tac_assembly_generator.languages.semantic.UniquenessTable;
+
  parser code {:
     
 
@@ -74,7 +77,7 @@ terminal EQUAL, PARENTHESIS_A, PARENTHESIS_B, PLUS, MINUS, MULTIPLICATION, DIVIS
 POINT, AMPERSON, COMMA, INTEGER_TYPE, FLOAT_TYPE, CHAR_TYPE, OR, AND, NOT,
 INTINPUT, CHARINPUT, FLOATINPUT, PUBLIC, FOR, WHILE, DO,
 TRUE, FALSE, IF, ELSE, GREATER_THAN,
-LESS_THAN, GREATER_THAN_EQUAL, LESS_THAN_EQUAL;
+LESS_THAN, GREATER_THAN_EQUAL, LESS_THAN_EQUAL, EQUAL_BOOL;
 
 terminal String STRING, ID, CHAR;
 
@@ -95,7 +98,7 @@ SYSTEM_OUT_PRINT, SWITCH_J, CASE_J, DEFAULT_J, BREAK, SEMICOLON,
 LEFT_CB, RIGHT_CB, COLON, DIFERENT_J;
 
 // Terminals Python*/
-terminal PROGRAM_SEPERATOR;
+terminal PROGRAM_SEPERATOR,NODENT, DEDENT, INDENT ;
 
 // Terminals C*/
 terminal CONST, LEFT_BRACKET, RIGHT_BRACKET, INCLUDE,
@@ -109,10 +112,10 @@ OpLogic, Type, Public;
 
 //Non-terminals VB*/
 non terminal FunctionVB, FunctionVbHeader, SubVb, SubVbHeader, Parameters, Parameter, InstructionsFunctionVb, InstructionsFunctionVb2, LnInstructionsVb, Lines,
-InputVb, OutputVb, ValuesVb, ValueVb, CycleVb, ForVb, Step, NumberValue,
-Number2, Number3, WhileVb, OpBool, OpBool2, OpBool3, BoolValueVb, ExBoolVb, DoWhileVb, DeclarationVb,
-DeTypeVb, IdsVb, AssiVb, AssignmentVb, ConditionVb, IfVb, IfVbHeader, ElseVb, ThenVb, SwitchVb,
-CasesVb;
+InputVb, OutputVb, ValuesVb, ValueVb, CycleVb, ForVb, ForVbHeader, ForVbHeaderStart, Step, NumberValue,
+Number2, Number3, WhileVb, WhileVbHeader, OpBool, OpBool2, OpBool3, BoolValueVb, ExBoolVb, DoWhileVb, DeclarationVb,
+DeTypeVb, IdsVb, AssiVb, AssignmentVb, ConditionVb, IfVb, IfVbHeader, ElseVb, ThenVb, SwitchVb, SwitchVbHeader,
+CasesVb, CasesVbHeader, CaseValue;
 
 //Non-terminals JAVA*/
 non terminal ClaseJ, ClaseJHeader,ConditionJHeader, ParametersJ, JavaClassCode, ClassCodeJ,
@@ -168,7 +171,8 @@ Parameter   ::= Parameter COMMA ID:id AS_VB Type:type {:sma.testManager.getParam
                 | ID:id AS_VB Type:type {:sma.testManager.getParameterControl().insertParameter((Integer)type,id,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));:} ;
 InstructionsFunctionVb  ::=InstructionsFunctionVb2{: RESULT=sma.translateControlerTAC.getcurrentQuads();
                                                     sma.testManager.finishAmbit();
-                                                    sma.translateControlerTAC.acceptCurrentBlock();:};
+                                                    sma.translateControlerTAC.acceptCurrentBlock();
+                                                    :};
 InstructionsFunctionVb2::= Lines LnInstructionsVb  
                             |Lines RETURN_VB ValuesVb
                             |Lines RETURN_VB
@@ -201,13 +205,31 @@ CycleVb         ::= ForVb
                     |WhileVb
                     |DoWhileVb;
 
-ForVb           ::= FOR ID AS_VB Type EQUAL NumberValue TO_VB NumberValue Step InstructionsFunctionVb NEXT_VB 
-                |FOR ID  EQUAL NumberValue TO_VB NumberValue Step InstructionsFunctionVb NEXT_VB;
-
-Step            ::= STEP_VB NumberValue
-                    | STEP_VB MINUS NumberValue
-                    | STEP_VB PLUS NumberValue
-                    |;
+ForVb           ::=  ForVbHeader InstructionsFunctionVb NEXT_VB {::};
+                
+ForVbHeader           ::= ForVbHeaderStart TO_VB NumberValue Step {:sma.testManager.creatSonAmbit();
+                                        sma.translateControlerTAC.createNewQuadrupleBlock();:};
+ForVbHeaderStart        ::=FOR ID:id AS_VB Type EQUAL NumberValue:val {:boolean bool= sma.testManager.assigValue(id,val,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
+                                                if(bool){sma.translateControlerTAC.creatTempIdQuadAssign(val,id);
+                                                        sma.translateControlerTAC.acceptAllIdQuas();
+                                                        RESULT=id;}:}
+                    |FOR ID:id EQUAL NumberValue:val{:Type type=sma.testManager.getTypeFromST(id,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
+                                                    if(type!=null){
+                                                    if(sma.testManager.getTypeManager().isNumerico(type.getNumber())){
+                                                        sma.testManager.creatSonAmbit();
+                                                        sma.translateControlerTAC.createNewQuadrupleBlock();
+                                                        boolean bool= sma.testManager.assigValue(id,val,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
+                                                        if(bool){sma.translateControlerTAC.creatTempIdQuadAssign(val,id);
+                                                            sma.translateControlerTAC.acceptAllIdQuas();
+                                                            RESULT=id;
+                                                        }
+                                                    }else{
+                                                        sma.testManager.callNumericError(id,type,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
+                                                    }}:};
+Step            ::= STEP_VB CaseValue:value {:RESULT=value;:}
+                    | STEP_VB MINUS CaseValue:value{:RESULT="-"+(String)value;:}
+                    | STEP_VB PLUS CaseValue:value{:RESULT=value;:}
+                    |{:RESULT="1";:};
 //NextVb          ::= NEXT_VB ID
   //                  | NEXT_VB;
                     
@@ -300,7 +322,13 @@ Number3     ::=NUMBER:val{: Type type =sma.testManager.getTypeManager().operateT
         
          
 
-WhileVb         ::= WHILE  OpBool  InstructionsFunctionVb END_VB WHILE;
+WhileVb         ::= WhileVbHeader:whileBool InstructionsFunctionVb:lines END_VB WHILE{:BoolQuad bool=(BoolQuad)whileBool;
+                                                                                    if(lines!=null){bool.changeFatherYesBool((ArrayList<Object>)lines);}
+                                                                                    sma.translateControlerTAC.addQuadsToCurrent(sma.translateControlerTAC.addGotoWhileTags(sma.translateControlerTAC.getBoolQuadControl().convertBoolToQuad(bool)));
+                                                                                    :};
+WhileVbHeader   ::= WHILE  OpBool:op{:sma.testManager.creatSonAmbit();
+                                        sma.translateControlerTAC.createNewQuadrupleBlock();
+                                        RESULT=op;:};
 
 OpBool::= OpBool:val1 OR OpBool2:val2 {:if(val1!=null &&val2!=null){
                                             RESULT= sma.translateControlerTAC.getBoolQuadControl().operateBoolQuad(val1,val2,Operation.OP_OR);}
@@ -385,9 +413,42 @@ ElseVb          ::= ELSE  InstructionsFunctionVb
                     |; 
 ThenVb          ::= THEN_VB
                     |;
-SwitchVb        ::= SELECT_VB CASE_VB ID CasesVb END_VB SELECT_VB;
-CasesVb         ::= CASE_VB ValueVb InstructionsFunctionVb CasesVb
-                    |CASE_VB ELSE InstructionsFunctionVb;
+SwitchVb        ::= SwitchVbHeader CasesVb END_VB SELECT_VB{:sma.translateControlerTAC.addQuadsToCurrent(sma.translateControlerTAC.getBoolQuadControl().convertBoolToQuad(sma.translateControlerTAC.getSwitchAsst().getFatherCases()));:};
+SwitchVbHeader  ::= SELECT_VB CASE_VB ID:id {:sma.translateControlerTAC.createSwitchAsst(id);:};
+CasesVb         ::= CasesVb:caseVb CasesVbHeader:caseH InstructionsFunctionVb:lines{:UniquenessTable ut=(UniquenessTable)caseVb;
+                                                                        if(caseH!=null){
+                                                                            
+                                                                            boolean verified =ut.add(caseH,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
+                                                                            if(verified){
+                                                                            
+                                                                            sma.translateControlerTAC.getSwitchAsst().addCases((String)caseH,(ArrayList<Object>)lines);}
+                                                                            }
+                                                                        RESULT=ut;:} 
+                    |CasesVbHeader:caseH InstructionsFunctionVb:lines{:UniquenessTable ut=sma.testManager.createNewUniquenessTable();
+                                                                        if(caseH!=null){
+                                                                            
+                                                                            boolean verified =ut.add(caseH,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
+                                                                            if(verified){
+                                                                            
+                                                                            sma.translateControlerTAC.getSwitchAsst().addCases((String)caseH,(ArrayList<Object>)lines);}
+                                                                            }
+                                                                        RESULT=ut;:};
+                                                                            
+CasesVbHeader   ::= CASE_VB CaseValue:val{:RESULT=val;
+                                            sma.testManager.creatSonAmbit();
+                                        sma.translateControlerTAC.createNewQuadrupleBlock();:}
+
+                    |CASE_VB ELSE{:RESULT=Switch.ELSE;
+                    sma.testManager.creatSonAmbit();
+                                        sma.translateControlerTAC.createNewQuadrupleBlock();:};
+CaseValue       ::=NUMBER:num {:RESULT=num;:}
+                    |DECIMAL:dec {:RESULT=dec;:}
+                    |CHAR:ch  {:RESULT=ch;:}
+                    |ID:id {:Type type=sma.testManager.getTypeFromST(id,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
+                            if(type!=null){
+                                RESULT=id;
+                            }:};
+
 /*
     JAVA
 */
@@ -477,7 +538,7 @@ CaseJ           ::= CASE_J ValuesJ COLON LineCodesJ BreakJ;
 BreakJ         ::= BREAK SEMICOLON
                     |;
 
-ExBoolJ         ::=EQUAL EQUAL 
+ExBoolJ         ::=EQUAL_BOOL 
                     |DIFERENT_J
                     |GREATER_THAN
                     |LESS_THAN                    

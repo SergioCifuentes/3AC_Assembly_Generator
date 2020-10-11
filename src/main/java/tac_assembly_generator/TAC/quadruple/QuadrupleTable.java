@@ -6,6 +6,9 @@
 package tac_assembly_generator.TAC.quadruple;
 
 import java.util.ArrayList;
+import tac_assembly_generator.TAC.TempGenerator;
+import tac_assembly_generator.TAC.asst.For;
+import tac_assembly_generator.TAC.asst.Switch;
 
 /**
  *
@@ -16,9 +19,13 @@ public class QuadrupleTable {
     private ArrayList<Object> quadruples;
     private ArrayList<ArrayList<Object>> idQuads;
     private QuadrupleTable father;
+    private Switch switchAsst;
+    private For forAsst;
+    private TempGenerator tem;
 
-    public QuadrupleTable(QuadrupleTable father) {
+    public QuadrupleTable(QuadrupleTable father,TempGenerator temp) {
         this.father=father;
+        tem=temp;
         this.quadruples = new ArrayList<>();
         idQuads = new ArrayList<>();
         idQuads.add(new ArrayList<>());
@@ -48,6 +55,13 @@ public class QuadrupleTable {
 
         idQuads.get(idQuads.size() - 1).add(quadruple);
 
+    }
+    public void createSwitchAsst(String id){
+        switchAsst=new  Switch(id,tem);
+    }
+
+    public Switch getSwitchAsst() {
+        return switchAsst;
     }
 
     public void acceptIdQuad(int index) {
@@ -85,5 +99,6 @@ public class QuadrupleTable {
     public ArrayList<ArrayList<Object>> getIdQuads() {
         return idQuads;
     }
+
     
 }

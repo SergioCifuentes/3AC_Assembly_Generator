@@ -28,8 +28,8 @@ public class BoolQuad {
         this.tag = tag;
         this.quadruple = quadruple;
         this.exit = exit;
-        sonExit=false;
-        
+        sonExit = false;
+
         if (yes != null) {
             yesBool = new BoolQuad(yes, null, null, null, exit);
             noBool = new BoolQuad(no, null, null, null, exit);
@@ -46,7 +46,7 @@ public class BoolQuad {
         for (int i = 0; i < quList.size(); i++) {
             quadruple.add(quList.get(i));
         }
-        
+
     }
 
     public void setYesBool(BoolQuad yesBool) {
@@ -69,17 +69,21 @@ public class BoolQuad {
         return noBool;
     }
 
-    public void setExit(String exit,boolean sonExit) {
+    public void setExit(String exit, boolean sonExit) {
         this.exit = exit;
-        this.sonExit=sonExit;
-        if (yesBoolTag==null&&yesBool!=null) {
+        this.sonExit = sonExit;
+        if (yesBoolTag == null && yesBool != null) {
             yesBool.setExit(exit, sonExit);
         }
-        if (noBoolTag==null&&noBool!=null) {
+        if (noBoolTag == null && noBool != null) {
             yesBool.setExit(exit, sonExit);
         }
     }
 
+    public void changeNoFatherWhile(){
+        changeFatherNoBool(new BoolQuad(exit, null,null,null,null), true);
+    }
+    
     public String getExit() {
         return exit;
     }
@@ -90,75 +94,49 @@ public class BoolQuad {
 
     @Override
     public String toString() {
-        String fatheryes="VACIO";
-        if (fatherYesBool!=null) {
-            fatheryes=fatherYesBool.tag;
+        String fatheryes = "VACIO";
+        if (fatherYesBool != null) {
+            fatheryes = fatherYesBool.tag;
         }
-        String fatherNo="VACIO";
-        if (fatherNoBool!=null) {
-            fatherNo=fatherNoBool.tag;
+        String fatherNo = "VACIO";
+        if (fatherNoBool != null) {
+            fatherNo = fatherNoBool.tag;
         }
-        String quadSize="VACIO";
-        if (quadruple!=null) {
-            quadSize=String.valueOf(quadruple.size());
+        String quadSize = "VACIO";
+        if (quadruple != null) {
+            quadSize = String.valueOf(quadruple.size());
         }
-        String yes="VACIO";
-        if (yesBool!=null) {
-            yes=yesBool.tag;
+        String yes = "VACIO";
+        if (yesBool != null) {
+            yes = yesBool.tag;
         }
-        String no="VACIO";
-        if (noBool!=null) {
-            no=noBool.tag;
+        String no = "VACIO";
+        if (noBool != null) {
+            no = noBool.tag;
         }
-        
-        return "BoolQuad{" + "tag=" + tag + ", quadruple=" + quadruple + "SIZE " + quadSize + ", exit=" + exit + ", yesBool=" + yes + ", noBool=" + no + ", fatherYesBool=" +fatheryes + ", fatherNoBool=" + fatherNo + '}';
+
+        return "BoolQuad{" + "tag=" + tag + ", quadruple=" + quadruple + "SIZE " + quadSize + ", exit=" + exit + ", yesBool=" + yes + ", noBool=" + no + ", fatherYesBool=" + fatheryes + ", fatherNoBool=" + fatherNo + '}';
     }
 
     public void setFatherYesBool(BoolQuad fatherYesBool) {
-        
+
         this.fatherYesBool = fatherYesBool;
     }
 
-
-    public void changeFatherYesBool(BoolQuad fatherYesBool,boolean justtag) {
-        if (noBool.getTag().equals(this.fatherYesBool.tag)) {
-            if (justtag) {
-                noBool = fatherYesBool;
-                noBoolTag=fatherYesBool.getTag();
-            }else{
-                noBool = fatherYesBool;
-            }
-            
-        } else if (noBool.quadruple != null) {
-            noBool.changeFatherYesBool(fatherYesBool,justtag);
-        }
-        if (yesBool.getTag().equals(this.fatherYesBool.tag)) {
-            if (justtag) {
-                 yesBool = fatherYesBool;
-                yesBoolTag=fatherYesBool.getTag();
-            }else{
-                 yesBool = fatherYesBool;
-            }
-        } else if (yesBool.quadruple != null) {
-            
-            yesBool.changeFatherYesBool(fatherYesBool, justtag);
-        }
-    }
-
     public void changeFatherYesBool(ArrayList<Object> fatherYesBool) {
-        System.out.println(noBool+"<<<<<-------------------");
+        System.out.println(noBool + "<<<<<-------------------");
         System.out.println(noBool.getTag());
         System.out.println(fatherYesBool.size());
-        if (noBool!=null&&this.fatherYesBool!=null&&noBool.getTag().equals(this.fatherYesBool.tag)) {
+        if (noBool != null && this.fatherYesBool != null && noBool.getTag().equals(this.fatherYesBool.tag)) {
             noBool.addQuad(fatherYesBool);
         } else if (noBool.quadruple != null) {
             noBool.changeFatherYesBool(fatherYesBool);
-            
+
         }
         if (yesBool.getTag().equals(this.fatherYesBool.tag)) {
             yesBool.addQuad(fatherYesBool);
         } else if (yesBool.quadruple != null) {
-            
+
             yesBool.changeFatherYesBool(fatherYesBool);
         }
     }
@@ -167,20 +145,23 @@ public class BoolQuad {
         this.sonExit = sonExit;
     }
 
+    public void changeFatherNoBool(ArrayList<Object> fatherNoBool) {
+        if (noBool != null) {
+            if (noBool.getTag().equals(this.fatherNoBool.tag)) {
+                noBool.addQuad(fatherNoBool);
 
-    
-     public void changeFatherNoBool(ArrayList<Object> fatherNoBool) {
-        if (noBool.getTag().equals(this.fatherNoBool.tag)) {
-            noBool.addQuad(fatherNoBool);
-            
-        } else if (noBool.quadruple != null) {
-            noBool.changeFatherNoBool(fatherNoBool);
+            } else if (noBool.quadruple != null) {
+                noBool.changeFatherNoBool(fatherNoBool);
+            }
         }
-        if (yesBool.getTag().equals(this.fatherNoBool.tag)) {
-            yesBool.addQuad(fatherNoBool);
-        } else if (yesBool.quadruple != null) {
-            
-            yesBool.changeFatherNoBool(fatherNoBool);
+        if (yesBool != null) {
+
+            if (yesBool.getTag().equals(this.fatherNoBool.tag)) {
+                yesBool.addQuad(fatherNoBool);
+            } else if (yesBool.quadruple != null) {
+
+                yesBool.changeFatherNoBool(fatherNoBool);
+            }
         }
     }
 
@@ -188,29 +169,58 @@ public class BoolQuad {
         return quadruple;
     }
 
-    public void changeFatherNoBool(BoolQuad fatherYesBool,boolean justtag) {
-        if (noBool.getTag().equals(fatherNoBool.tag)) {
+    public void changeFatherYesBool(BoolQuad fatherYesBool, boolean justtag) {
+        if (noBool.getTag().equals(this.fatherYesBool.tag)) {
             if (justtag) {
                 noBool = fatherYesBool;
-                noBoolTag=fatherYesBool.getTag();
-            }else{
+                noBoolTag = fatherYesBool.getTag();
+            } else {
                 noBool = fatherYesBool;
             }
-            
+
         } else if (noBool.quadruple != null) {
-            noBool.changeFatherNoBool(fatherYesBool,justtag);
+            noBool.changeFatherYesBool(fatherYesBool, justtag);
         }
-        if (yesBool.getTag().equals(fatherNoBool.tag)) {
+        if (yesBool.getTag().equals(this.fatherYesBool.tag)) {
             if (justtag) {
                 yesBool = fatherYesBool;
-                yesBoolTag=fatherYesBool.getTag();
-            }else{
-                 yesBool = fatherYesBool;
+                yesBoolTag = fatherYesBool.getTag();
+            } else {
+                yesBool = fatherYesBool;
             }
         } else if (yesBool.quadruple != null) {
-            
-            yesBool.changeFatherNoBool(fatherYesBool,justtag);
+
+            yesBool.changeFatherYesBool(fatherYesBool, justtag);
         }
+    }
+
+    public void changeFatherNoBool(BoolQuad fatherYesBool, boolean justtag) {
+        if (noBool != null) {
+            if (noBool.getTag().equals(fatherNoBool.tag)) {
+                if (justtag) {
+                    noBool = fatherYesBool;
+                    noBoolTag = fatherYesBool.getTag();
+                } else {
+                    noBool = fatherYesBool;
+                }
+
+            } else if (noBool.quadruple != null) {
+                noBool.changeFatherNoBool(fatherYesBool, justtag);
+            }
+        }
+        if (yesBool != null) {
+            if (yesBool.getTag().equals(fatherNoBool.tag)) {
+                if (justtag) {
+                    yesBool = fatherYesBool;
+                    yesBoolTag = fatherYesBool.getTag();
+                } else {
+                    yesBool = fatherYesBool;
+                }
+            } else if (yesBool.quadruple != null) {
+                yesBool.changeFatherNoBool(fatherYesBool, justtag);
+            }
+        }
+
     }
 
     public String getYesBoolTag() {

@@ -13,6 +13,7 @@ import tac_assembly_generator.languages.analyzers.syntax.SynthesizedOpAsst;
 import tac_assembly_generator.languages.semantic.AmbitControler;
 import tac_assembly_generator.languages.semantic.SymbolTable;
 import tac_assembly_generator.languages.semantic.Tuple;
+import tac_assembly_generator.languages.semantic.UniquenessTable;
 import tac_assembly_generator.languages.semantic.type.Type;
 import tac_assembly_generator.languages.semantic.type.TypeManager;
 import tac_assembly_generator.ui.MainFrame;
@@ -57,7 +58,10 @@ public class TestManager {
     public void creatSonAmbit() {
         ambitControler.createSonAmbit();
     }
-
+    public UniquenessTable createNewUniquenessTable(){
+        return new UniquenessTable(mainFrame.getOutputPannel());
+    }
+    
     public void finishAmbit() {
         ambitControler.finishAmbit();
     }
@@ -125,6 +129,10 @@ public class TestManager {
             }
         }
         parameterControl.removeParameters();
+    }
+    
+    public void callNumericError(String id,Type type, Symbol symbol){
+        OutputErrors.typeNotNumeric(mainFrame.getOutputPannel(), id, typeManager.getOutputType(type.getNumber()), symbol);
     }
     
     public Type operateType(Integer type1, Integer type2, Symbol symbol) {
