@@ -80,10 +80,10 @@ public class BoolQuad {
         }
     }
 
-    public void changeNoFatherWhile(){
-        changeFatherNoBool(new BoolQuad(exit, null,null,null,null), true);
+    public void changeNoFatherWhile() {
+        changeFatherNoBool(new BoolQuad(exit, null, null, null, null), true);
     }
-    
+
     public String getExit() {
         return exit;
     }
@@ -123,46 +123,57 @@ public class BoolQuad {
         this.fatherYesBool = fatherYesBool;
     }
 
-    public void changeFatherYesBool(ArrayList<Object> fatherYesBool) {
-        System.out.println(noBool + "<<<<<-------------------");
-        System.out.println(noBool.getTag());
-        System.out.println(fatherYesBool.size());
+    public boolean changeFatherYesBool(ArrayList<Object> fatherYesBool) {
         if (noBool != null && this.fatherYesBool != null && noBool.getTag().equals(this.fatherYesBool.tag)) {
             noBool.addQuad(fatherYesBool);
+            return true;
         } else if (noBool.quadruple != null) {
-            noBool.changeFatherYesBool(fatherYesBool);
-
+            boolean b = noBool.changeFatherYesBool(fatherYesBool);
+            if (b) {
+                return b;
+            }
         }
         if (yesBool.getTag().equals(this.fatherYesBool.tag)) {
             yesBool.addQuad(fatherYesBool);
+            return true;
         } else if (yesBool.quadruple != null) {
-
-            yesBool.changeFatherYesBool(fatherYesBool);
+            boolean b = yesBool.changeFatherYesBool(fatherYesBool);
+            if (b) {
+                return b;
+            }
         }
+        return false;
     }
 
     public void setSonExit(Boolean sonExit) {
         this.sonExit = sonExit;
     }
 
-    public void changeFatherNoBool(ArrayList<Object> fatherNoBool) {
+    public boolean changeFatherNoBool(ArrayList<Object> fatherNoBool) {
         if (noBool != null) {
             if (noBool.getTag().equals(this.fatherNoBool.tag)) {
                 noBool.addQuad(fatherNoBool);
-
+                return true;
             } else if (noBool.quadruple != null) {
-                noBool.changeFatherNoBool(fatherNoBool);
+                boolean b = noBool.changeFatherNoBool(fatherNoBool);
+                if (b) {
+                    return b;
+                }
             }
         }
         if (yesBool != null) {
-
             if (yesBool.getTag().equals(this.fatherNoBool.tag)) {
                 yesBool.addQuad(fatherNoBool);
+                return true;
             } else if (yesBool.quadruple != null) {
 
-                yesBool.changeFatherNoBool(fatherNoBool);
+                boolean b = yesBool.changeFatherNoBool(fatherNoBool);
+                if (b) {
+                    return b;
+                }
             }
         }
+        return false;
     }
 
     public ArrayList<Object> getQuadruple() {

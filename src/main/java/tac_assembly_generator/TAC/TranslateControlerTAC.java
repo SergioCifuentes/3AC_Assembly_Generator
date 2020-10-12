@@ -136,6 +136,16 @@ public class TranslateControlerTAC {
         return obList;
     }
 
+    public Quadruple createPrintQuad(Object print){
+        if (print.getClass().equals(String.class)) {
+            return new Quadruple(Operation.PRINT, null,null, (String)print);
+        }else{
+            SynthesizedOpAsst soa= (SynthesizedOpAsst)print;
+            return new Quadruple(Operation.PRINT, null,null,soa.getQuadruple().getResult());
+        }
+        
+    }
+    
     public ArrayList<Object> getcurrentQuads() {
         
         ArrayList<Object> obList = new ArrayList<>();

@@ -116,7 +116,7 @@ OpLogic, Type, Public;
 non terminal FunctionVB, FunctionVbHeader, SubVb, SubVbHeader, Parameters, Parameter, InstructionsFunctionVb, InstructionsFunctionVb2, LnInstructionsVb, Lines,
 InputVb, OutputVb, ValuesVb, ValueVb, CycleVb, ForVb, ForVbHeader, ForVbHeaderStart, For, Step, NumberValue,
 Number2, Number3, WhileVb, WhileVbHeader, OpBool, OpBool2, OpBool3, BoolValueVb, ExBoolVb, DoWhileVb, DoHeader, DeclarationVb,
-DeTypeVb, IdsVb, AssiVb, AssignmentVb, ConditionVb, IfVb, IfVbHeader, ElseVb, ThenVb, SwitchVb, SwitchVbHeader,
+DeTypeVb, IdsVb, AssiVb, AssignmentVb, ConditionVb, IfVb, IfVbHeader, ElseVb, ElseHeader, ElseIfHeader,  ThenVb, SwitchVb, SwitchVbHeader,
 CasesVb, CasesVbHeader, CaseValue;
 
 //Non-terminals JAVA*/
@@ -194,14 +194,32 @@ InputVb			::= INTINPUT PARENTHESIS_A STRING PARENTHESIS_B
 					|FLOATINPUT PARENTHESIS_A STRING PARENTHESIS_B
 					| CHARINPUT PARENTHESIS_A STRING PARENTHESIS_B ;
 	
-OutputVb		::=CONSOLE_VB POINT WRITE_VB PARENTHESIS_A ValuesVb PARENTHESIS_B{:System.out.println("OUTPUT LINE");:}
-					|CONSOLE_VB POINT WRITELN_VB PARENTHESIS_A ValuesVb PARENTHESIS_B;
-ValuesVb			::= ValueVb AMPERSON ValuesVb
-				|ValueVb:val {:RESULT=val;
-                                if(val!=null){System.out.println(((SynthesizedOpAsst)val).toString());}else{}System.out.println("NULL");
-                                :};
-ValueVb			::=STRING
-				|NumberValue:val{:RESULT = val;:};
+OutputVb		::=CONSOLE_VB POINT WRITE_VB PARENTHESIS_A ValuesVb:vals PARENTHESIS_B{: if(vals!=null){
+                                                                                                sma.translateControlerTAC.addQuadsToCurrent((ArrayList<Object>)vals);
+                                                                                                
+                                                                                            }:}
+					|CONSOLE_VB POINT WRITELN_VB PARENTHESIS_A ValuesVb:vals PARENTHESIS_B{:Quadruple lineBreak = sma.translateControlerTAC.createPrintQuad("\n");
+                                                                                            if(vals!=null){
+                                                                                                ArrayList asst=(ArrayList<Object>)vals;
+                                                                                                asst.add(lineBreak);
+                                                                                                sma.translateControlerTAC.addQuadsToCurrent(asst);
+                                                                                                
+                                                                                                
+                                                                                            }:};
+ValuesVb			::= ValuesVb:vals AMPERSON ValueVb:val{:ArrayList<Object> printQuad= new ArrayList<Object>();
+                                    printQuad.addAll((ArrayList<Object>)vals);
+                                    printQuad.addAll((ArrayList<Object>)val);
+                                    RESULT=printQuad;:}
+				|ValueVb:val {:ArrayList<Object> printQuad= new ArrayList<Object>();
+                                    printQuad.addAll((ArrayList<Object>)val);
+                                    RESULT=printQuad;:};
+ValueVb			::=STRING:string {:ArrayList<Object> printQuad= new ArrayList<Object>();
+                                    printQuad.add(sma.translateControlerTAC.createPrintQuad(string));
+                                    RESULT=printQuad;:}
+				|NumberValue:val{:ArrayList<Object> printQuad= new ArrayList<Object>();
+                                    printQuad.addALL(sma.translateControlerTAC.getcurrentTempQuads());
+                                    printQuad.add(sma.translateControlerTAC.createPrintQuad(val));
+                                    RESULT=printQuad;:};
 
 CycleVb         ::= ForVb
                     |WhileVb
@@ -406,10 +424,10 @@ IdsVb           ::= IdsVb COMMA  ID:id AssiVb:val{:sma.testManager.insertPreTupl
                                                             sma.translateControlerTAC.creatTempIdQuadAssign(val,id);}
                                         sma.translateControlerTAC.nextIdQuad();:}; 
 
-AssiVb            ::= EQUAL ValueVb:val {:RESULT = val;:}
+AssiVb            ::= EQUAL NumberValue:val {:RESULT = val;:}
                     |{:System.out.println("ASSI VACIO");:};
 
-AssignmentVb      ::=ID:id EQUAL ValueVb:val {:boolean bool= sma.testManager.assigValue(id,val,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
+AssignmentVb      ::=ID:id EQUAL NumberValue:val {:boolean bool= sma.testManager.assigValue(id,val,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
                                                 if(bool){sma.translateControlerTAC.creatTempIdQuadAssign(val,id);
                                                         sma.translateControlerTAC.acceptAllIdQuas();}:};
 
@@ -424,9 +442,23 @@ IfVb            ::= IfVbHeader:ifBool InstructionsFunctionVb:lines ElseVb:elseBo
 IfVbHeader      ::=IF OpBool:op ThenVb {:sma.testManager.creatSonAmbit();
                                         sma.translateControlerTAC.createNewQuadrupleBlock();
                                         RESULT=op;:};
-ElseVb          ::= ELSE  InstructionsFunctionVb
-                    | ELSE_IF_VB OpBool ThenVb InstructionsFunctionVb ElseVb
+ElseVb          ::= ElseHeader  InstructionsFunctionVb:lines{:RESULT=lines;:}
+
+
+                    |ElseIfHeader:ifBool InstructionsFunctionVb:lines ElseVb:elseBool{:if(ifBool!=null){
+                                                                    BoolQuad bool=(BoolQuad)ifBool;
+                                                                                    if(lines!=null){bool.changeFatherYesBool((ArrayList<Object>)lines);}
+                                                                                    if(elseBool!=null){bool.changeFatherNoBool((ArrayList<Object>)elseBool);}
+                                                                                    RESULT =sma.translateControlerTAC.getBoolQuadControl().convertBoolToQuad(bool);
+                                                                                    
+                                                                }:}
                     |; 
+ElseHeader      ::= ELSE{:sma.testManager.creatSonAmbit();
+                                        sma.translateControlerTAC.createNewQuadrupleBlock();:};
+ElseIfHeader    ::= ELSE_IF_VB OpBool:op ThenVb{:sma.testManager.creatSonAmbit();
+                                        sma.translateControlerTAC.createNewQuadrupleBlock();
+                                        RESULT =op;:};
+
 ThenVb          ::= THEN_VB
                     |;
 SwitchVb        ::= SwitchVbHeader CasesVb END_VB SELECT_VB{:sma.translateControlerTAC.addQuadsToCurrent(sma.translateControlerTAC.getBoolQuadControl().convertBoolToQuad(sma.translateControlerTAC.getSwitchAsst().getFatherCases()));:};
@@ -535,7 +567,7 @@ StepJ           ::= ID EQUAL NumberValue
                     |ID DIVISION EQUAL NumberValue;   
 DeclarationJ    ::=PUBLIC Type IdsVb{::}
                     |Type IdsVb{::};
-AssignmentJ     ::= ID EQUAL ValueVb;
+AssignmentJ     ::= ID EQUAL NumberValue;
 
 ConditionJ      ::= IfJ 
                     |SwitchJHeader LEFT_CB CasesJ1 RIGHT_CB;

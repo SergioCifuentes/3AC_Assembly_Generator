@@ -28,6 +28,7 @@ public class Operation {
     public static final Integer OP_NOT = 15;
     public static final int GO_TO = 16;
     public static final int CASE = 17;
+    public static final int PRINT = 18;
 
     public static String getIntOpOutput(int op) {
         switch (op) {
@@ -57,6 +58,8 @@ public class Operation {
                 return "=";
             case GO_TO:
                 return "goto";
+            case PRINT:
+                return "print";
             default:
                 throw new AssertionError();
         }

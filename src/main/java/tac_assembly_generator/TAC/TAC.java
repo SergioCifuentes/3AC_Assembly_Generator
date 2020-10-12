@@ -65,6 +65,8 @@ public class TAC {
                  OutputText.appendToPane(mainFrame.getTACPannel(), tacQuad + "\n", Color.white, false);
             } else if (quadAsst.getOp() <= Operation.EQUAL_BOOL) {
                  OutputText.appendToPane(mainFrame.getTACPannel(),"If " +quadAsst.getArg1()+" "+Operation.getIntOpOutput(quadAsst.getOp())+" "+quadAsst.getArg2()+" "+Operation.getIntOpOutput(Operation.GO_TO) +" "+quadAsst.getResult()+"\n", Color.white, false);
+            } else if (quadAsst.getOp() == Operation.PRINT) {
+                 OutputText.appendToPane(mainFrame.getTACPannel(),Operation.getIntOpOutput(quadAsst.getOp())+" "+quadAsst.getResult()+"\n", Color.white, false);
             }
             
         }
