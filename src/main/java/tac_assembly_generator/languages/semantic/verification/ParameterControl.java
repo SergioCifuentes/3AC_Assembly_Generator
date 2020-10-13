@@ -27,8 +27,7 @@ public class ParameterControl {
         symbols= new ArrayList<>();
     }
     
-    
-    
+ 
     public void insertParameter(int num,String id,Symbol symbol){
         System.out.println("-------INSE "+id);
         ids.add(id);
@@ -53,5 +52,7 @@ public class ParameterControl {
     public ArrayList<Type> getTypes() {
         return types;
     }
+
+    
     
 }

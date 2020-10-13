@@ -121,10 +121,10 @@ Input_Ignore_Case= ("I"|"i")("N"|"n")("P"|"p")("U"|"u")("T"|"t")
     "/"                                    { return new Symbol(SimbolosMlg.DIVISION, yycolumn,yyline,yytext());}
     ("M"|"m")("O"|"o")("D"|"d")                                    { return new Symbol(SimbolosMlg.MOD, yycolumn,yyline,yytext());}
    
-    "."                                                     { System.out.println("POINT "+yytext());return new Symbol(SimbolosMlg.POINT, yycolumn,yyline,yytext());}
-    ","                                                     { System.out.println("COMMA "+yytext());return new Symbol(SimbolosMlg.COMMA, yycolumn,yyline,yytext());}
-    "&"                                                     { System.out.println("AMPERSON "+yytext());return new Symbol(SimbolosMlg.AMPERSON, yycolumn,yyline,yytext());}
-    [ \t\b]                {System.out.println("ESPACIO ");}
+    "."                                                     { return new Symbol(SimbolosMlg.POINT, yycolumn,yyline,yytext());}
+    ","                                                     { return new Symbol(SimbolosMlg.COMMA, yycolumn,yyline,yytext());}
+    "&"                                                     { return new Symbol(SimbolosMlg.AMPERSON, yycolumn,yyline,yytext());}
+    [ \t\b]                {}
     {LineTerminator}                        { System.out.println("SALTO "); }
 
     
@@ -158,7 +158,10 @@ Input_Ignore_Case= ("I"|"i")("N"|"n")("P"|"p")("U"|"u")("T"|"t")
     "case"                              { return new Symbol(SimbolosMlg.CASE_J, yycolumn,yyline,yytext());}
     "default"                              { return new Symbol(SimbolosMlg.DEFAULT_J, yycolumn,yyline,yytext());}
     "break"                              { return new Symbol(SimbolosMlg.BREAK, yycolumn,yyline,yytext());}
-    
+
+   "."                                                     { System.out.println("POINT "+yytext());return new Symbol(SimbolosMlg.POINT, yycolumn,yyline,yytext());}
+    ","                                                     { System.out.println("COMMA "+yytext());return new Symbol(SimbolosMlg.COMMA, yycolumn,yyline,yytext());}
+     
     ":"                                                     { System.out.println("COLON "+yytext());return new Symbol(SimbolosMlg.COLON, yycolumn,yyline,yytext());}
     "="                                                     { System.out.println("EQUAL "+yytext());return new Symbol(SimbolosMlg.EQUAL, yycolumn,yyline,yytext());}
     "=="                                                     { System.out.println("EQUAL "+yytext());return new Symbol(SimbolosMlg.EQUAL_BOOL, yycolumn,yyline,yytext());}
@@ -197,11 +200,25 @@ Input_Ignore_Case= ("I"|"i")("N"|"n")("P"|"p")("U"|"u")("T"|"t")
 <PYCODE>{
     "%%PROGRAMA"                                    { System.out.println("PR "+yytext()); yybegin(PROGRAM); return new Symbol(SimbolosMlg.PROGRAM_SEPERATOR, yycolumn,yyline,yytext());}
     
-
-    "intinput"                              { return new Symbol(SimbolosMlg.INTINPUT, yycolumn,yyline,yytext());}
+    "def"                              { return new Symbol(SimbolosMlg.DEF, yycolumn,yyline,yytext());}
+    "intinput"                              { System.out.println("INTIN "+yytext());return new Symbol(SimbolosMlg.INTINPUT, yycolumn,yyline,yytext());}
     "charinput"                              { return new Symbol(SimbolosMlg.CHARINPUT, yycolumn,yyline,yytext());}
     "floatinput"                              { return new Symbol(SimbolosMlg.FLOATINPUT, yycolumn,yyline,yytext());}
-
+    "return"                                    { return new Symbol(SimbolosMlg.RETURN, yycolumn,yyline,yytext());}
+    "print"                                    { return new Symbol(SimbolosMlg.PRINT, yycolumn,yyline,yytext());}
+    "for"                              { return new Symbol(SimbolosMlg.FOR, yycolumn,yyline,yytext());}
+    "while"                              { return new Symbol(SimbolosMlg.WHILE, yycolumn,yyline,yytext());}
+    "in"                              { return new Symbol(SimbolosMlg.IN, yycolumn,yyline,yytext());}
+    "range"                              { return new Symbol(SimbolosMlg.RANGE, yycolumn,yyline,yytext());}
+    "if"                              { return new Symbol(SimbolosMlg.IF, yycolumn,yyline,yytext());}
+    "elif"                              { return new Symbol(SimbolosMlg.ELIF, yycolumn,yyline,yytext());}
+    "else"                              { return new Symbol(SimbolosMlg.ELSE, yycolumn,yyline,yytext());}
+    "True"                              { return new Symbol(SimbolosMlg.TRUE, yycolumn,yyline,yytext());}
+    "False"                              { return new Symbol(SimbolosMlg.FALSE, yycolumn,yyline,yytext());}
+    
+    ","                                                     { System.out.println("COMMA "+yytext());return new Symbol(SimbolosMlg.COMMA, yycolumn,yyline,yytext());}
+    
+    ":"                                                     { System.out.println("COLON "+yytext());return new Symbol(SimbolosMlg.COLON, yycolumn,yyline,yytext());}
     "="                                                     { System.out.println("EQUAL "+yytext());return new Symbol(SimbolosMlg.EQUAL, yycolumn,yyline,yytext());}
     ("=="|"is")                                                     { System.out.println("EQUAL "+yytext());return new Symbol(SimbolosMlg.EQUAL_BOOL, yycolumn,yyline,yytext());}
     ("=!"|"is not")                                                    { System.out.println("DIFERENT_J "+yytext());return new Symbol(SimbolosMlg.DIFERENT_VB, yycolumn,yyline,yytext());}
@@ -220,28 +237,36 @@ Input_Ignore_Case= ("I"|"i")("N"|"n")("P"|"p")("U"|"u")("T"|"t")
     "and"                                                     { System.out.println("OR "+yytext());return new Symbol(SimbolosMlg.OR, yycolumn,yyline,yytext());}
     "or"                                                    { System.out.println("AND "+yytext());return new Symbol(SimbolosMlg.AND, yycolumn,yyline,yytext());}
     
-    "\"" [^\"] ~ "\""                                                   { System.out.println("STRING "+yytext()); return new Symbol(SimbolosMlg.STRING, yycolumn,yyline,yytext());}
+    "\"" [^\"] ~ "\""|"\"" [\b]*  "\""                                                   { System.out.println("STRING "+yytext()); return new Symbol(SimbolosMlg.STRING, yycolumn,yyline,yytext());}
      "\'' [^\''] "\''                                                   { System.out.println("CHAR "+yytext()); return new Symbol(SimbolosMlg.CHAR, yycolumn,yyline,yytext());}
     ({Letra}|"_")({Letra}|{Digito}|"_")*                                { System.out.println("ID "+yytext()); return new Symbol(SimbolosMlg.ID, yycolumn,yyline,yytext());}
     ({Digito})+                                             { System.out.println("NUMBER "+yytext()); return new Symbol(SimbolosMlg.NUMBER, yycolumn,yyline,yytext());}
     ({Digito})+"."({Digito})+                               { System.out.println("DECIMAL "+yytext()); return new Symbol(SimbolosMlg.DECIMAL, yycolumn,yyline,yytext());}
 
     {CommentC}                               {tac.addComment(yytext());}
-    ({LineTerminator})+                        { System.out.println("SALTO ");return new Symbol(SimbolosMlg.LINE_BREAK, yycolumn,yyline,yytext());}
-    ("\t"|"\b")+                                 { int in=0;
+    ({LineTerminator})+                        { System.out.println("SALTO ");}
+[ \b]                {System.out.println("ESPACIO ");}
+    ("\t")+                                 { int in=0;
                                                     for (int i = 0; i < yytext().length(); i++) {
                                                     if (yytext().charAt(i)=='\t') {
+                                                        
                                                             in++;
                                                             
                                                     }
                                                     }if(blockIndentation==in){
-                                                        return new Symbol(SimbolosMlg.NODENT, yycolumn,yyline,yytext());
+                                                        System.out.println("NON ");
                                                     }else if(blockIndentation>in){
+                                                        Symbol sim=new Symbol(SimbolosMlg.DEDENT, yycolumn,yyline,yytext());
                                                         blockIndentation--;
-                                                        return new Symbol(SimbolosMlg.DEDENT, yycolumn,yyline,yytext());
+                                                        yypushback(1);
+                                                        System.out.println("DEDENT ");
+                                                        return sim;
                                                     }else{
+                                                        Symbol sim=new Symbol(SimbolosMlg.INDENT, yycolumn,yyline,yytext());
                                                         blockIndentation++;
-                                                        return new Symbol(SimbolosMlg.INDENT, yycolumn,yyline,yytext());
+                                                        yypushback(1);
+                                                        System.out.println("INDENT ");
+                                                        return sim;
                                                     }}
     [^]                                     { System.out.println("ERROR");}
     

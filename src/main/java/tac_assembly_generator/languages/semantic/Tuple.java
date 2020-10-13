@@ -8,6 +8,7 @@ package tac_assembly_generator.languages.semantic;
 import java.util.ArrayList;
 import java_cup.runtime.Symbol;
 import tac_assembly_generator.languages.semantic.type.Type;
+import tac_assembly_generator.languages.semantic.type.TypeManager;
 
 /**
  *
@@ -20,6 +21,7 @@ public class Tuple {
     private Symbol symbol;
     private Ambit ambit;
     private ArrayList<Tuple> parameters;
+    private String tacFunctionName;
     //0 normal type
     //1 one dimension array ...
     private Integer dimension;
@@ -33,6 +35,25 @@ public class Tuple {
         this.ambit=ambit;
         
     }
+    
+    public String generateFunctionName(String language){
+        
+        String name=language+"_"+this.name;
+        for (int i = 0; i < parameters.size(); i++) {
+            name+="_"+TypeManager.getOutputTypeStatic(parameters.get(i).type.getNumber());
+        }
+        tacFunctionName=name;
+        String output="";
+        if (type==null) {
+            output+="void ";
+        }else{
+            output+=TypeManager.getOutputTypeStatic(type.getNumber())+" ";
+        }
+        output+=name;
+        return output;
+        
+        
+    }
 
     public ArrayList<Tuple> getParameters() {
         return parameters;
@@ -40,6 +61,10 @@ public class Tuple {
 
     public Ambit getAmbit() {
         return ambit;
+    }
+
+    public void setParameters(ArrayList<Tuple> parameters) {
+        this.parameters = parameters;
     }
 
     

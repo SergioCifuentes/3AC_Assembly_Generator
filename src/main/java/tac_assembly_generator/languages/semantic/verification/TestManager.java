@@ -44,7 +44,7 @@ public class TestManager {
         semanticRecoverableError = false;
         ambitControler = new AmbitControler();
         this.mainFrame = mainFrame;
-        parameterControl= new ParameterControl(typeManager);
+        parameterControl = new ParameterControl(typeManager);
     }
 
     public void switchNextTypes() {
@@ -58,10 +58,11 @@ public class TestManager {
     public void creatSonAmbit() {
         ambitControler.createSonAmbit();
     }
-    public UniquenessTable createNewUniquenessTable(){
+
+    public UniquenessTable createNewUniquenessTable() {
         return new UniquenessTable(mainFrame.getOutputPannel());
     }
-    
+
     public void finishAmbit() {
         ambitControler.finishAmbit();
     }
@@ -70,24 +71,24 @@ public class TestManager {
         return parameterControl;
     }
 
-    public void  insertPreTuplesToSymbolTable(Integer typeNumber, Integer dimension, Symbol symbol,TranslateControlerTAC tAC) {
+    public void insertPreTuplesToSymbolTable(Integer typeNumber, Integer dimension, Symbol symbol, TranslateControlerTAC tAC) {
         for (int i = 0; i < preTupleSymbols.size(); i++) {
-            System.out.println("PRETUPLE "+preTupleSymbols.get(i).getName()+" VAL_TYPE  "+preTupleSymbols.get(i).getType());
+            System.out.println("PRETUPLE " + preTupleSymbols.get(i).getName() + " VAL_TYPE  " + preTupleSymbols.get(i).getType());
             if (preTupleSymbols.get(i).getValue() != null) {
 
                 SynthesizedOpAsst so = (SynthesizedOpAsst) preTupleSymbols.get(i).getValue();
                 System.out.println("TYPE " + so.getType());
                 System.out.println("FOR " + typeNumber);
-                if ((so.getType().getNumber()==typeNumber)||so.getType().isFather(typeManager.getType(typeNumber))) {
+                if ((so.getType().getNumber() == typeNumber) || so.getType().isFather(typeManager.getType(typeNumber))) {
                     preTupleSymbols.get(i).setDimension(dimension);
                     preTupleSymbols.get(i).setType(typeManager.getType(typeNumber));
                     symbolTable.insertTuple(preTupleSymbols.get(i));
                     tAC.acceptIdQuad(i);
-                }else{
+                } else {
                     OutputText.appendToPane(mainFrame.getOutputPannel(), "SEMANTIC ERROR:\n", Color.red, false);
-                    OutputText.appendToPane(mainFrame.getOutputPannel(), "\t No se puede asignar un valor tipo " +so.getType().getName()+" a una variable tipo " +typeManager.getOutputType(typeNumber) + "\n", Color.white, false);
+                    OutputText.appendToPane(mainFrame.getOutputPannel(), "\t No se puede asignar un valor tipo " + so.getType().getName() + " a una variable tipo " + typeManager.getOutputType(typeNumber) + "\n", Color.white, false);
                     OutputText.appendToPane(mainFrame.getOutputPannel(), "\t Fila: ", Color.white, false);
-                    OutputText.appendToPane(mainFrame.getOutputPannel(), (symbol.right+1) + "\n", Color.YELLOW, false);
+                    OutputText.appendToPane(mainFrame.getOutputPannel(), (symbol.right + 1) + "\n", Color.YELLOW, false);
                 }
                 //cast test
             } else {
@@ -96,7 +97,7 @@ public class TestManager {
                     OutputText.appendToPane(mainFrame.getOutputPannel(), "SEMANTIC ERROR:\n", Color.red, false);
                     OutputText.appendToPane(mainFrame.getOutputPannel(), "\t" + preTupleSymbols.get(i).getName() + " ya ha sido declarado \n", Color.white, false);
                     OutputText.appendToPane(mainFrame.getOutputPannel(), "\t Fila: ", Color.white, false);
-                    OutputText.appendToPane(mainFrame.getOutputPannel(), (symbol.right+1) + "\n", Color.YELLOW, false);
+                    OutputText.appendToPane(mainFrame.getOutputPannel(), (symbol.right + 1) + "\n", Color.YELLOW, false);
                 } else {
                     preTupleSymbols.get(i).setDimension(dimension);
                     preTupleSymbols.get(i).setType(typeManager.getType(typeNumber));
@@ -114,52 +115,78 @@ public class TestManager {
         return symbolTable.getTypeWithAmbit(id, ambitControler.getCurrentAmbit(), mainFrame, symbol);
     }
 
+    public String insertFunction(String id, Integer type, Symbol s) {
+        Type ty = null;
+        if (type != null) {
+            ty = typeManager.getType(type);
+        }
+        for (int i = 0; i < parameterControl.getIds().size(); i++) {
+            for (int j = i + 1; j < parameterControl.getIds().size(); j++) {
+
+                if (i != j && parameterControl.getIds().get(i).equals(parameterControl.getIds().get(j))) {
+                    OutputErrors.alreadyDeclaredParameter(mainFrame.getOutputPannel(), parameterControl.getIds().get(i), parameterControl.getSymbols().get(i));
+                    return null;
+                }
+            }
+        }
+
+        Tuple tuple = symbolTable.insertFunction(id, ty, parameterControl, s, ambitControler.getCurrentAmbit());
+        if (tuple == null) {
+            parameterControl.removeParameters();
+            return null;
+        } else {
+            ArrayList<Tuple> paArrayList = insertParameters();
+            tuple.setParameters(paArrayList);
+            parameterControl.removeParameters();
+            return tuple.generateFunctionName(typeManager.getLanguage());
+        }
+
+    }
+
     public TypeManager getTypeManager() {
         return typeManager;
     }
 
-    public void insertParameters(){
+    public ArrayList<Tuple> insertParameters() {
+        ArrayList<Tuple> parameters = new ArrayList<>();
         for (int i = 0; i < parameterControl.getIds().size(); i++) {
-            Tuple findExisting = symbolTable.getTupleWithAmbit(parameterControl.getIds().get(i), ambitControler.getCurrentAmbit());
-            if (findExisting!=null) {
-                OutputErrors.alreadyDeclaredParameter(mainFrame.getOutputPannel(), parameterControl.getIds().get(i), parameterControl.getSymbols().get(i));
-            }else{
-                Tuple tuple= new Tuple(parameterControl.getIds().get(i), parameterControl.getTypes().get(i),null,null, parameterControl.getSymbols().get(i), ambitControler.getCurrentAmbit());
-                    symbolTable.insertTuple(tuple);
-            }
+            Tuple tuple = new Tuple(parameterControl.getIds().get(i), parameterControl.getTypes().get(i), null, null, parameterControl.getSymbols().get(i), ambitControler.getCurrentAmbit());
+            parameters.add(tuple);
+            symbolTable.insertTuple(tuple);
         }
         parameterControl.removeParameters();
+        return parameters;
     }
-    
-    public void callNumericError(String id,Type type, Symbol symbol){
+
+    public void callNumericError(String id, Type type, Symbol symbol) {
         OutputErrors.typeNotNumeric(mainFrame.getOutputPannel(), id, typeManager.getOutputType(type.getNumber()), symbol);
     }
-    
+
     public Type operateType(Integer type1, Integer type2, Symbol symbol) {
         Type type = typeManager.operateTypes(type1, type2);
         if (type == null) {
             //Type Error
-            OutputErrors.typeOpError(mainFrame.getOutputPannel(), typeManager.getOutputType(type1) , typeManager.getOutputType(type2), symbol);
-         }
+            OutputErrors.typeOpError(mainFrame.getOutputPannel(), typeManager.getOutputType(type1), typeManager.getOutputType(type2), symbol);
+        }
         return type;
 
     }
-    
-        public Type operateBoolType(Integer type1, Integer type2, Symbol symbol) {
+
+    public Type operateBoolType(Integer type1, Integer type2, Symbol symbol) {
         Type type = typeManager.operateBoolTypes(type1, type2);
         if (type == null) {
             //Type Error
-            OutputErrors.typeOpBoolError(mainFrame.getOutputPannel(), typeManager.getOutputType(type1) , typeManager.getOutputType(type2), symbol);
+            OutputErrors.typeOpBoolError(mainFrame.getOutputPannel(), typeManager.getOutputType(type1), typeManager.getOutputType(type2), symbol);
         }
         return type;
     }
-    
-    public boolean assigValue(String id,Object value, Symbol symbol){
+
+    public boolean assigValue(String id, Object value, Symbol symbol) {
         Type idType = symbolTable.getTypeWithAmbit(id, ambitControler.getCurrentAmbit(), mainFrame, symbol);
-        if (idType!=null) {
-            if (value!=null) {
-                SynthesizedOpAsst soa= (SynthesizedOpAsst)value;
-                if (soa.getType().equals(idType)||soa.getType().isFather(idType)) {
+        if (idType != null) {
+            if (value != null) {
+                SynthesizedOpAsst soa = (SynthesizedOpAsst) value;
+                if (soa.getType().equals(idType) || soa.getType().isFather(idType)) {
                     return true;
                 }
             }
@@ -169,7 +196,7 @@ public class TestManager {
 
     public void insertPreTuple(String name, Integer typeNumber, Object value, Integer dimension, Symbol symbol) {
         Tuple newPreTuple;
-        System.out.println("Sy "+name+" " + symbol + " " + symbol.left + " " + symbol.right + " " + symbol.value+"===" +value);
+        System.out.println("Sy " + name + " " + symbol + " " + symbol.left + " " + symbol.right + " " + symbol.value + "===" + value);
         if (symbol != null && symbol.value != null) {
             System.out.println("inserting new tuple " + symbol.value.toString() + " name " + name);
         } else {

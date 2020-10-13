@@ -52,7 +52,9 @@ public class QuadrupleTable {
     }
 
     public void addIdQuad(Object quadruple) {
-
+        if (idQuads.isEmpty()) {
+            idQuads.add(new ArrayList<>());
+        }
         idQuads.get(idQuads.size() - 1).add(quadruple);
 
     }
@@ -70,7 +72,7 @@ public class QuadrupleTable {
 
     public void removeIdQuads() {
         idQuads.removeAll(idQuads);
-        idQuads.add(new ArrayList<>());
+        
 
     }
 

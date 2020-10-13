@@ -19,6 +19,8 @@ public class TypeManager {
     public static final int CHAR_TYPE = 3;
     private static final String BOOL_NAME = "Boolean";
     public static final int BOOL_TYPE = 4;
+        private static final String VAR_NAME = "var";
+    public static final int VAR_TYPE = 4;
 
     public static final int VB_TYPES = 1;
     public static final int JAVA_TYPES = 2;
@@ -82,6 +84,20 @@ public class TypeManager {
                 throw new AssertionError();
         }
     }
+        public static String getOutputTypeStatic(Integer type){
+        switch (type) {
+            case INTEGER_TYPE:
+                return INTEGER_NAME;
+            case CHAR_TYPE:
+                return CHAR_NAME;
+            case FLOAT_TYPE:
+                return FLOAT_NAME;
+            case BOOL_TYPE:
+                return BOOL_NAME;
+            default:
+                throw new AssertionError();
+        }
+    }
     public Type getType(int type) {
         for (int i = 0; i < types.length; i++) {
             if (types[i].getNumber() == type) {
@@ -89,6 +105,19 @@ public class TypeManager {
             }
         }
         return null;
+    }
+    public String getLanguage(){
+        switch (languageType) {
+            case VB_TYPES:
+                return "VB";
+            case JAVA_TYPES:
+                return "JAVA";
+            case PYTHON_TYPES:
+                return "PY";
+            default:
+                throw new AssertionError();
+        }
+ 
     }
 
     public void loadnextType() {

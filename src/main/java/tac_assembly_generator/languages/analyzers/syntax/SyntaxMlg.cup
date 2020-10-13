@@ -26,10 +26,12 @@ public boolean SyntaxError;
 
     public void setTestManager(TestManager testManager) {
         this.testManager = testManager;
+        testManager.creatFatherAmbit();
     }
 
 public void setTranslateControlerTAC(TranslateControlerTAC translateControlerTAC) {
         this.translateControlerTAC = translateControlerTAC;
+                            
     }
 
      public void syntax_error(Symbol s){
@@ -78,7 +80,7 @@ terminal VB_SEPERATOR, ERROR;
 terminal EQUAL, PARENTHESIS_A, PARENTHESIS_B, PLUS, MINUS, MULTIPLICATION, DIVISION, MOD, LINE_BREAK,
 POINT, AMPERSON, COMMA, INTEGER_TYPE, FLOAT_TYPE, CHAR_TYPE, OR, AND, NOT,
 INTINPUT, CHARINPUT, FLOATINPUT, PUBLIC, FOR, WHILE, DO,
-TRUE, FALSE, IF, ELSE, GREATER_THAN,
+TRUE, FALSE, IF, ELSE, GREATER_THAN, RETURN, PRINT,
 LESS_THAN, GREATER_THAN_EQUAL, LESS_THAN_EQUAL, EQUAL_BOOL;
 
 terminal String STRING, ID, CHAR;
@@ -100,7 +102,7 @@ SYSTEM_OUT_PRINT, SWITCH_J, CASE_J, DEFAULT_J, BREAK, SEMICOLON,
 LEFT_CB, RIGHT_CB, COLON, DIFERENT_J;
 
 // Terminals Python*/
-terminal PROGRAM_SEPERATOR,NODENT, DEDENT, INDENT ;
+terminal PROGRAM_SEPERATOR, DEDENT, INDENT, DEF, IN, RANGE, ELIF;
 
 // Terminals C*/
 terminal CONST, LEFT_BRACKET, RIGHT_BRACKET, INCLUDE,
@@ -109,8 +111,8 @@ PRINTF, CLRSCR, GETCH, SCAN_F, MAIN ;
     
 //Non-terminals Common or StartUp*/
 non terminal Inicio, VB, Java, Python,
-VbCode, JavaCode, PythonCode, Programa,VbSeperator,
-OpLogic, Type, Public;
+VbCode, JavaCode, PythonCode, Programa,VbSeperator, PythonSeperator,
+OpLogic, Type, Public, JavaSeperator;
 
 //Non-terminals VB*/
 non terminal FunctionVB, FunctionVbHeader, SubVb, SubVbHeader, Parameters, Parameter, InstructionsFunctionVb, InstructionsFunctionVb2, LnInstructionsVb, Lines,
@@ -127,6 +129,11 @@ CycleJ, ForJHeader, WhileJHeader, StepJ, DeclarationJ, AssignmentJ, ConditionJ, 
 IfJHeader, ElseJ, SwitchJHeader, CasesJ1, CasesJ2, CaseJ, BreakJ,
 ExBoolJ, BoolValueJ, OpBoolJ, ConstructorJ; 
 
+//Non-terminals PY*/
+non terminal FunctionPY, FunctionLinesPY1, FunctionPYHeader, ParametersPY, IdsPY, FunctionLinesPY, LinesPY,
+LineCodePY, OutputPY, OutputValuesPY, CyclePY, ForPY, ForPYHeader, Range, Range1,
+WhilePY, WhilePYHeader, AssignmentPY, ConditionPY, IfPY, Elif;
+
 
 // non Terminals MAIN
 non terminal Library, Main, Constantes, Constante, Dimensions, ArrayValues,
@@ -139,32 +146,53 @@ OpBoolC, ArrayVal;
 start with Inicio;
 Inicio 		::= VB Java Python  Programa {:System.out.println("FIN Inicio");
                                         sma.translateControlerTAC.printQuads();
+                                        sma.testManager.finishAmbit();
+                                    sma.translateControlerTAC.acceptCurrentBlock();
+                                        sma.translateControlerTAC.convertQuads(sma.translateControlerTAC.getcurrentQuads());
                                         :};
                 
 /*
     VB
 */
 VB 			::= VbSeperator  VbCode {:sma.testManager.switchNextTypes();
+                                    sma.testManager.finishAmbit();
                                     sma.translateControlerTAC.acceptCurrentBlock();
+                                    sma.translateControlerTAC.addQuadsToCurrent(sma.translateControlerTAC.getcurrentQuads());
                                     :};
                 
-VbSeperator::= VB_SEPERATOR{:sma.translateControlerTAC.createNewQuadrupleBlock();:};
+VbSeperator::= VB_SEPERATOR{:sma.testManager.creatFatherAmbit();
+                            sma.translateControlerTAC.createNewQuadrupleBlock();
+                             :};
 
-VbCode     ::= FunctionVB VbCode  
-                | SubVb VbCode
+VbCode     ::= VbCode FunctionVB   
+                |VbCode SubVb 
 		        |
-                |error VbCode; 
+                |VbCode error ; 
  
-FunctionVB	::= FunctionVbHeader InstructionsFunctionVb:ins END_VB FUNCTION_VB {:sma.translateControlerTAC.convertQuads((ArrayList<Object>)ins);:};
-FunctionVbHeader::= Public FUNCTION_VB ID PARENTHESIS_A Parameters PARENTHESIS_B AS_VB Type {:sma.testManager.creatFatherAmbit();
+FunctionVB	::= FunctionVbHeader:fun InstructionsFunctionVb:ins END_VB FUNCTION_VB {:ArrayList<Object>quad=new ArrayList<>();
+                                                                        if(fun!=null){
+                                                                        quad=sma.translateControlerTAC.tagFunction((String)fun,(ArrayList<Object>) ins);
+                                                                         
+                                                                          }
+                                                                         sma.testManager.finishAmbit();
+                                                    sma.translateControlerTAC.acceptCurrentBlock();
+                                                    sma.translateControlerTAC.addQuadsToCurrent(quad);:};
+FunctionVbHeader::= Public FUNCTION_VB ID:id PARENTHESIS_A Parameters PARENTHESIS_B AS_VB Type:type {:sma.testManager.creatFatherAmbit();
                                                                                             sma.translateControlerTAC.createNewQuadrupleBlock();
-                                                                                            sma.testManager.insertParameters();:};
-                    
-SubVb      ::=  SubVbHeader InstructionsFunctionVb END_VB SUB_VB {:sma.testManager.finishAmbit();
-                                                                            sma.translateControlerTAC.acceptCurrentBlock();:}; 
-SubVbHeader::= Public SUB_VB ID PARENTHESIS_A Parameters PARENTHESIS_B{:sma.testManager.creatFatherAmbit();
+                                                                                            String name =sma.testManager.insertFunction(id, (Integer) type, ((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
+                RESULT= name;:};
+SubVb      ::=  SubVbHeader:sub InstructionsFunctionVb:lines END_VB SUB_VB {:ArrayList<Object>quad=new ArrayList<>();
+                                                                        if(sub!=null){
+                                                                        quad=sma.translateControlerTAC.tagFunction((String)sub,(ArrayList<Object>) lines);
+                                                                         
+                                                                          }
+                                                                         sma.testManager.finishAmbit();
+                                                    sma.translateControlerTAC.acceptCurrentBlock();
+                                                    sma.translateControlerTAC.addQuadsToCurrent(quad);:}; 
+SubVbHeader::= Public SUB_VB ID:id PARENTHESIS_A Parameters PARENTHESIS_B{:sma.testManager.creatFatherAmbit();
                                                                                             sma.translateControlerTAC.createNewQuadrupleBlock();
-                                                                                            sma.testManager.insertParameters();:};
+                                                                                            String name =sma.testManager.insertFunction(id, null, ((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
+                RESULT= name;:};
 Public::= PUBLIC
             |;
 Parameters::= Parameter 
@@ -190,9 +218,9 @@ LnInstructionsVb::= InputVb
 				|AssignmentVb   {:System.out.println("ASIGNACION");:}
                 |ConditionVb  
 				|error;
-InputVb			::= INTINPUT PARENTHESIS_A STRING PARENTHESIS_B
-					|FLOATINPUT PARENTHESIS_A STRING PARENTHESIS_B
-					| CHARINPUT PARENTHESIS_A STRING PARENTHESIS_B ;
+InputVb			::= INTINPUT PARENTHESIS_A STRING PARENTHESIS_B {:RESULT= TypeManager.INTEGER_TYPE;:}
+					|FLOATINPUT PARENTHESIS_A STRING PARENTHESIS_B {:RESULT= TypeManager.FLOAT_TYPE;:}
+					| CHARINPUT PARENTHESIS_A STRING PARENTHESIS_B {:RESULT= TypeManager.CHAR_TYPE;:} ;
 	
 OutputVb		::=CONSOLE_VB POINT WRITE_VB PARENTHESIS_A ValuesVb:vals PARENTHESIS_B{: if(vals!=null){
                                                                                                 sma.translateControlerTAC.addQuadsToCurrent((ArrayList<Object>)vals);
@@ -217,7 +245,7 @@ ValueVb			::=STRING:string {:ArrayList<Object> printQuad= new ArrayList<Object>(
                                     printQuad.add(sma.translateControlerTAC.createPrintQuad(string));
                                     RESULT=printQuad;:}
 				|NumberValue:val{:ArrayList<Object> printQuad= new ArrayList<Object>();
-                                    printQuad.addALL(sma.translateControlerTAC.getcurrentTempQuads());
+                                    printQuad.addAll(sma.translateControlerTAC.getcurrentTempQuads());
                                     printQuad.add(sma.translateControlerTAC.createPrintQuad(val));
                                     RESULT=printQuad;:};
 
@@ -500,8 +528,10 @@ CaseValue       ::=NUMBER:num {:RESULT=num;:}
 /*
     JAVA
 */
-Java 			::= JAVA_SEPERATOR JavaCode {:sma.testManager.switchNextTypes();:};
-
+Java 			::= JavaSeperator JavaCode {:sma.testManager.switchNextTypes();
+                                    sma.translateControlerTAC.acceptCurrentBlock();
+                                    :};
+JavaSeperator   ::=JAVA_SEPERATOR{:sma.translateControlerTAC.createNewQuadrupleBlock();:};
 JavaCode::=JavaCode ClaseJ
             |;
 ClaseJ  ::= ClaseJHeader LEFT_CB JavaClassCode RIGHT_CB;
@@ -603,8 +633,69 @@ OpBoolJ::= OpBoolJ OpLogic BoolValueJ
 /*
     Python
 */
-Python 	::= PYTHON_SEPERATOR PythonCode {:sma.testManager.switchNextTypes();:};
-PythonCode::=;
+Python 	    ::= PythonSeperator PythonCode {:sma.testManager.switchNextTypes();
+                                            sma.testManager.finishAmbit();
+                                    sma.translateControlerTAC.acceptCurrentBlock();
+                                    sma.translateControlerTAC.addQuadsToCurrent(sma.translateControlerTAC.getcurrentQuads());
+                                    :};
+PythonSeperator::=PYTHON_SEPERATOR{:sma.testManager.creatFatherAmbit();
+                            sma.translateControlerTAC.createNewQuadrupleBlock();
+                             :};
+PythonCode  ::= FunctionPY PythonCode
+                |;
+FunctionPY  ::= FunctionPYHeader:fun INDENT FunctionLinesPY:ins {:ArrayList<Object>quad=new ArrayList<>();
+                                                                        if(fun!=null){
+                                                                        quad=sma.translateControlerTAC.tagFunction((String)fun,(ArrayList<Object>) ins);
+                                                                         
+                                                                          }
+                                                                         sma.testManager.finishAmbit();
+                                                    sma.translateControlerTAC.acceptCurrentBlock();
+                                                    sma.translateControlerTAC.addQuadsToCurrent(quad);:};
+FunctionPYHeader::= DEF ID:id PARENTHESIS_A ParametersPY PARENTHESIS_B COLON{:sma.testManager.creatFatherAmbit();
+                                                                                            sma.translateControlerTAC.createNewQuadrupleBlock();
+                                                                                            String name =sma.testManager.insertFunction(id,TypeManager.VAR_TYPE, ((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
+                RESULT= name;:};
+ParametersPY    ::=IdsPY
+                    |;
+IdsPY       ::= IdsPY COMMA  ID:id {:sma.testManager.getParameterControl().insertParameter(TypeManager.VAR_TYPE,id,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));:}
+                |ID:id{:sma.testManager.getParameterControl().insertParameter(TypeManager.VAR_TYPE,id,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));:};
+FunctionLinesPY::=FunctionLinesPY1{:RESULT=sma.translateControlerTAC.getcurrentQuads();
+                                                    sma.testManager.finishAmbit();
+                                                    sma.translateControlerTAC.acceptCurrentBlock();
+                                                    :};
+FunctionLinesPY1::=LinesPY  
+                            |LinesPY RETURN NumberValue;
+LinesPY               ::=LinesPY LineCodePY
+                        |;
+LineCodePY  ::= Input     
+				|OutputPY 
+				|CyclePY  
+				|AssignmentPY  
+                |ConditionPY  
+				|error;
+Input           ::= InputVb;
+OutputPY        ::=PRINT PARENTHESIS_A OutputValuesPY PARENTHESIS_B ;
+OutputValuesPY  ::=OutputValuesPY COMMA ValueVb
+                    
+                    |ValueVb;
+
+CyclePY         ::=ForPY
+                    |WhilePY;
+ForPY           ::=ForPYHeader COLON INDENT FunctionLinesPY DEDENT;
+ForPYHeader     ::=FOR ID IN Range ;
+
+Range           ::= RANGE PARENTHESIS_A Range1 COMMA Range1 COMMA NumberValue PARENTHESIS_B
+                    |RANGE PARENTHESIS_A Range1 COMMA NumberValue PARENTHESIS_B
+                    |RANGE PARENTHESIS_A  NumberValue PARENTHESIS_B;
+Range1          ::= NumberValue;
+WhilePY         ::=WhilePYHeader OpBool COLON INDENT FunctionLinesPY DEDENT ;
+
+AssignmentPY    ::=ID EQUAL NumberValue{::}
+                    |ID EQUAL InputVb {::};  
+ConditionPY     ::=IfPY;
+IfPY            ::=IF OpBool COLON INDENT FunctionLinesPY DEDENT Elif;
+Elif            ::= ELIF OpBool COLON INDENT FunctionLinesPY DEDENT Elif
+                    |ELSE COLON INDENT FunctionLinesPY DEDENT;
 /*
     C
 */

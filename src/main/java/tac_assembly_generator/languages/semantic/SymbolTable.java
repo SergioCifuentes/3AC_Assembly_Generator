@@ -9,6 +9,8 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java_cup.runtime.Symbol;
 import tac_assembly_generator.languages.semantic.type.Type;
+import tac_assembly_generator.languages.semantic.type.TypeManager;
+import tac_assembly_generator.languages.semantic.verification.ParameterControl;
 import tac_assembly_generator.ui.MainFrame;
 import tac_assembly_generator.ui.backend.OutputErrors;
 import tac_assembly_generator.ui.backend.OutputText;
@@ -18,52 +20,86 @@ import tac_assembly_generator.ui.backend.OutputText;
  * @author sergio
  */
 public class SymbolTable {
+
     private ArrayList<Tuple> symbols;
 
     public SymbolTable() {
-        symbols= new ArrayList<>();
+        symbols = new ArrayList<>();
     }
-    
-    public void insertTuple(Tuple tuple){
+
+    public void insertTuple(Tuple tuple) {
         symbols.add(tuple);
     }
-    
-    public Tuple getTupleWithAmbit(String id, Ambit ambit){
-        
-        ArrayList<Tuple> tuplesWithId=new ArrayList<>();
+
+    public Tuple getTupleWithAmbit(String id, Ambit ambit) {
+
+        ArrayList<Tuple> tuplesWithId = new ArrayList<>();
         for (int i = 0; i < symbols.size(); i++) {
-            if (symbols.get(i).getName().equals(id)&&symbols.get(i).getParameters()==null) {
+            if (symbols.get(i).getName().equals(id) && symbols.get(i).getParameters() == null) {
                 tuplesWithId.add(symbols.get(i));
             }
         }
         for (int i = 0; i < tuplesWithId.size(); i++) {
             if (tuplesWithId.get(i).getAmbit().isSon(ambit)) {
-             return tuplesWithId.get(i);
+                return tuplesWithId.get(i);
             }
         }
         return null;
     }
-    
-    public Type getTypeWithAmbit(String id, Ambit ambit,MainFrame mainFrame,Symbol symbol){
-        ArrayList<Tuple> tuplesWithId=new ArrayList<>();
+
+    public Type getTypeWithAmbit(String id, Ambit ambit, MainFrame mainFrame, Symbol symbol) {
+        ArrayList<Tuple> tuplesWithId = new ArrayList<>();
         for (int i = 0; i < symbols.size(); i++) {
-            if (symbols.get(i).getName().equals(id)&&symbols.get(i).getParameters()==null) {
+            if (symbols.get(i).getName().equals(id) && symbols.get(i).getParameters() == null) {
                 tuplesWithId.add(symbols.get(i));
             }
         }
 
         for (int i = 0; i < tuplesWithId.size(); i++) {
             if (ambit.isSon(tuplesWithId.get(i).getAmbit())) {
-             return tuplesWithId.get(i).getType();
+                return tuplesWithId.get(i).getType();
             }
         }
         if (tuplesWithId.isEmpty()) {
             OutputErrors.notDeclared(mainFrame.getOutputPannel(), id, symbol);
-        }else{
+        } else {
             OutputErrors.declaredOutOfAmbit(mainFrame.getOutputPannel(), id, symbol);
         }
         return null;
     }
-    
-    
+
+    public Tuple insertFunction(String id, Type type, ParameterControl parameterControl,Symbol symbol,Ambit ambit) {
+
+        ArrayList<Tuple> tuplesWithId = new ArrayList<>();
+       
+        for (int i = 0; i < symbols.size(); i++) {
+            if (symbols.get(i).getName().equals(id) && symbols.get(i).getParameters() != null && symbols.get(i).getType().equals(type)) {
+                tuplesWithId.add(symbols.get(i));
+            }
+        }
+        for (int i = 0; i < tuplesWithId.size(); i++) {
+            if (compateParameters(tuplesWithId.get(i).getParameters(),parameterControl.getTypes())) {
+                return null;
+            }
+        }
+        Tuple functionTuple=new Tuple(id, type, null, 0, symbol, ambit);
+        insertTuple(functionTuple);
+        return functionTuple;
+
+    }
+
+    public boolean compateParameters(ArrayList<Tuple> parameters1, ArrayList<Type> parameter2) {
+        boolean same=true;
+        if (parameters1.size() == parameter2.size()) {
+            for (int i = 0; i < parameters1.size(); i++) {
+                if (!parameters1.get(i).getType().equals(parameter2.get(i))) {
+                    same=false;
+                }
+            }
+            return same;
+        }
+        return false;
+
+    }
+
 }

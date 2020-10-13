@@ -45,9 +45,19 @@ public class TAC {
 
         if (quad.getClass().equals(String.class)) {
             if (!((String) quad).endsWith("\n")) {
-                OutputText.appendToPane(mainFrame.getTACPannel(), (String) quad + "\n", Color.lightGray, false);
+                if (((String) quad).startsWith("//")||((String) quad).startsWith("/*")) {
+                    OutputText.appendToPane(mainFrame.getTACPannel(), (String) quad + "\n", Color.lightGray, false);
+                }else{
+                    OutputText.appendToPane(mainFrame.getTACPannel(), (String) quad + "\n", Color.ORANGE, false);
+                }
+                
             } else {
-                OutputText.appendToPane(mainFrame.getTACPannel(), (String) quad, Color.lightGray, false);
+                if (((String) quad).startsWith("//")||((String) quad).startsWith("/*")) {
+                    OutputText.appendToPane(mainFrame.getTACPannel(), (String) quad, Color.lightGray, false);
+                }else{
+                    OutputText.appendToPane(mainFrame.getTACPannel(), (String) quad, Color.orange, false);
+                }
+                
             }
 
         } else if (quad.getClass().equals(Quadruple.class)) {
