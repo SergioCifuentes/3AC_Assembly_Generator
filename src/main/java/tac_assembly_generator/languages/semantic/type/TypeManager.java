@@ -19,8 +19,8 @@ public class TypeManager {
     public static final int CHAR_TYPE = 3;
     private static final String BOOL_NAME = "Boolean";
     public static final int BOOL_TYPE = 4;
-        private static final String VAR_NAME = "var";
-    public static final int VAR_TYPE = 4;
+    private static final String VAR_NAME = "var";
+    public static final int VAR_TYPE = 5;
 
     public static final int VB_TYPES = 1;
     public static final int JAVA_TYPES = 2;
@@ -35,42 +35,50 @@ public class TypeManager {
     }
 
     public Type operateTypes(Integer type1, Integer type2) {
+
         if (type2 == null) {
             return getType(type1);
         } else {
-            if (type1==type2) {
+            if (type1 == VAR_TYPE) {
+                return getType(type2);
+            } else if (type2 == VAR_TYPE) {
                 return getType(type1);
             }
-            if(getType(type1).isFather(getType(type2))){
+            if (type1 == type2) {
+                return getType(type1);
+            }
+            if (getType(type1).isFather(getType(type2))) {
                 return getType(type2);
-            }else if (getType(type2).isFather(getType(type1))) {
-                 return getType(type1);
-            }else{
+            } else if (getType(type2).isFather(getType(type1))) {
+                return getType(type1);
+            } else {
                 return null;
             }
-                  
+
         }
-    }
-    
-     public Type operateBoolTypes(Integer type1, Integer type2) {
-         
-         if (isNumerico(type1)&&isNumerico(type2)) return getType(BOOL_TYPE);
-         return null;
     }
 
-     public boolean isNumerico(Integer type){
-         if (type==INTEGER_TYPE||type==FLOAT_TYPE) {
-             return true;
-         }
-         if (languageType==JAVA_TYPES||languageType==PYTHON_TYPES) {
-             if (type==CHAR_TYPE) {
-                 return true;
-             }
-         }
-         return false;
-     }
-     
-    public String getOutputType(Integer type){
+    public Type operateBoolTypes(Integer type1, Integer type2) {
+
+        if (isNumerico(type1) && isNumerico(type2)) {
+            return getType(BOOL_TYPE);
+        }
+        return null;
+    }
+
+    public boolean isNumerico(Integer type) {
+        if (type == INTEGER_TYPE || type == FLOAT_TYPE || type == VAR_TYPE) {
+            return true;
+        }
+        if (languageType == JAVA_TYPES || languageType == PYTHON_TYPES) {
+            if (type == CHAR_TYPE) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public String getOutputType(Integer type) {
         switch (type) {
             case INTEGER_TYPE:
                 return INTEGER_NAME;
@@ -80,11 +88,14 @@ public class TypeManager {
                 return FLOAT_NAME;
             case BOOL_TYPE:
                 return BOOL_NAME;
+            case VAR_TYPE:
+                return VAR_NAME;
             default:
                 throw new AssertionError();
         }
     }
-        public static String getOutputTypeStatic(Integer type){
+
+    public static String getOutputTypeStatic(Integer type) {
         switch (type) {
             case INTEGER_TYPE:
                 return INTEGER_NAME;
@@ -94,10 +105,13 @@ public class TypeManager {
                 return FLOAT_NAME;
             case BOOL_TYPE:
                 return BOOL_NAME;
+            case VAR_TYPE:
+                return VAR_NAME;
             default:
                 throw new AssertionError();
         }
     }
+
     public Type getType(int type) {
         for (int i = 0; i < types.length; i++) {
             if (types[i].getNumber() == type) {
@@ -106,7 +120,8 @@ public class TypeManager {
         }
         return null;
     }
-    public String getLanguage(){
+
+    public String getLanguage() {
         switch (languageType) {
             case VB_TYPES:
                 return "VB";
@@ -117,7 +132,7 @@ public class TypeManager {
             default:
                 throw new AssertionError();
         }
- 
+
     }
 
     public void loadnextType() {
@@ -137,7 +152,7 @@ public class TypeManager {
     }
 
     public void loadTypes(int typeOfTypes) {
-        types = new Type[4];
+        types = new Type[5];
         languageType = typeOfTypes;
         switch (typeOfTypes) {
             case VB_TYPES:
@@ -158,6 +173,7 @@ public class TypeManager {
                 types[1] = new Type(INTEGER_NAME, INTEGER_TYPE, types[0]);
                 types[2] = new Type(CHAR_NAME, CHAR_TYPE, types[2]);
                 types[3] = new Type(BOOL_NAME, BOOL_TYPE, null);
+                types[4] = new Type(VAR_NAME, VAR_TYPE, null);
                 break;
             case C_TYPES:
                 types[0] = new Type(FLOAT_NAME, FLOAT_TYPE, null);

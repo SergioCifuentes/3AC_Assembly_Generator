@@ -15,6 +15,7 @@ import tac_assembly_generator.TAC.asst.Switch;
 import tac_assembly_generator.languages.semantic.UniquenessTable;
 import tac_assembly_generator.TAC.asst.For;
 import tac_assembly_generator.languages.semantic.SemanticAsstIdQuad;
+import tac_assembly_generator.ui.backend.OutputErrors;
 
  parser code {:
     
@@ -39,10 +40,7 @@ public void setTranslateControlerTAC(TranslateControlerTAC translateControlerTAC
             String lexema = s.value.toString();
             int fila = s.right;
             int columna = s.left;
-            System.out.println("Error Sintactico Recuperado\n");
-            System.out.println("\t \tLexema: " + lexema + "\n");
-            System.out.println("\t \tFila: " + fila + "\n");
-            System.out.println("\t \tColumna: " + columna + "\n");
+            OutputErrors.syntacticRecovered(testManager.getMainFrame().getOutputPannel(), lexema, columna, fila, s);
         } catch (Exception e) {
             System.out.println("error");
             int fila = s.right;
@@ -58,10 +56,7 @@ public void setTranslateControlerTAC(TranslateControlerTAC translateControlerTAC
             String lexema = s.value.toString();
             int fila = s.right;
             int columna = s.left;
-        System.out.println("Error Sintactico Recuperado\n");
-        System.out.println("\t \tLexema: "+ lexema+"\n");
-        System.out.println("\t \tFila: "+ fila+"\n");
-        System.out.println("\t \tColumna: "+ columna+"\n");
+        OutputErrors.syntacticNotRecovered(testManager.getMainFrame().getOutputPannel(), lexema, columna, fila, s);
 
         } catch (Exception ex) {
             
@@ -132,7 +127,7 @@ ExBoolJ, BoolValueJ, OpBoolJ, ConstructorJ;
 //Non-terminals PY*/
 non terminal FunctionPY, FunctionLinesPY1, FunctionPYHeader, ParametersPY, IdsPY, FunctionLinesPY, LinesPY,
 LineCodePY, OutputPY, OutputValuesPY, CyclePY, ForPY, ForPYHeader, Range, Range1,
-WhilePY, WhilePYHeader, AssignmentPY, ConditionPY, IfPY, Elif;
+WhilePY, WhilePYHeader, AssignmentPY, ConditionPY, IfPY, IfPYHeader, Elif, ElifHeader, ElseHeaderPY ;
 
 
 // non Terminals MAIN
@@ -637,12 +632,13 @@ Python 	    ::= PythonSeperator PythonCode {:sma.testManager.switchNextTypes();
                                             sma.testManager.finishAmbit();
                                     sma.translateControlerTAC.acceptCurrentBlock();
                                     sma.translateControlerTAC.addQuadsToCurrent(sma.translateControlerTAC.getcurrentQuads());
-                                    :};
+                                    :}
+                |PythonSeperator;
 PythonSeperator::=PYTHON_SEPERATOR{:sma.testManager.creatFatherAmbit();
                             sma.translateControlerTAC.createNewQuadrupleBlock();
                              :};
-PythonCode  ::= FunctionPY PythonCode
-                |;
+PythonCode  ::=  PythonCode DEDENT FunctionPY
+                |FunctionPY;
 FunctionPY  ::= FunctionPYHeader:fun INDENT FunctionLinesPY:ins {:ArrayList<Object>quad=new ArrayList<>();
                                                                         if(fun!=null){
                                                                         quad=sma.translateControlerTAC.tagFunction((String)fun,(ArrayList<Object>) ins);
@@ -660,7 +656,6 @@ ParametersPY    ::=IdsPY
 IdsPY       ::= IdsPY COMMA  ID:id {:sma.testManager.getParameterControl().insertParameter(TypeManager.VAR_TYPE,id,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));:}
                 |ID:id{:sma.testManager.getParameterControl().insertParameter(TypeManager.VAR_TYPE,id,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));:};
 FunctionLinesPY::=FunctionLinesPY1{:RESULT=sma.translateControlerTAC.getcurrentQuads();
-                                                    sma.testManager.finishAmbit();
                                                     sma.translateControlerTAC.acceptCurrentBlock();
                                                     :};
 FunctionLinesPY1::=LinesPY  
@@ -674,10 +669,18 @@ LineCodePY  ::= Input
                 |ConditionPY  
 				|error;
 Input           ::= InputVb;
-OutputPY        ::=PRINT PARENTHESIS_A OutputValuesPY PARENTHESIS_B ;
-OutputValuesPY  ::=OutputValuesPY COMMA ValueVb
+OutputPY        ::=PRINT PARENTHESIS_A OutputValuesPY:vals PARENTHESIS_B{: if(vals!=null){
+                                                                                                sma.translateControlerTAC.addQuadsToCurrent((ArrayList<Object>)vals);
+                                                                                                
+                                                                                            }:};
+OutputValuesPY  ::=OutputValuesPY:vals COMMA ValueVb:val{:ArrayList<Object> printQuad= new ArrayList<Object>();
+                                    printQuad.addAll((ArrayList<Object>)vals);
+                                    printQuad.addAll((ArrayList<Object>)val);
+                                    RESULT=printQuad;:}
                     
-                    |ValueVb;
+                    |ValueVb:val {:ArrayList<Object> printQuad= new ArrayList<Object>();
+                                    printQuad.addAll((ArrayList<Object>)val);
+                                    RESULT=printQuad;:};
 
 CyclePY         ::=ForPY
                     |WhilePY;
@@ -688,14 +691,42 @@ Range           ::= RANGE PARENTHESIS_A Range1 COMMA Range1 COMMA NumberValue PA
                     |RANGE PARENTHESIS_A Range1 COMMA NumberValue PARENTHESIS_B
                     |RANGE PARENTHESIS_A  NumberValue PARENTHESIS_B;
 Range1          ::= NumberValue;
-WhilePY         ::=WhilePYHeader OpBool COLON INDENT FunctionLinesPY DEDENT ;
-
-AssignmentPY    ::=ID EQUAL NumberValue{::}
+WhilePY         ::=WhilePYHeader:whileBool INDENT FunctionLinesPY:lines DEDENT {:BoolQuad bool=(BoolQuad)whileBool;
+                                                                                    if(lines!=null){bool.changeFatherYesBool((ArrayList<Object>)lines);}
+                                                                                    sma.translateControlerTAC.addQuadsToCurrent(sma.translateControlerTAC.addGotoWhileTags(sma.translateControlerTAC.getBoolQuadControl().convertBoolToQuad(bool)));
+                                                                                    :};
+WhilePYHeader   ::=WHILE OpBool:op COLON {:
+                                        sma.translateControlerTAC.createNewQuadrupleBlock();
+                                        RESULT=op;:};
+AssignmentPY    ::=ID:id EQUAL NumberValue:num{:if(num!=null){
+                                                                    if(!sma.testManager.checkExistence(id)){
+                                                                    sma.testManager.insertTuple(id,TypeManager.VAR_TYPE,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
+                                                            }
+                                                           sma.translateControlerTAC.creatTempIdQuadAssign(num,id);
+                                                        sma.translateControlerTAC.acceptAllIdQuas();}
+                                                    
+:}
                     |ID EQUAL InputVb {::};  
 ConditionPY     ::=IfPY;
-IfPY            ::=IF OpBool COLON INDENT FunctionLinesPY DEDENT Elif;
-Elif            ::= ELIF OpBool COLON INDENT FunctionLinesPY DEDENT Elif
-                    |ELSE COLON INDENT FunctionLinesPY DEDENT;
+IfPY            ::=IfPYHeader:ifBool INDENT FunctionLinesPY:lines DEDENT Elif:elseBool{:BoolQuad bool=(BoolQuad)ifBool;
+                                                                                    if(lines!=null){bool.changeFatherYesBool((ArrayList<Object>)lines);}
+                                                                                    if(elseBool!=null){bool.changeFatherNoBool((ArrayList<Object>)elseBool);}
+                                                                                    sma.translateControlerTAC.addQuadsToCurrent(sma.translateControlerTAC.getBoolQuadControl().convertBoolToQuad(bool));
+                                                                                    :};
+IfPYHeader      ::=      IF OpBool:op COLON {:sma.translateControlerTAC.createNewQuadrupleBlock();
+                                        RESULT=op;:};
+Elif            ::= ElifHeader:ifBool INDENT FunctionLinesPY:lines DEDENT Elif:elseBool {:if(ifBool!=null){
+                                                                    BoolQuad bool=(BoolQuad)ifBool;
+                                                                                    if(lines!=null){bool.changeFatherYesBool((ArrayList<Object>)lines);}
+                                                                                    if(elseBool!=null){bool.changeFatherNoBool((ArrayList<Object>)elseBool);}
+                                                                                    RESULT =sma.translateControlerTAC.getBoolQuadControl().convertBoolToQuad(bool);
+                                                                                    
+                                                                }:}
+                    |ElseHeaderPY INDENT FunctionLinesPY:lines DEDENT {:RESULT=lines;:}
+                    |;
+ElseHeaderPY    ::=ELSE COLON{:sma.translateControlerTAC.createNewQuadrupleBlock();:};
+ElifHeader      ::=ELIF OpBool:op COLON {:sma.translateControlerTAC.createNewQuadrupleBlock();
+                                        RESULT =op;:};
 /*
     C
 */

@@ -72,6 +72,7 @@ public class TranslateControlerTAC {
         String temp = tempGenerator.generateTag();
         quads.add(0, new Quadruple(null, null, null, temp));
         int cont = 0;
+        int asst=0;
         while (true) {
             if (cont == quads.size()) {
                 break;
@@ -79,8 +80,15 @@ public class TranslateControlerTAC {
             Object qObject = quads.get(quads.size() - 1 - cont);
             try {
                 Quadruple aux = (Quadruple) qObject;
-                quads.add(quads.size() - cont - 2, new Quadruple(Operation.GO_TO, null, null, temp));
+                asst++;
+                if (asst==3) {
+                    quads.add(quads.size() - cont - 2, new Quadruple(Operation.GO_TO, null, null, temp));
+                    quads.remove(quads.size() - cont - 2);
                 break;
+                }else{
+                    cont++;
+                }
+
             } catch (Exception e) {
                 cont++;
             }

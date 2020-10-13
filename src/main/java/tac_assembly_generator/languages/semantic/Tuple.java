@@ -47,7 +47,10 @@ public class Tuple {
         if (type==null) {
             output+="void ";
         }else{
-            output+=TypeManager.getOutputTypeStatic(type.getNumber())+" ";
+            if (type.getNumber()!=TypeManager.VAR_TYPE) {
+                    output+=TypeManager.getOutputTypeStatic(type.getNumber())+" ";
+            }
+            
         }
         output+=name;
         return output;

@@ -5,6 +5,7 @@ Dim a=2,b=4 AS integer =4 ->fix
 Multiple block close python
 Replace CaseValue with NumberValue (for, switch)
 fix comments with variable string in TranslateControler
+Fix Dedent Python if..
 
 Comprobador Estatico-> Comprobacion de tipos
 

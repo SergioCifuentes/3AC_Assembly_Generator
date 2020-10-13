@@ -115,6 +115,16 @@ public class TestManager {
         return symbolTable.getTypeWithAmbit(id, ambitControler.getCurrentAmbit(), mainFrame, symbol);
     }
 
+    public void insertTuple(String id, Integer type,Symbol symbol){
+        Tuple tuple= new Tuple(id,typeManager.getType(0),null, 0, symbol,ambitControler.getCurrentAmbit());
+        symbolTable.insertTuple(tuple);
+    }
+
+    public MainFrame getMainFrame() {
+        return mainFrame;
+    }
+    
+    
     public String insertFunction(String id, Integer type, Symbol s) {
         Type ty = null;
         if (type != null) {
@@ -142,7 +152,16 @@ public class TestManager {
         }
 
     }
+    public boolean checkExistence(String id){
+        
+        if (symbolTable.getTupleWithAmbit(id, ambitControler.getCurrentAmbit())!=null) {
+            return true;
+        }else{
+            return false;
+        }
 
+    }
+    
     public TypeManager getTypeManager() {
         return typeManager;
     }

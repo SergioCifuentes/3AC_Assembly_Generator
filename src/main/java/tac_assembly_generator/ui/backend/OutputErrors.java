@@ -75,4 +75,20 @@ public class OutputErrors {
             OutputText.appendToPane(textPane,"\t Columna: ", Color.white, false);
             OutputText.appendToPane(textPane,(symbol.left+1)+"\n", Color.YELLOW, false);
     }
+           public static void syntacticRecovered(JTextPane textPane,String lexema, Integer column,Integer row, Symbol symbol) {
+         OutputText.appendToPane(textPane,"Error Sintactico Recuperado\n", Color.red, false);
+            OutputText.appendToPane(textPane,"\t Lexema: " + lexema + "\n", Color.white, false);
+            OutputText.appendToPane(textPane,"\t Fila: ", Color.white, false);
+            OutputText.appendToPane(textPane,(row+1)+"\n", Color.YELLOW, false);
+            OutputText.appendToPane(textPane,"\t Columna: ", Color.white, false);
+            OutputText.appendToPane(textPane,(column+1)+"\n", Color.YELLOW, false);
+    }
+            public static void syntacticNotRecovered(JTextPane textPane,String lexema, Integer column,Integer row, Symbol symbol) {
+         OutputText.appendToPane(textPane,"Error Sintactico No Recuperable\n", Color.red, false);
+            OutputText.appendToPane(textPane,"\t Lexema: " + lexema + "\n", Color.white, false);
+            OutputText.appendToPane(textPane,"\t Fila: ", Color.white, false);
+            OutputText.appendToPane(textPane,(row+1)+"\n", Color.YELLOW, false);
+            OutputText.appendToPane(textPane,"\t Columna: ", Color.white, false);
+            OutputText.appendToPane(textPane,(column+1)+"\n", Color.YELLOW, false);
+    }
 }
