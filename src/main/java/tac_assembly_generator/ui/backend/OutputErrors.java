@@ -59,36 +59,57 @@ public class OutputErrors {
         OutputText.appendToPane(textPane, "\t Columna: ", Color.white, false);
         OutputText.appendToPane(textPane, (symbol.left + 1) + "\n", Color.YELLOW, false);
     }
+
     public static void notDeclared(JTextPane textPane, String id, Symbol symbol) {
-         OutputText.appendToPane(textPane,"SEMANTIC ERROR:\n", Color.red, false);
-            OutputText.appendToPane(textPane,"\t"+id +" no ha sido declarado \n", Color.white, false);
-            OutputText.appendToPane(textPane,"\t Fila: ", Color.white, false);
-            OutputText.appendToPane(textPane,(symbol.right+1)+"\n", Color.YELLOW, false);
-            OutputText.appendToPane(textPane,"\t Columna: ", Color.white, false);
-            OutputText.appendToPane(textPane,(symbol.left+1)+"\n", Color.YELLOW, false);
+        OutputText.appendToPane(textPane, "SEMANTIC ERROR:\n", Color.red, false);
+        OutputText.appendToPane(textPane, "\t" + id + " no ha sido declarado \n", Color.white, false);
+        OutputText.appendToPane(textPane, "\t Fila: ", Color.white, false);
+        OutputText.appendToPane(textPane, (symbol.right + 1) + "\n", Color.YELLOW, false);
+        OutputText.appendToPane(textPane, "\t Columna: ", Color.white, false);
+        OutputText.appendToPane(textPane, (symbol.left + 1) + "\n", Color.YELLOW, false);
     }
-        public static void declaredOutOfAmbit(JTextPane textPane, String id, Symbol symbol) {
-         OutputText.appendToPane(textPane,"SEMANTIC ERROR:\n", Color.red, false);
-            OutputText.appendToPane(textPane,"\t"+id +" esta fuera de ambito \n", Color.white, false);
-            OutputText.appendToPane(textPane,"\t Fila: ", Color.white, false);
-            OutputText.appendToPane(textPane,(symbol.right+1)+"\n", Color.YELLOW, false);
-            OutputText.appendToPane(textPane,"\t Columna: ", Color.white, false);
-            OutputText.appendToPane(textPane,(symbol.left+1)+"\n", Color.YELLOW, false);
+
+    public static void declaredOutOfAmbit(JTextPane textPane, String id, Symbol symbol) {
+        OutputText.appendToPane(textPane, "SEMANTIC ERROR:\n", Color.red, false);
+        OutputText.appendToPane(textPane, "\t" + id + " esta fuera de ambito \n", Color.white, false);
+        OutputText.appendToPane(textPane, "\t Fila: ", Color.white, false);
+        OutputText.appendToPane(textPane, (symbol.right + 1) + "\n", Color.YELLOW, false);
+        OutputText.appendToPane(textPane, "\t Columna: ", Color.white, false);
+        OutputText.appendToPane(textPane, (symbol.left + 1) + "\n", Color.YELLOW, false);
     }
-           public static void syntacticRecovered(JTextPane textPane,String lexema, Integer column,Integer row, Symbol symbol) {
-         OutputText.appendToPane(textPane,"Error Sintactico Recuperado\n", Color.red, false);
-            OutputText.appendToPane(textPane,"\t Lexema: " + lexema + "\n", Color.white, false);
-            OutputText.appendToPane(textPane,"\t Fila: ", Color.white, false);
-            OutputText.appendToPane(textPane,(row+1)+"\n", Color.YELLOW, false);
-            OutputText.appendToPane(textPane,"\t Columna: ", Color.white, false);
-            OutputText.appendToPane(textPane,(column+1)+"\n", Color.YELLOW, false);
+
+    public static void syntacticRecovered(JTextPane textPane, String lexema, Integer column, Integer row, Symbol symbol) {
+        OutputText.appendToPane(textPane, "Error Sintactico Recuperado\n", Color.red, false);
+        OutputText.appendToPane(textPane, "\t Lexema: " + lexema + "\n", Color.white, false);
+        OutputText.appendToPane(textPane, "\t Fila: ", Color.white, false);
+        OutputText.appendToPane(textPane, (row + 1) + "\n", Color.YELLOW, false);
+        OutputText.appendToPane(textPane, "\t Columna: ", Color.white, false);
+        OutputText.appendToPane(textPane, (column + 1) + "\n", Color.YELLOW, false);
     }
-            public static void syntacticNotRecovered(JTextPane textPane,String lexema, Integer column,Integer row, Symbol symbol) {
-         OutputText.appendToPane(textPane,"Error Sintactico No Recuperable\n", Color.red, false);
-            OutputText.appendToPane(textPane,"\t Lexema: " + lexema + "\n", Color.white, false);
-            OutputText.appendToPane(textPane,"\t Fila: ", Color.white, false);
-            OutputText.appendToPane(textPane,(row+1)+"\n", Color.YELLOW, false);
-            OutputText.appendToPane(textPane,"\t Columna: ", Color.white, false);
-            OutputText.appendToPane(textPane,(column+1)+"\n", Color.YELLOW, false);
+
+    public static void syntacticNotRecovered(JTextPane textPane, String lexema, Integer column, Integer row, Symbol symbol) {
+        OutputText.appendToPane(textPane, "Error Sintactico No Recuperable\n", Color.red, false);
+        OutputText.appendToPane(textPane, "\t Lexema: " + lexema + "\n", Color.white, false);
+        OutputText.appendToPane(textPane, "\t Fila: ", Color.white, false);
+        OutputText.appendToPane(textPane, (row + 1) + "\n", Color.YELLOW, false);
+        OutputText.appendToPane(textPane, "\t Columna: ", Color.white, false);
+        OutputText.appendToPane(textPane, (column + 1) + "\n", Color.YELLOW, false);
+    }
+
+    public static void alreadyDeclared(JTextPane textPane, String id, Symbol symbol) {
+        OutputText.appendToPane(textPane, "SEMANTIC ERROR:\n", Color.red, false);
+        OutputText.appendToPane(textPane, "\t" + id + " ya ha sido declarado \n", Color.white, false);
+        OutputText.appendToPane(textPane, "\t Fila: ", Color.white, false);
+        OutputText.appendToPane(textPane, (symbol.right + 1) + "\n", Color.YELLOW, false);
+        OutputText.appendToPane(textPane, "\t Columna: ", Color.white, false);
+        OutputText.appendToPane(textPane, (symbol.left + 1) + "\n", Color.YELLOW, false);
+    }
+        public static void assignmentError(JTextPane textPane, String type1,String type2, Symbol symbol) {
+        OutputText.appendToPane(textPane, "SEMANTIC ERROR:\n", Color.red, false);
+        OutputText.appendToPane(textPane,"\t No se puede asignar un valor tipo " + type1 + " a una variable tipo " + type2 + "\n", Color.white, false);
+        OutputText.appendToPane(textPane, "\t Fila: ", Color.white, false);
+        OutputText.appendToPane(textPane, (symbol.right + 1) + "\n", Color.YELLOW, false);
+        OutputText.appendToPane(textPane, "\t Columna: ", Color.white, false);
+        OutputText.appendToPane(textPane, (symbol.left + 1) + "\n", Color.YELLOW, false);
     }
 }

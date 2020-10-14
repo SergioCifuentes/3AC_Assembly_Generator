@@ -22,18 +22,25 @@ public class Tuple {
     private Ambit ambit;
     private ArrayList<Tuple> parameters;
     private String tacFunctionName;
+    private boolean constante;
     //0 normal type
     //1 one dimension array ...
     private Integer dimension;
 
     public Tuple(String name, Type type, Object value,Integer dimension, Symbol symbol,Ambit ambit) {
+        
         this.name = name;
         this.type = type;
         this.value = value;
         this.symbol=symbol;
         this.dimension=dimension;
         this.ambit=ambit;
+        constante=false;
         
+    }
+
+    public void setConstante(boolean constante) {
+        this.constante = constante;
     }
     
     public String generateFunctionName(String language){

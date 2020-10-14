@@ -129,6 +129,8 @@ public class TypeManager {
                 return "JAVA";
             case PYTHON_TYPES:
                 return "PY";
+            case C_TYPES :
+                return "C";
             default:
                 throw new AssertionError();
         }
@@ -146,6 +148,7 @@ public class TypeManager {
             case PYTHON_TYPES:
                 loadTypes(C_TYPES);
                 break;
+                
             default:
                 throw new AssertionError();
         }

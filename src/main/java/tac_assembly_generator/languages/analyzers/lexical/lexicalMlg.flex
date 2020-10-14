@@ -51,7 +51,7 @@ Input_Ignore_Case= ("I"|"i")("N"|"n")("P"|"p")("U"|"u")("T"|"t")
 }
 
 <COMMON_SYMBOLS>{    
-    "="                                    { System.out.println("EQUAL "+yytext());return new Symbol(SimbolosMlg.EQUAL, yycolumn,yyline,yytext());}
+    "="                                    {return new Symbol(SimbolosMlg.EQUAL, yycolumn,yyline,yytext());}
     "("                                    { return new Symbol(SimbolosMlg.PARENTHESIS_A, yycolumn,yyline,yytext());}
     ")"                                    { return new Symbol(SimbolosMlg.PARENTHESIS_B, yycolumn,yyline,yytext());}
     "+"                                    { return new Symbol(SimbolosMlg.PLUS, yycolumn,yyline,yytext());}
@@ -64,57 +64,57 @@ Input_Ignore_Case= ("I"|"i")("N"|"n")("P"|"p")("U"|"u")("T"|"t")
 <VBCODE>{
     //%ignorecase
     
-    "%%JAVA"                                                            { System.out.println("JAVA "+yytext());  yybegin(JAVACODE); return new Symbol(SimbolosMlg.JAVA_SEPERATOR, yycolumn,yyline,yytext());}
-    ("I"|"i")("N"|"n")("T"|"t")("E"|"e")("G"|"g")("E"|"e")("R"|"r")     { System.out.println("INTEGER "+yytext()); return new Symbol(SimbolosMlg.INTEGER_TYPE, yycolumn,yyline,yytext());}
+    "%%JAVA"                                                            {   yybegin(JAVACODE); return new Symbol(SimbolosMlg.JAVA_SEPERATOR, yycolumn,yyline,yytext());}
+    ("I"|"i")("N"|"n")("T"|"t")("E"|"e")("G"|"g")("E"|"e")("R"|"r")     {  return new Symbol(SimbolosMlg.INTEGER_TYPE, yycolumn,yyline,yytext());}
     ("F"|"f")("L"|"l")("O"|"o")("A"|"a")("T"|"t")                       {  return new Symbol(SimbolosMlg.FLOAT_TYPE, yycolumn,yyline,yytext());}
     ("C"|"c")("H"|"h")("A"|"a")("R"|"r")                                { return new Symbol(SimbolosMlg.CHAR_TYPE, yycolumn,yyline,yytext());}
-    ("D"|"d")("I"|"i")("M"|"m")                                         {System.out.println("DIM "+yytext()); return new Symbol(SimbolosMlg.DIM_VB, yycolumn,yyline,yytext());}
-    ("P"|"p")("U"|"u")("B"|"b")("L"|"l")("I"|"i")("C"|"c")              {  System.out.println("PUBLIC "+yytext()); return new Symbol(SimbolosMlg.PUBLIC, yycolumn,yyline,yytext());}
-    ("F"|"f")("U"|"u")("N"|"n")("C"|"c")("T"|"t")("I"|"i")("O"|"o")("N"|"n") { System.out.println("FUNCTION_VB "+yytext()); return new Symbol(SimbolosMlg.FUNCTION_VB, yycolumn,yyline,yytext());}
-    ("S"|"s")("U"|"u")("B"|"b")                                         {System.out.println("SUB "+yytext()); return new Symbol(SimbolosMlg.SUB_VB, yycolumn,yyline,yytext());}
-    ("E"|"e")("N"|"n")("D"|"d")                                         {System.out.println("END "+yytext()); return new Symbol(SimbolosMlg.END_VB, yycolumn,yyline,yytext());}
-    ("A"|"a")("S"|"s")                                                  {System.out.println("As "+yytext()); return new Symbol(SimbolosMlg.AS_VB, yycolumn,yyline,yytext());}
+    ("D"|"d")("I"|"i")("M"|"m")                                         { return new Symbol(SimbolosMlg.DIM_VB, yycolumn,yyline,yytext());}
+    ("P"|"p")("U"|"u")("B"|"b")("L"|"l")("I"|"i")("C"|"c")              { return new Symbol(SimbolosMlg.PUBLIC, yycolumn,yyline,yytext());}
+    ("F"|"f")("U"|"u")("N"|"n")("C"|"c")("T"|"t")("I"|"i")("O"|"o")("N"|"n") {  return new Symbol(SimbolosMlg.FUNCTION_VB, yycolumn,yyline,yytext());}
+    ("S"|"s")("U"|"u")("B"|"b")                                         { return new Symbol(SimbolosMlg.SUB_VB, yycolumn,yyline,yytext());}
+    ("E"|"e")("N"|"n")("D"|"d")                                         { return new Symbol(SimbolosMlg.END_VB, yycolumn,yyline,yytext());}
+    ("A"|"a")("S"|"s")                                                  { return new Symbol(SimbolosMlg.AS_VB, yycolumn,yyline,yytext());}
     ("R"|"r")("E"|"e")("T"|"t")("I"|"i")("N"|"n")("P"|"p")              {  return new Symbol(SimbolosMlg.RETURN_VB, yycolumn,yyline,yytext());}
-    ("I"|"i")("N"|"n")("T"|"t"){Input_Ignore_Case}                      { System.out.println("INTINPUT "+yytext()); return new Symbol(SimbolosMlg.INTINPUT, yycolumn,yyline,yytext());}
-    ("C"|"c")("H"|"h")("A"|"a")("R"|"r"){Input_Ignore_Case}             { System.out.println("FLOATINPUT_VB "+yytext()); return new Symbol(SimbolosMlg.FLOATINPUT, yycolumn,yyline,yytext());}
-    ("F"|"f")("L"|"l")("O"|"o")("A"|"a")("T"|"t"){Input_Ignore_Case}    { System.out.println("CHARINPUT_VB "+yytext()); return new Symbol(SimbolosMlg.CHARINPUT, yycolumn,yyline,yytext());}
-    ("C"|"c")("O"|"o")("N"|"n")("S"|"s")("O"|"o")("L"|"l")("E"|"e")     { System.out.println("CONSOLE_VB "+yytext()); return new Symbol(SimbolosMlg.CONSOLE_VB, yycolumn,yyline,yytext());}
-    ("W"|"w")("R"|"r")("I"|"i")("T"|"t")("E"|"e")                       { System.out.println("WRITE_VB "+yytext()); return new Symbol(SimbolosMlg.WRITE_VB, yycolumn,yyline,yytext());}
+    ("I"|"i")("N"|"n")("T"|"t"){Input_Ignore_Case}                      {return new Symbol(SimbolosMlg.INTINPUT, yycolumn,yyline,yytext());}
+    ("C"|"c")("H"|"h")("A"|"a")("R"|"r"){Input_Ignore_Case}             { return new Symbol(SimbolosMlg.FLOATINPUT, yycolumn,yyline,yytext());}
+    ("F"|"f")("L"|"l")("O"|"o")("A"|"a")("T"|"t"){Input_Ignore_Case}    { return new Symbol(SimbolosMlg.CHARINPUT, yycolumn,yyline,yytext());}
+    ("C"|"c")("O"|"o")("N"|"n")("S"|"s")("O"|"o")("L"|"l")("E"|"e")     { return new Symbol(SimbolosMlg.CONSOLE_VB, yycolumn,yyline,yytext());}
+    ("W"|"w")("R"|"r")("I"|"i")("T"|"t")("E"|"e")                       { return new Symbol(SimbolosMlg.WRITE_VB, yycolumn,yyline,yytext());}
     ("W"|"w")("R"|"r")("I"|"i")("T"|"t")("E"|"e")("L"|"l")("N"|"n")     {  return new Symbol(SimbolosMlg.WRITELN_VB, yycolumn,yyline,yytext());}
-    ("F"|"f")("O"|"o")("R"|"r")                                         {System.out.println("FOR_VB "+yytext()); return new Symbol(SimbolosMlg.FOR, yycolumn,yyline,yytext());}
-    ("T"|"t")("O"|"o")                                                  {System.out.println("TO_VB "+yytext()); return new Symbol(SimbolosMlg.TO_VB, yycolumn,yyline,yytext());}
+    ("F"|"f")("O"|"o")("R"|"r")                                         { return new Symbol(SimbolosMlg.FOR, yycolumn,yyline,yytext());}
+    ("T"|"t")("O"|"o")                                                  { return new Symbol(SimbolosMlg.TO_VB, yycolumn,yyline,yytext());}
     ("S"|"s")("T"|"t")("E"|"e")("P"|"p")                                { return new Symbol(SimbolosMlg.STEP_VB, yycolumn,yyline,yytext());}
     ("N"|"n")("E"|"e")("X"|"x")("T"|"t")                                { return new Symbol(SimbolosMlg.NEXT_VB, yycolumn,yyline,yytext());}
     ("W"|"w")("H"|"h")("I"|"i")("L"|"l")("E"|"e")                       {  return new Symbol(SimbolosMlg.WHILE, yycolumn,yyline,yytext());}
-    ("N"|"n")("O"|"o")("T"|"t")                                         {System.out.println("NOT_VB "+yytext()); return new Symbol(SimbolosMlg.NOT, yycolumn,yyline,yytext());}
-    ("A"|"a")("N"|"n")("D"|"d")                                         {System.out.println("AND_VB "+yytext()); return new Symbol(SimbolosMlg.AND, yycolumn,yyline,yytext());}
-    ("O"|"o")("R"|"r")                                                  {System.out.println("OR "+yytext()); return new Symbol(SimbolosMlg.OR, yycolumn,yyline,yytext());}
+    ("N"|"n")("O"|"o")("T"|"t")                                         { return new Symbol(SimbolosMlg.NOT, yycolumn,yyline,yytext());}
+    ("A"|"a")("N"|"n")("D"|"d")                                         { return new Symbol(SimbolosMlg.AND, yycolumn,yyline,yytext());}
+    ("O"|"o")("R"|"r")                                                  { return new Symbol(SimbolosMlg.OR, yycolumn,yyline,yytext());}
     ("T"|"t")("R"|"r")("U"|"u")("E"|"e")                                { return new Symbol(SimbolosMlg.TRUE, yycolumn,yyline,yytext());}
     ("F"|"f")("A"|"a")("L"|"l")("S"|"s")("E"|"e")                       {  return new Symbol(SimbolosMlg.FALSE, yycolumn,yyline,yytext());}
-    ("D"|"d")("O"|"o")                                                  {System.out.println("DO_VB "+yytext()); return new Symbol(SimbolosMlg.DO, yycolumn,yyline,yytext());}
+    ("D"|"d")("O"|"o")                                                  {return new Symbol(SimbolosMlg.DO, yycolumn,yyline,yytext());}
     ("L"|"l")("O"|"o")("O"|"o")("P"|"p")                                { return new Symbol(SimbolosMlg.LOOP_VB, yycolumn,yyline,yytext());}
-    ("I"|"i")("F"|"f")                                                  {System.out.println("IF_VB "+yytext()); return new Symbol(SimbolosMlg.IF, yycolumn,yyline,yytext());}
+    ("I"|"i")("F"|"f")                                                  { return new Symbol(SimbolosMlg.IF, yycolumn,yyline,yytext());}
     ("E"|"e")("L"|"l")("S"|"s")("E"|"e")                                { return new Symbol(SimbolosMlg.ELSE, yycolumn,yyline,yytext());}
     ("E"|"e")("L"|"l")("S"|"s")("E"|"e")("I"|"i")("F"|"f")              {  return new Symbol(SimbolosMlg.ELSE_IF_VB, yycolumn,yyline,yytext());}
     ("T"|"t")("H"|"h")("E"|"e")("N"|"n")                                { return new Symbol(SimbolosMlg.THEN_VB, yycolumn,yyline,yytext());}
     ("S"|"s")("E"|"e")("L"|"l")("E"|"e")("C"|"c")("T"|"t")              {  return new Symbol(SimbolosMlg.SELECT_VB, yycolumn,yyline,yytext());}
     ("C"|"c")("A"|"a")("S"|"s")("E"|"e")                                { return new Symbol(SimbolosMlg.CASE_VB, yycolumn,yyline,yytext());}
-    ("M"|"m")("O"|"o")("D"|"d")                                         {System.out.println("MOD "+yytext()); return new Symbol(SimbolosMlg.MOD, yycolumn,yyline,yytext());}
+    ("M"|"m")("O"|"o")("D"|"d")                                         { return new Symbol(SimbolosMlg.MOD, yycolumn,yyline,yytext());}
 
-    "\"" [^\"] ~ "\""                                                   { System.out.println("STRING "+yytext()); return new Symbol(SimbolosMlg.STRING, yycolumn,yyline,yytext());}
-     "\'' [^\''] "\''                                                   { System.out.println("CHAR "+yytext()); return new Symbol(SimbolosMlg.CHAR, yycolumn,yyline,yytext());}
-    ({Letra}|"_")({Letra}|{Digito}|"_")*                                { System.out.println("ID "+yytext()); return new Symbol(SimbolosMlg.ID, yycolumn,yyline,yytext());}
-    ({Digito})+                                             { System.out.println("NUMBER "+yytext()); return new Symbol(SimbolosMlg.NUMBER, yycolumn,yyline,yytext());}
-    ({Digito})+"."({Digito})+                               { System.out.println("DECIMAL "+yytext()); return new Symbol(SimbolosMlg.DECIMAL, yycolumn,yyline,yytext());}
+    "\"" [^\"] ~ "\""                                                   { return new Symbol(SimbolosMlg.STRING, yycolumn,yyline,yytext());}
+     "\'' [^\''] "\''                                                   { return new Symbol(SimbolosMlg.CHAR, yycolumn,yyline,yytext());}
+    ({Letra}|"_")({Letra}|{Digito}|"_")*                                { return new Symbol(SimbolosMlg.ID, yycolumn,yyline,yytext());}
+    ({Digito})+                                             {  return new Symbol(SimbolosMlg.NUMBER, yycolumn,yyline,yytext());}
+    ({Digito})+"."({Digito})+                               { return new Symbol(SimbolosMlg.DECIMAL, yycolumn,yyline,yytext());}
     {CommentC}                               {tac.addComment(yytext());}
-    "="                                                     { System.out.println("EQUAL "+yytext());return new Symbol(SimbolosMlg.EQUAL, yycolumn,yyline,yytext());}
-    "<>"                                                    { System.out.println("DIFERENT_VB "+yytext());return new Symbol(SimbolosMlg.DIFERENT_VB, yycolumn,yyline,yytext());}
-    ">"                                                     { System.out.println("GREATER_THAN "+yytext());return new Symbol(SimbolosMlg.GREATER_THAN, yycolumn,yyline,yytext());}
-    "<"                                                     { System.out.println("LESS_THAN "+yytext());return new Symbol(SimbolosMlg.LESS_THAN, yycolumn,yyline,yytext());}
-    (">="|"=>")                                             { System.out.println("GREATER_THAN_EQUAL "+yytext());return new Symbol(SimbolosMlg.GREATER_THAN_EQUAL, yycolumn,yyline,yytext());}
-    ("<="|"=<")                                             { System.out.println("LESS_THAN_EQUAL "+yytext());return new Symbol(SimbolosMlg.LESS_THAN_EQUAL, yycolumn,yyline,yytext());}
-    "("                                                     { System.out.println("PAREBNTHESIS_A "+yytext());return new Symbol(SimbolosMlg.PARENTHESIS_A, yycolumn,yyline,yytext());}
-    ")"                                                     { System.out.println("PAREBNTHESIS_B "+yytext());return new Symbol(SimbolosMlg.PARENTHESIS_B, yycolumn,yyline,yytext());}
+    "="                                                     { return new Symbol(SimbolosMlg.EQUAL, yycolumn,yyline,yytext());}
+    "<>"                                                    { return new Symbol(SimbolosMlg.DIFERENT_VB, yycolumn,yyline,yytext());}
+    ">"                                                     { return new Symbol(SimbolosMlg.GREATER_THAN, yycolumn,yyline,yytext());}
+    "<"                                                     { return new Symbol(SimbolosMlg.LESS_THAN, yycolumn,yyline,yytext());}
+    (">="|"=>")                                             { return new Symbol(SimbolosMlg.GREATER_THAN_EQUAL, yycolumn,yyline,yytext());}
+    ("<="|"=<")                                             { return new Symbol(SimbolosMlg.LESS_THAN_EQUAL, yycolumn,yyline,yytext());}
+    "("                                                     { return new Symbol(SimbolosMlg.PARENTHESIS_A, yycolumn,yyline,yytext());}
+    ")"                                                     { return new Symbol(SimbolosMlg.PARENTHESIS_B, yycolumn,yyline,yytext());}
     "+"                                    { return new Symbol(SimbolosMlg.PLUS, yycolumn,yyline,yytext());}
     "-"                                    { return new Symbol(SimbolosMlg.MINUS, yycolumn,yyline,yytext());}
     "*"                                    { return new Symbol(SimbolosMlg.MULTIPLICATION, yycolumn,yyline,yytext());}
@@ -198,23 +198,23 @@ Input_Ignore_Case= ("I"|"i")("N"|"n")("P"|"p")("U"|"u")("T"|"t")
     
 }
 <PYCODE>{
-    "%%PROGRAMA"                                    { System.out.println("PR "+yytext()); yybegin(PROGRAM); return new Symbol(SimbolosMlg.PROGRAM_SEPERATOR, yycolumn,yyline,yytext());}
+    "%%PROGRAMA"                       { System.out.println("PR "+yytext()); yybegin(PROGRAM); return new Symbol(SimbolosMlg.PROGRAM_SEPERATOR, yycolumn,yyline,yytext());}
     
     "def"                              { return new Symbol(SimbolosMlg.DEF, yycolumn,yyline,yytext());}
-    "intinput"                              { System.out.println("INTIN "+yytext());return new Symbol(SimbolosMlg.INTINPUT, yycolumn,yyline,yytext());}
-    "charinput"                              { return new Symbol(SimbolosMlg.CHARINPUT, yycolumn,yyline,yytext());}
-    "floatinput"                              { return new Symbol(SimbolosMlg.FLOATINPUT, yycolumn,yyline,yytext());}
-    "return"                                    { return new Symbol(SimbolosMlg.RETURN, yycolumn,yyline,yytext());}
-    "print"                                    { return new Symbol(SimbolosMlg.PRINT, yycolumn,yyline,yytext());}
+    "intinput"                         { return new Symbol(SimbolosMlg.INTINPUT, yycolumn,yyline,yytext());}
+    "charinput"                        { return new Symbol(SimbolosMlg.CHARINPUT, yycolumn,yyline,yytext());}
+    "floatinput"                       { return new Symbol(SimbolosMlg.FLOATINPUT, yycolumn,yyline,yytext());}
+    "return"                           { return new Symbol(SimbolosMlg.RETURN, yycolumn,yyline,yytext());}
+    "print"                            { return new Symbol(SimbolosMlg.PRINT, yycolumn,yyline,yytext());}
     "for"                              { return new Symbol(SimbolosMlg.FOR, yycolumn,yyline,yytext());}
-    "while"                              { return new Symbol(SimbolosMlg.WHILE, yycolumn,yyline,yytext());}
-    "in"                              { return new Symbol(SimbolosMlg.IN, yycolumn,yyline,yytext());}
-    "range"                              { return new Symbol(SimbolosMlg.RANGE, yycolumn,yyline,yytext());}
-    "if"                              { return new Symbol(SimbolosMlg.IF, yycolumn,yyline,yytext());}
-    "elif"                              { return new Symbol(SimbolosMlg.ELIF, yycolumn,yyline,yytext());}
-    "else"                              { return new Symbol(SimbolosMlg.ELSE, yycolumn,yyline,yytext());}
-    "True"                              { return new Symbol(SimbolosMlg.TRUE, yycolumn,yyline,yytext());}
-    "False"                              { return new Symbol(SimbolosMlg.FALSE, yycolumn,yyline,yytext());}
+    "while"                            { return new Symbol(SimbolosMlg.WHILE, yycolumn,yyline,yytext());}
+    "in"                               { return new Symbol(SimbolosMlg.IN, yycolumn,yyline,yytext());}
+    "range"                            { return new Symbol(SimbolosMlg.RANGE, yycolumn,yyline,yytext());}
+    "if"                               { return new Symbol(SimbolosMlg.IF, yycolumn,yyline,yytext());}
+    "elif"                             { return new Symbol(SimbolosMlg.ELIF, yycolumn,yyline,yytext());}
+    "else"                             { return new Symbol(SimbolosMlg.ELSE, yycolumn,yyline,yytext());}
+    "True"                             { return new Symbol(SimbolosMlg.TRUE, yycolumn,yyline,yytext());}
+    "False"                            { return new Symbol(SimbolosMlg.FALSE, yycolumn,yyline,yytext());}
     
     ","                                                     { System.out.println("COMMA "+yytext());return new Symbol(SimbolosMlg.COMMA, yycolumn,yyline,yytext());}
     
@@ -244,7 +244,27 @@ Input_Ignore_Case= ("I"|"i")("N"|"n")("P"|"p")("U"|"u")("T"|"t")
     ({Digito})+"."({Digito})+                               { System.out.println("DECIMAL "+yytext()); return new Symbol(SimbolosMlg.DECIMAL, yycolumn,yyline,yytext());}
 
     {CommentC}                               {tac.addComment(yytext());}
-    ({LineTerminator})+                        { System.out.println("SALTO ");}
+    ({LineTerminator})+ ("\t")*                       { int in=0;
+                                                    for (int i = 0; i < yytext().length(); i++) {
+                                                    if (yytext().charAt(i)=='\t') {
+                                                            in++; 
+                                                    }
+                                                    System.out.println(blockIndentation+"         "+in);
+                                                    }if(blockIndentation==in){
+                                                        System.out.println("NON <<<<<<<<<<");
+                                                    }else if(blockIndentation>in){
+                                                        Symbol sim=new Symbol(SimbolosMlg.DEDENT, yycolumn,yyline,yytext());
+                                                        blockIndentation--;
+                                                        yypushback(in);
+                                                        System.out.println("DEDENT <<<<<<<<<<");
+                                                        return sim;
+                                                    }else{
+                                                        Symbol sim=new Symbol(SimbolosMlg.INDENT, yycolumn,yyline,yytext());
+                                                        blockIndentation++;
+                                                        yypushback(in);
+                                                        System.out.println("INDENT <<<<<");
+                                                        return sim;
+                                                    }}
 [ \b]                {System.out.println("ESPACIO ");}
     ("\t")+                                 { int in=0;
                                                     for (int i = 0; i < yytext().length(); i++) {
@@ -327,6 +347,7 @@ Input_Ignore_Case= ("I"|"i")("N"|"n")("P"|"p")("U"|"u")("T"|"t")
 ({Letra}|"_")({Letra}|{Digito}|"_")*                                { System.out.println("ID "+yytext()); return new Symbol(SimbolosMlg.ID, yycolumn,yyline,yytext());}
     ({Digito})+                                             { System.out.println("NUMBER "+yytext()); return new Symbol(SimbolosMlg.NUMBER, yycolumn,yyline,yytext());}
     ({Digito})+"."({Digito})+                               { System.out.println("DECIMAL "+yytext()); return new Symbol(SimbolosMlg.DECIMAL, yycolumn,yyline,yytext());}
+    "\'" [^\''] "\'"                                                   { System.out.println("CHAR "+yytext()); return new Symbol(SimbolosMlg.CHAR, yycolumn,yyline,yytext());}
     "\"" [^\"] ~ "\""                                                   { System.out.println("STRING "+yytext()); return new Symbol(SimbolosMlg.STRING, yycolumn,yyline,yytext());}
     {LineTerminator}                        { System.out.println("SALTO ");}
      [ \t\b]                {System.out.println("ESPACIO ");}

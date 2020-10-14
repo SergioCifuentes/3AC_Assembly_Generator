@@ -123,7 +123,7 @@ public class FileMlg extends javax.swing.JPanel {
         setBackground(new java.awt.Color(0, 0, 0));
 
         mlgText.setBackground(new java.awt.Color(32, 31, 31));
-        mlgText.setFont(new java.awt.Font("DejaVu Sans", 1, 13)); // NOI18N
+        mlgText.setFont(new java.awt.Font("Dialog", 0, 13)); // NOI18N
         mlgText.setForeground(new java.awt.Color(255, 255, 255));
         mlgText.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         mlgscroll.setViewportView(mlgText);

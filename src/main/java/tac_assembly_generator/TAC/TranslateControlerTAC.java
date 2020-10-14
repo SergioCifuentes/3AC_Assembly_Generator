@@ -154,6 +154,11 @@ public class TranslateControlerTAC {
     }
 
     public ArrayList<Object> tagFunction(String function, ArrayList<Object> quads) {
+        System.out.println("TAFFGGG ========");
+        for (int i = 0; i <quads.size(); i++) {
+            System.out.println(quads.get(i));
+        }
+        System.out.println(" ========");
         quads.add(0, function + "(){");
         quads.add(quads.size() , "}");
         return quads;
@@ -170,11 +175,11 @@ public class TranslateControlerTAC {
     }
 
     public ArrayList<Object> getcurrentQuads() {
-
+      
         ArrayList<Object> obList = new ArrayList<>();
-
+        System.out.println("GEEETTTTTTTTTTTTTTTTTTTTTTTT");
         System.out.println(currentQuadrupleTable.equals(mainQuadrupleTable));
-
+        System.out.println(currentQuadrupleTable.getQuadruples());
         obList.addAll(currentQuadrupleTable.getQuadruples());
 
         currentQuadrupleTable.removeQuads();
@@ -233,9 +238,14 @@ public class TranslateControlerTAC {
         }
     }
 
-    public void creatTempIdQuadAssign(Object val, String result) {
-        SynthesizedOpAsst soa = (SynthesizedOpAsst) val;
+    public void createTempIdQuadAssign(Object val, String result) {
+        if (val.getClass().equals(SynthesizedOpAsst.class)) {
+             SynthesizedOpAsst soa = (SynthesizedOpAsst) val;
         creatTempIdQuad(Operation.EQUAL, soa.getQuadruple().getResult(), null, result);
+        }else{
+            creatTempIdQuad(Operation.EQUAL, (Integer) val, null, result);
+        }
+       
     }
 
     public void nextIdQuad() {

@@ -85,19 +85,15 @@ public class TestManager {
                     symbolTable.insertTuple(preTupleSymbols.get(i));
                     tAC.acceptIdQuad(i);
                 } else {
-                    OutputText.appendToPane(mainFrame.getOutputPannel(), "SEMANTIC ERROR:\n", Color.red, false);
-                    OutputText.appendToPane(mainFrame.getOutputPannel(), "\t No se puede asignar un valor tipo " + so.getType().getName() + " a una variable tipo " + typeManager.getOutputType(typeNumber) + "\n", Color.white, false);
-                    OutputText.appendToPane(mainFrame.getOutputPannel(), "\t Fila: ", Color.white, false);
-                    OutputText.appendToPane(mainFrame.getOutputPannel(), (symbol.right + 1) + "\n", Color.YELLOW, false);
+                    OutputErrors.assignmentError(mainFrame.getOutputPannel(), so.getType().getName(), typeManager.getOutputType(typeNumber), symbol);
+
                 }
                 //cast test
             } else {
                 Tuple findExisting = symbolTable.getTupleWithAmbit(preTupleSymbols.get(i).getName(), ambitControler.getCurrentAmbit());
                 if (findExisting != null) {
-                    OutputText.appendToPane(mainFrame.getOutputPannel(), "SEMANTIC ERROR:\n", Color.red, false);
-                    OutputText.appendToPane(mainFrame.getOutputPannel(), "\t" + preTupleSymbols.get(i).getName() + " ya ha sido declarado \n", Color.white, false);
-                    OutputText.appendToPane(mainFrame.getOutputPannel(), "\t Fila: ", Color.white, false);
-                    OutputText.appendToPane(mainFrame.getOutputPannel(), (symbol.right + 1) + "\n", Color.YELLOW, false);
+                    OutputErrors.alreadyDeclared(mainFrame.getOutputPannel(), preTupleSymbols.get(i).getName(), symbol);
+                    
                 } else {
                     preTupleSymbols.get(i).setDimension(dimension);
                     preTupleSymbols.get(i).setType(typeManager.getType(typeNumber));
@@ -116,7 +112,7 @@ public class TestManager {
     }
 
     public void insertTuple(String id, Integer type,Symbol symbol){
-        Tuple tuple= new Tuple(id,typeManager.getType(0),null, 0, symbol,ambitControler.getCurrentAmbit());
+        Tuple tuple= new Tuple(id,typeManager.getType(type),null, 0, symbol,ambitControler.getCurrentAmbit());
         symbolTable.insertTuple(tuple);
     }
 
@@ -124,7 +120,11 @@ public class TestManager {
         return mainFrame;
     }
     
-    
+    public void convertPreTuplesToConstante(){
+        for (int i = 0; i < preTupleSymbols.size(); i++) {
+            preTupleSymbols.get(i).setConstante(true);
+        }
+    }
     public String insertFunction(String id, Integer type, Symbol s) {
         Type ty = null;
         if (type != null) {
@@ -157,6 +157,18 @@ public class TestManager {
         if (symbolTable.getTupleWithAmbit(id, ambitControler.getCurrentAmbit())!=null) {
             return true;
         }else{
+            return false;
+        }
+
+    }
+    
+        public boolean checkExistence(String id,Symbol s){
+        
+        if (symbolTable.getTupleWithAmbit(id, ambitControler.getCurrentAmbit())!=null) {
+            OutputErrors.alreadyDeclared(mainFrame.getOutputPannel(), id, s);
+            return true;
+        }else{
+            
             return false;
         }
 
