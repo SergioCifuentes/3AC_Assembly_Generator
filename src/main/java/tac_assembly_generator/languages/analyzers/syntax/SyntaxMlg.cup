@@ -75,7 +75,7 @@ terminal VB_SEPERATOR, ERROR;
 terminal EQUAL, PARENTHESIS_A, PARENTHESIS_B, PLUS, MINUS, MULTIPLICATION, DIVISION, MOD, LINE_BREAK,
 POINT, AMPERSON, COMMA, INTEGER_TYPE, FLOAT_TYPE, CHAR_TYPE, OR, AND, NOT,
 INTINPUT, CHARINPUT, FLOATINPUT, PUBLIC, FOR, WHILE, DO,
-TRUE, FALSE, IF, ELSE, GREATER_THAN, RETURN, PRINT,
+TRUE, FALSE, IF, ELSE, GREATER_THAN, RETURN, PRINT,SWITCH, DEFAULT, CASE,
 LESS_THAN, GREATER_THAN_EQUAL, LESS_THAN_EQUAL, EQUAL_BOOL;
 
 terminal String STRING, ID, CHAR;
@@ -133,7 +133,8 @@ WhilePY, WhilePYHeader, AssignmentPY, ConditionPY, IfPY, IfPYHeader, Elif, ElifH
 // non Terminals MAIN
 non terminal Library, Main, MainHeader, MainCode1, InputC, Constantes, Constante, Dimensions, ArrayValues,
 Nums, Rows, Globals, Include, MainCode, MainLineCode, DeclarationC, DeclarationGlobalC,IdsC,
-AssiC, AssignmentC, ConditionC, IfCHeader, ElseC, ElseCHeader, ElseIfCHeader, SwitchCHeader, CasesC, CasesC2,
+AssiC, AssignmentC, ConditionC, IfCHeader, ElseC, ElseCHeader, ElseIfCHeader, SwitchCHeader, CaseElseCHeader, CaseCHeader,
+ CasesC, CasesC2, CaseValueC, AssignmentStepC, ForCHeaderStart,
 CaseC, CycleC, ForCHeader, WhileCHeader, StepC, OutputC, OutputValuesC, OutputValueC,
 Getch, Input, FuntionCall, FuntionIDs, ParametersC, ValueC, BoolValueC,
 OpBoolC, OpBoolC2, OpBoolC3, ArrayVal;
@@ -776,7 +777,7 @@ ProgramSeperator  ::=PROGRAM_SEPERATOR{:sma.testManager.creatSonAmbit();
                              :};
 Library::= Library Include 
             | ;
-Constantes ::= Constantes  Constante SEMICOLON){:sma.translateControlerTAC.acceptAllIdQuas();:}
+Constantes ::= Constantes  Constante SEMICOLON{:sma.translateControlerTAC.acceptAllIdQuas();:}
                 |Constante SEMICOLON {:sma.translateControlerTAC.acceptAllIdQuas();:};
 Constante::=CONST Type:type ID:id EQUAL NumberValue:val{:sma.testManager.insertPreTuple(id,null,val,null,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
                                         if(val!=null){ 
@@ -860,7 +861,7 @@ ConditionC  ::= IfCHeader:ifBool LEFT_CB MainCode:lines RIGHT_CB ElseC:elseBool 
                                                                                     if(elseBool!=null){bool.changeFatherNoBool((ArrayList<Object>)elseBool);}
                                                                                     sma.translateControlerTAC.addQuadsToCurrent(sma.translateControlerTAC.getBoolQuadControl().convertBoolToQuad(bool));
                                                                                     :}
-                |SwitchCHeader  LEFT_CB CasesC RIGHT_CB;
+                |SwitchCHeader  LEFT_CB CasesC RIGHT_CB {:sma.translateControlerTAC.addQuadsToCurrent(sma.translateControlerTAC.getBoolQuadControl().convertBoolToQuad(sma.translateControlerTAC.getSwitchAsst().getFatherCases()));:};
 IfCHeader::= IF PARENTHESIS_A OpBoolC:op PARENTHESIS_B{:sma.testManager.creatSonAmbit();
                                         sma.translateControlerTAC.createNewQuadrupleBlock();
                                         RESULT=op;:};
@@ -880,14 +881,50 @@ ElseCHeader      ::= ELSE{:sma.testManager.creatSonAmbit();
 ElseIfCHeader    ::= ELSE IF PARENTHESIS_A OpBoolC:op PARENTHESIS_B {:sma.testManager.creatSonAmbit();
                                         sma.translateControlerTAC.createNewQuadrupleBlock();
                                         RESULT =op;:};
-SwitchCHeader::=SWITCH_J PARENTHESIS_A ID PARENTHESIS_B;
+SwitchCHeader::=SWITCH PARENTHESIS_A ID:id PARENTHESIS_B {:sma.translateControlerTAC.createSwitchAsst(id);:};
 CasesC       ::=CasesC2 CaseC
-                |CasesC2 DEFAULT_J COLON MainCode BreakJ
+                |CasesC2 CaseElseCHeader:caseH COLON MainCode:lines BREAK SEMICOLON{:UniquenessTable ut=sma.testManager.createNewUniquenessTable();
+                                                                        if(caseH!=null){
+                                                                            
+                                                                            boolean verified =ut.add(caseH,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
+                                                                            if(verified){
+                                                                            
+                                                                            sma.translateControlerTAC.getSwitchAsst().addCases((String)caseH,(ArrayList<Object>)lines);}
+                                                                            }
+                                                                        RESULT=ut;:}
                 |CaseC;
 CasesC2     ::= CasesC2 CaseC
                 |CaseC;
-CaseC       ::= CASE_J COLON MainCode BreakJ;
-CycleC      ::=ForCHeader LEFT_CB MainCode RIGHT_CB
+CaseC       ::= CaseCHeader:caseH COLON MainCode:lines BREAK SEMICOLON{:UniquenessTable ut=sma.testManager.createNewUniquenessTable();
+                                                                        if(caseH!=null){
+                                                                            
+                                                                            boolean verified =ut.add(caseH,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
+                                                                            if(verified){
+                                                                            
+                                                                            sma.translateControlerTAC.getSwitchAsst().addCases((String)caseH,(ArrayList<Object>)lines);}
+                                                                            }
+                                                                        RESULT=ut;:};
+CaseCHeader ::=  CASE CaseValueC:val{:RESULT=val;
+                                            sma.testManager.creatSonAmbit();
+                                        sma.translateControlerTAC.createNewQuadrupleBlock();:};
+CaseElseCHeader ::=  DEFAULT{:RESULT=Switch.ELSE;
+                    sma.testManager.creatSonAmbit();
+                                        sma.translateControlerTAC.createNewQuadrupleBlock();:};
+
+CaseValueC  ::=NUMBER:num {:RESULT=num;:}
+                    |DECIMAL:dec {:RESULT=dec;:}
+                    |CHAR:ch  {:RESULT=ch;:}
+                    |ID:id {:Type type=sma.testManager.getTypeFromST(id,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
+                            if(type!=null){
+                                RESULT=id;
+                            }:}
+                    |ArrayVal;
+
+CycleC      ::=ForCHeader:f LEFT_CB MainCode:lines RIGHT_CB {:if(f!=null){
+                                                                For fo=(For)f;
+                                                                fo.addCode((ArrayList<Object>)lines);
+                                                                sma.translateControlerTAC.addQuadsToCurrent(fo.convertToQuad());
+                                                                }:}
                 |WhileCHeader:whileBool LEFT_CB MainCode:lines RIGHT_CB{:BoolQuad bool=(BoolQuad)whileBool;
                                                                                     if(lines!=null){bool.changeFatherYesBool((ArrayList<Object>)lines);}
                                                                                     sma.translateControlerTAC.addQuadsToCurrent(sma.translateControlerTAC.addGotoWhileTags(sma.translateControlerTAC.getBoolQuadControl().convertBoolToQuad(bool)));
@@ -896,24 +933,70 @@ CycleC      ::=ForCHeader LEFT_CB MainCode RIGHT_CB
                                                                                 sma.translateControlerTAC.addQuadsToCurrent(sma.translateControlerTAC.creatDoWhile((ArrayList<Object>)lines,(BoolQuad)op));
                                                                                 }:};
            
-ForCHeader        ::= FOR PARENTHESIS_A Type ID EQUAL ValueC SEMICOLON OpBoolC SEMICOLON StepC PARENTHESIS_B 
-                    |FOR PARENTHESIS_A ID EQUAL ValueC SEMICOLON OpBoolC SEMICOLON StepC PARENTHESIS_B ;
+ForCHeader        ::= ForCHeaderStart:id  OpBoolC:op SEMICOLON AssignmentStepC:step PARENTHESIS_B {:if (id!=null) {
+                    BoolQuad boolQuad=(BoolQuad)op;
+                    SemanticAsstIdQuad saiq= (SemanticAsstIdQuad)id;
+                    
+                    
+                     For f=sma.translateControlerTAC.createForAsst(saiq.getQuads(),step,boolQuad );
+                    RESULT=f;}:};
+
+
+ForCHeaderStart     ::=For PARENTHESIS_A Type:type1 ID:id EQUAL ValueC:val SEMICOLON {: boolean boolExistence= sma.testManager.checkExistence(id,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
+                                                if(boolExistence){
+
+                                                    if(sma.testManager.getTypeManager().isNumerico((Integer)type1)){
+                                                        sma.testManager.insertTuple(id,(Integer)type1,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
+                                                        boolean bool= sma.testManager.assigValue(id,val,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
+                                                        if(bool){sma.translateControlerTAC.createTempIdQuadAssign(val,id);
+                                                            RESULT=new SemanticAsstIdQuad(id, sma.translateControlerTAC.getcurrentTempQuads());
+                                                        }
+                                                    }else{
+                                                        sma.testManager.callNumericError(id,sma.testManager.getTypeManager().getType((Integer)type1),((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
+                                                    }
+                                                }
+                                                :}
+                        |For PARENTHESIS_A ID:id EQUAL ValueC:val SEMICOLON {:Type type=sma.testManager.getTypeFromST(id,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
+                                                    if(type!=null){
+                                                    if(sma.testManager.getTypeManager().isNumerico(type.getNumber())){
+                                                        
+                                                        boolean bool= sma.testManager.assigValue(id,val,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
+                                                        if(bool){sma.translateControlerTAC.createTempIdQuadAssign(val,id);
+                                                            RESULT=new SemanticAsstIdQuad(id, sma.translateControlerTAC.getcurrentTempQuads());
+                                                        }
+                                                    }else{
+                                                        sma.testManager.callNumericError(id,type,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
+                                                    }}:};
+
 WhileCHeader        ::= WHILE PARENTHESIS_A OpBoolC:op PARENTHESIS_B{:sma.testManager.creatSonAmbit();
                                         sma.translateControlerTAC.createNewQuadrupleBlock();
                                         RESULT=op;:}; 
-StepC          ::= ID EQUAL ValueC
-                    |ID PLUS EQUAL ValueC
-                    |ID MINUS EQUAL ValueC
-                    |ID MULTIPLICATION EQUAL ValueC
-                    |ID DIVISION EQUAL ValueC;
-OutputC         ::= PRINTF PARENTHESIS_A  OutputValuesC PARENTHESIS_B
-                    |CLRSCR PARENTHESIS_A PARENTHESIS_B;
-OutputValuesC   ::= OutputValuesC COMMA OutputValueC
-                    |OutputValueC;
-OutputValueC    ::= NUMBER
-                    |ID
-                    |DECIMAL
-                    |STRING;
+AssignmentStepC::= ID:id EQUAL ValueC:val {:boolean bool= sma.testManager.assigValue(id,val,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
+                                                if(bool){sma.translateControlerTAC.createTempIdQuadAssign(val,id);
+                                                        RESULT=sma.translateControlerTAC.getcurrentTempQuads();}:} ;
+
+
+OutputC         ::= PRINTF PARENTHESIS_A  OutputValuesC:vals PARENTHESIS_B {: if(vals!=null){
+                                                                                                sma.translateControlerTAC.addQuadsToCurrent((ArrayList<Object>)vals);
+                                                                                                
+                                                                                            }:}
+                    |CLRSCR PARENTHESIS_A PARENTHESIS_B {:sma.translateControlerTAC.addClrScrToCurrent();:};
+OutputValuesC   ::= OutputValuesC:vals COMMA OutputValueC:val {:ArrayList<Object> printQuad= new ArrayList<Object>();
+                                    printQuad.addAll((ArrayList<Object>)vals);
+                                    printQuad.addAll((ArrayList<Object>)val);
+                                    RESULT=printQuad;:}
+                    |OutputValueC:val {:ArrayList<Object> printQuad= new ArrayList<Object>();
+                                    printQuad.addAll((ArrayList<Object>)val);
+                                    RESULT=printQuad;:};
+OutputValueC    ::= NumberValue:val {:ArrayList<Object> printQuad= new ArrayList<Object>();
+                                    printQuad.addAll(sma.translateControlerTAC.getcurrentTempQuads());
+                                    printQuad.add(sma.translateControlerTAC.createPrintQuad(val));
+                                    RESULT=printQuad;:}
+                    |STRING:string {:ArrayList<Object> printQuad= new ArrayList<Object>();
+                                    printQuad.add(sma.translateControlerTAC.createPrintQuad(string));
+                                    RESULT=printQuad;:}
+                    |FuntionCall
+                    |ArrayVal;
 
 Getch ::=GETCH PARENTHESIS_A PARENTHESIS_B;
 Input   ::= SCAN_F PARENTHESIS_A STRING COMMA AMPERSON ID PARENTHESIS_B ;

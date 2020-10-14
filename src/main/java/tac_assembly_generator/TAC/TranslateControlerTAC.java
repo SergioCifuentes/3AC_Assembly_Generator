@@ -55,6 +55,9 @@ public class TranslateControlerTAC {
     public For createForAsst(ArrayList<Object> assigment, String step, BoolQuad quad, String id) {
         return new For(tempGenerator, assigment, step, quad, id);
     }
+        public For createForAsst(ArrayList<Object> assigment, Object step, BoolQuad quad) {
+        return new For(tempGenerator, assigment, step, quad);
+    }
 
     public void addComment(String comment) {
 
@@ -286,6 +289,9 @@ public class TranslateControlerTAC {
 
     }
 
+    public void addClrScrToCurrent(){
+        currentQuadrupleTable.addQuad(new Quadruple(Operation.CLRSCR, null,null, null));
+    }
     public void removeIdQuads() {
         //remove temperory variables
         currentQuadrupleTable.removeIdQuads();

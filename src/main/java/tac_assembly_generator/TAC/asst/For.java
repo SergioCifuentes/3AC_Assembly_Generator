@@ -26,19 +26,21 @@ public class For {
     private String id;
     private String tag;
 
-    public For(TempGenerator tempGenerator, ArrayList<Object> assigment, ArrayList<Object> step, BoolQuad compare,String id) {
-        this.tempGenerator = tempGenerator;
-        this.assigment = assigment;
-        this.step = step;
-        this.compare = compare;
-        this.id=id;
-    }
+ 
 
     public For(TempGenerator tempGenerator, ArrayList<Object> assigment, String step, BoolQuad compare,String id) {
         this.tempGenerator = tempGenerator;
         this.compare=compare;
         this.assigment = assigment;
         this.stepString = step;
+        this.id=id;
+    }
+    
+        public For(TempGenerator tempGenerator, ArrayList<Object> assigment, Object step, BoolQuad compare) {
+        this.tempGenerator = tempGenerator;
+        this.compare=compare;
+        this.assigment = assigment;
+        this.step=(ArrayList<Object>)step;
         this.id=id;
     }
 
@@ -52,9 +54,12 @@ public class For {
             }else{
                 stepQuadruple= new Quadruple(Operation.PLUS,id, stepString, id);
             }  
+            code.add(stepQuadruple);
+        }else{
+            code.addAll(step);
         }
          Quadruple returnQuad = new Quadruple(Operation.GO_TO, null,null, tag);
-        code.add(stepQuadruple);
+        
         code.add(returnQuad);
         compare.changeFatherNoBool(code);
     }

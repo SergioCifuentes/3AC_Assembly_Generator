@@ -297,9 +297,9 @@ Input_Ignore_Case= ("I"|"i")("N"|"n")("P"|"p")("U"|"u")("T"|"t")
     "char"                                    { return new Symbol(SimbolosMlg.CHAR_TYPE, yycolumn,yyline,yytext());}
     "if"                              { return new Symbol(SimbolosMlg.IF, yycolumn,yyline,yytext());}
     "else"                              { return new Symbol(SimbolosMlg.ELSE, yycolumn,yyline,yytext());}
-    "switch"                              { return new Symbol(SimbolosMlg.SWITCH_J, yycolumn,yyline,yytext());}
-    "case"                              { return new Symbol(SimbolosMlg.CASE_J, yycolumn,yyline,yytext());}
-    "default"                              { return new Symbol(SimbolosMlg.DEFAULT_J, yycolumn,yyline,yytext());}
+    "switch"                              { return new Symbol(SimbolosMlg.SWITCH, yycolumn,yyline,yytext());}
+    "case"                              { return new Symbol(SimbolosMlg.CASE, yycolumn,yyline,yytext());}
+    "default"                              { return new Symbol(SimbolosMlg.DEFAULT, yycolumn,yyline,yytext());}
     "break"                              { return new Symbol(SimbolosMlg.BREAK, yycolumn,yyline,yytext());}
     "for"                              { return new Symbol(SimbolosMlg.FOR, yycolumn,yyline,yytext());}
     "while"                              { return new Symbol(SimbolosMlg.WHILE, yycolumn,yyline,yytext());}

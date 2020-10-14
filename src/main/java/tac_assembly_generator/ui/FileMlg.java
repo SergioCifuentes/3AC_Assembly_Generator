@@ -52,6 +52,10 @@ public class FileMlg extends javax.swing.JPanel {
     public JTextPane getOPText() {
         return optText;
     }
+
+    public JTextPane getAssemblerText() {
+        return assemblerText;
+    }
     
 
 

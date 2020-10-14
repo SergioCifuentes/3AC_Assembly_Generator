@@ -172,5 +172,12 @@ public class FileManager {
 
     }
 
+    public void cleanTextPanes(int selectedIndex) {
+        files.get(selectedIndex).getOptText().setText("");
+        files.get(selectedIndex).gettACText().setText("");
+        files.get(selectedIndex).getOPText().setText("");
+        files.get(selectedIndex).getAssemblerText().setText("");
+    }
+
 
 }

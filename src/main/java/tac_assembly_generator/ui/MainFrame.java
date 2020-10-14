@@ -234,6 +234,7 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_saveAsMenuItemActionPerformed
 
     private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
+        fileManager.cleanTextPanes(tabs.getSelectedIndex());
         fileManager.getFiles().get(tabs.getSelectedIndex()).getLanguageManager().generateTAC(this);
     }//GEN-LAST:event_jMenuItem6ActionPerformed
     public void addFileMlg(FileMlg newFile) {

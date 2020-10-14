@@ -29,6 +29,7 @@ public class Operation {
     public static final int GO_TO = 16;
     public static final int CASE = 17;
     public static final int PRINT = 18;
+    public static final int CLRSCR = 19;
 
     public static String getIntOpOutput(int op) {
         switch (op) {
