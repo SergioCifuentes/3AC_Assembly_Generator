@@ -16,17 +16,27 @@ public class Quadruple {
     private Object arg1;
     private Object arg2;
     private String result;
+    private boolean constante;
 
     public Quadruple(Integer op, Object arg1, Object arg2, String result) {
         this.op = op;
         this.arg1 = arg1;
         this.arg2 = arg2;
         this.result = result;
+        constante=false;
     }
 
     @Override
     public String toString() {
         return "Quadruple{" + "op=" + op + ", arg1=" + arg1 + ", arg2=" + arg2 + ", result=" + result + '}';
+    }
+
+    public boolean isConstante() {
+        return constante;
+    }
+
+    public void setConstante(boolean constante) {
+        this.constante = constante;
     }
 
     public Integer getOp() {

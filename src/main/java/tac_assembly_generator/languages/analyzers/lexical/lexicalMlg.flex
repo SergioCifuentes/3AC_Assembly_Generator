@@ -75,9 +75,9 @@ Input_Ignore_Case= ("I"|"i")("N"|"n")("P"|"p")("U"|"u")("T"|"t")
     ("E"|"e")("N"|"n")("D"|"d")                                         { return new Symbol(SimbolosMlg.END_VB, yycolumn,yyline,yytext());}
     ("A"|"a")("S"|"s")                                                  { return new Symbol(SimbolosMlg.AS_VB, yycolumn,yyline,yytext());}
     ("R"|"r")("E"|"e")("T"|"t")("I"|"i")("N"|"n")("P"|"p")              {  return new Symbol(SimbolosMlg.RETURN_VB, yycolumn,yyline,yytext());}
-    ("I"|"i")("N"|"n")("T"|"t"){Input_Ignore_Case}                      {return new Symbol(SimbolosMlg.INTINPUT, yycolumn,yyline,yytext());}
-    ("C"|"c")("H"|"h")("A"|"a")("R"|"r"){Input_Ignore_Case}             { return new Symbol(SimbolosMlg.FLOATINPUT, yycolumn,yyline,yytext());}
-    ("F"|"f")("L"|"l")("O"|"o")("A"|"a")("T"|"t"){Input_Ignore_Case}    { return new Symbol(SimbolosMlg.CHARINPUT, yycolumn,yyline,yytext());}
+    ("I"|"i")("N"|"n")("T"|"t")("I"|"i")("N"|"n")("P"|"p")("U"|"u")("T"|"t")                      {return new Symbol(SimbolosMlg.INTINPUT, yycolumn,yyline,yytext());}
+    ("C"|"c")("H"|"h")("A"|"a")("R"|"r")("I"|"i")("N"|"n")("P"|"p")("U"|"u")("T"|"t")            {System.out.println("CHHHEEEEEEEEEEEEEEEEEAAAAAAAAAAAAAAAR"); return new Symbol(SimbolosMlg.CHARINPUT, yycolumn,yyline,yytext());}
+    ("F"|"f")("L"|"l")("O"|"o")("A"|"a")("T"|"t")("I"|"i")("N"|"n")("P"|"p")("U"|"u")("T"|"t")   { return new Symbol(SimbolosMlg.FLOATINPUT, yycolumn,yyline,yytext());}
     ("C"|"c")("O"|"o")("N"|"n")("S"|"s")("O"|"o")("L"|"l")("E"|"e")     { return new Symbol(SimbolosMlg.CONSOLE_VB, yycolumn,yyline,yytext());}
     ("W"|"w")("R"|"r")("I"|"i")("T"|"t")("E"|"e")                       { return new Symbol(SimbolosMlg.WRITE_VB, yycolumn,yyline,yytext());}
     ("W"|"w")("R"|"r")("I"|"i")("T"|"t")("E"|"e")("L"|"l")("N"|"n")     {  return new Symbol(SimbolosMlg.WRITELN_VB, yycolumn,yyline,yytext());}

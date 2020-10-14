@@ -21,6 +21,9 @@ public class TypeManager {
     public static final int BOOL_TYPE = 4;
     private static final String VAR_NAME = "var";
     public static final int VAR_TYPE = 5;
+    private static final String CLASS_NAME = "class";
+    public static final int CLASS_TYPE = 6;
+    public static final Type CLASS= new Type(CLASS_NAME, CLASS_TYPE,null);
 
     public static final int VB_TYPES = 1;
     public static final int JAVA_TYPES = 2;
@@ -35,7 +38,7 @@ public class TypeManager {
     }
 
     public Type operateTypes(Integer type1, Integer type2) {
-
+        
         if (type2 == null) {
             return getType(type1);
         } else {
@@ -138,11 +141,16 @@ public class TypeManager {
     }
 
     public void loadnextType() {
+        
+       
         switch (languageType) {
             case VB_TYPES:
+                 System.out.println("SWWWWWWWWWWWWWWWWWWWWW JAVA");
                 loadTypes(JAVA_TYPES);
                 break;
             case JAVA_TYPES:
+                System.out.println("SWWWWWWWWWWWWWWWWWWWWW pY");
+                
                 loadTypes(PYTHON_TYPES);
                 break;
             case PYTHON_TYPES:
@@ -167,14 +175,14 @@ public class TypeManager {
             case JAVA_TYPES:
                 types[0] = new Type(FLOAT_NAME, FLOAT_TYPE, null);
                 types[1] = new Type(INTEGER_NAME, INTEGER_TYPE, types[0]);
-                types[2] = new Type(CHAR_NAME, CHAR_TYPE, types[2]);
+                types[2] = new Type(CHAR_NAME, CHAR_TYPE, types[1]);
                 types[3] = new Type(BOOL_NAME, BOOL_TYPE, null);
 
-                break;
+                   break;
             case PYTHON_TYPES:
                 types[0] = new Type(FLOAT_NAME, FLOAT_TYPE, null);
                 types[1] = new Type(INTEGER_NAME, INTEGER_TYPE, types[0]);
-                types[2] = new Type(CHAR_NAME, CHAR_TYPE, types[2]);
+                types[2] = new Type(CHAR_NAME, CHAR_TYPE, types[1]);
                 types[3] = new Type(BOOL_NAME, BOOL_TYPE, null);
                 types[4] = new Type(VAR_NAME, VAR_TYPE, null);
                 break;

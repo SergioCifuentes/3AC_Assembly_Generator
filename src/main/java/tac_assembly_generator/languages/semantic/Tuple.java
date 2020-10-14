@@ -46,8 +46,11 @@ public class Tuple {
     public String generateFunctionName(String language){
         
         String name=language+"_"+this.name;
-        for (int i = 0; i < parameters.size(); i++) {
+        if (parameters!=null) {
+            for (int i = 0; i < parameters.size(); i++) {
             name+="_"+TypeManager.getOutputTypeStatic(parameters.get(i).type.getNumber());
+        }
+        
         }
         tacFunctionName=name;
         String output="";
@@ -104,6 +107,15 @@ public class Tuple {
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    public String generateClassName(String language) {
+         String name=language+"_"+this.name;
+        tacFunctionName=name;
+        String output="";
+            output+="class ";
+        output+=name;
+        return output;
     }
     
     

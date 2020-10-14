@@ -113,6 +113,17 @@ public class TranslateControlerTAC {
         }
     }
 
+    public ArrayList<Object> createInputQuads(String id,String string){
+        ArrayList<Object> quads= new ArrayList<>();
+        quads.add(createPrintQuad(string));
+        if (id!=null) {
+            quads.add(new Quadruple(Operation.READ, null,null, id));
+        }else{
+            quads.add(new Quadruple(Operation.READ, null,null, null));
+        }
+        return quads;
+    }
+    
     public void convertQuads(ArrayList<Object> obs) {
         for (int i = 0; i < obs.size(); i++) {
             System.out.println(obs.get(i));
@@ -157,14 +168,13 @@ public class TranslateControlerTAC {
     }
 
     public ArrayList<Object> tagFunction(String function, ArrayList<Object> quads) {
-        System.out.println("TAFFGGG ========");
-        for (int i = 0; i <quads.size(); i++) {
-            System.out.println(quads.get(i));
+        ArrayList<Object> aux= new ArrayList<>();
+        aux.add(function + "(){");
+        if (quads!=null) {
+            aux.addAll(quads);
         }
-        System.out.println(" ========");
-        quads.add(0, function + "(){");
-        quads.add(quads.size() , "}");
-        return quads;
+        aux.add("}");
+        return aux;
     }
 
     public Quadruple createPrintQuad(Object print) {
@@ -241,12 +251,12 @@ public class TranslateControlerTAC {
         }
     }
 
-    public void createTempIdQuadAssign(Object val, String result) {
+    public Quadruple createTempIdQuadAssign(Object val, String result) {
         if (val.getClass().equals(SynthesizedOpAsst.class)) {
              SynthesizedOpAsst soa = (SynthesizedOpAsst) val;
-        creatTempIdQuad(Operation.EQUAL, soa.getQuadruple().getResult(), null, result);
+        return creatTempIdQuad(Operation.EQUAL, soa.getQuadruple().getResult(), null, result);
         }else{
-            creatTempIdQuad(Operation.EQUAL, (Integer) val, null, result);
+            return creatTempIdQuad(Operation.EQUAL, (Integer) val, null, result);
         }
        
     }

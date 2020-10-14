@@ -41,6 +41,15 @@ public class OutputErrors {
         OutputText.appendToPane(textPane, "\t Columna: ", Color.white, false);
         OutputText.appendToPane(textPane, (symbol.left + 1) + "\n", Color.YELLOW, false);
     }
+    
+        public static void typeOpError(JTextPane textPane, String type1, String type2,String id, Symbol symbol) {
+        OutputText.appendToPane(textPane, "SEMANTIC ERROR:\n", Color.red, false);
+        OutputText.appendToPane(textPane, "\t No se puede asignar un " + type2 + " a " + id + " que es un "+type1+" \n", Color.white, false);
+        OutputText.appendToPane(textPane, "\t Fila: ", Color.white, false);
+        OutputText.appendToPane(textPane, (symbol.right + 1) + "\n", Color.YELLOW, false);
+        OutputText.appendToPane(textPane, "\t Columna: ", Color.white, false);
+        OutputText.appendToPane(textPane, (symbol.left + 1) + "\n", Color.YELLOW, false);
+    }
 
     public static void typeOpBoolError(JTextPane textPane, String type1, String type2, Symbol symbol) {
         OutputText.appendToPane(textPane, "SEMANTIC ERROR:\n", Color.red, false);
@@ -104,9 +113,19 @@ public class OutputErrors {
         OutputText.appendToPane(textPane, "\t Columna: ", Color.white, false);
         OutputText.appendToPane(textPane, (symbol.left + 1) + "\n", Color.YELLOW, false);
     }
-        public static void assignmentError(JTextPane textPane, String type1,String type2, Symbol symbol) {
+
+    public static void assignmentError(JTextPane textPane, String type1, String type2, Symbol symbol) {
         OutputText.appendToPane(textPane, "SEMANTIC ERROR:\n", Color.red, false);
-        OutputText.appendToPane(textPane,"\t No se puede asignar un valor tipo " + type1 + " a una variable tipo " + type2 + "\n", Color.white, false);
+        OutputText.appendToPane(textPane, "\t No se puede asignar un valor tipo " + type1 + " a una variable tipo " + type2 + "\n", Color.white, false);
+        OutputText.appendToPane(textPane, "\t Fila: ", Color.white, false);
+        OutputText.appendToPane(textPane, (symbol.right + 1) + "\n", Color.YELLOW, false);
+        OutputText.appendToPane(textPane, "\t Columna: ", Color.white, false);
+        OutputText.appendToPane(textPane, (symbol.left + 1) + "\n", Color.YELLOW, false);
+    }
+
+    public static void alreadyDeclaredFunctions(JTextPane textPane, String id, Symbol symbol) {
+        OutputText.appendToPane(textPane, "SEMANTIC ERROR:\n", Color.red, false);
+        OutputText.appendToPane(textPane, "\tFuncion: " + id + " ya ha sido declarado \n", Color.white, false);
         OutputText.appendToPane(textPane, "\t Fila: ", Color.white, false);
         OutputText.appendToPane(textPane, (symbol.right + 1) + "\n", Color.YELLOW, false);
         OutputText.appendToPane(textPane, "\t Columna: ", Color.white, false);

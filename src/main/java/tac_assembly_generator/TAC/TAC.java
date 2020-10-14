@@ -68,6 +68,9 @@ public class TAC {
             } else if (quadAsst.getOp().equals(Operation.GO_TO)) {
                     OutputText.appendToPane(mainFrame.getTACPannel(),Operation.getIntOpOutput(quadAsst.getOp())+" "+ quadAsst.getResult() + "\n", Color.white, false);
             }else if (quadAsst.getOp() ==Operation.EQUAL) {
+                if (quadAsst.isConstante()) {
+                    OutputText.appendToPane(mainFrame.getTACPannel(),"const ", Color.white, false);
+                }
                  String tacQuad = quadAsst.getResult() + Operation.getIntOpOutput(quadAsst.getOp())  + quadAsst.getArg1() ;
                  OutputText.appendToPane(mainFrame.getTACPannel(), tacQuad + "\n", Color.white, false);
             } else if (quadAsst.getOp() <= Operation.MINUS) {
@@ -79,6 +82,14 @@ public class TAC {
                  OutputText.appendToPane(mainFrame.getTACPannel(),Operation.getIntOpOutput(quadAsst.getOp())+" "+quadAsst.getResult()+"\n", Color.white, false);
             }else if (quadAsst.getOp() == Operation.CLRSCR) {
                  OutputText.appendToPane(mainFrame.getTACPannel(),"clrscr()\n", Color.white, false);
+            }else if (quadAsst.getOp() == Operation.READ) {
+                
+                 OutputText.appendToPane(mainFrame.getTACPannel(),"read ", Color.white, false);
+                 if (quadAsst.getResult()!=null) {
+                    OutputText.appendToPane(mainFrame.getTACPannel(),quadAsst.getResult() +"\n", Color.white, false);
+                }else{
+                     OutputText.appendToPane(mainFrame.getTACPannel(),"\n", Color.white, false);
+                 }
             }
             
         }

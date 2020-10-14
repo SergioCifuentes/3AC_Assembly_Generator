@@ -8,6 +8,7 @@ package tac_assembly_generator.languages.semantic;
 import java.awt.Color;
 import java.util.ArrayList;
 import java_cup.runtime.Symbol;
+import javax.swing.JTextPane;
 import tac_assembly_generator.languages.semantic.type.Type;
 import tac_assembly_generator.languages.semantic.type.TypeManager;
 import tac_assembly_generator.languages.semantic.verification.ParameterControl;
@@ -46,6 +47,22 @@ public class SymbolTable {
         }
         return null;
     }
+    
+        public Tuple getTupleWithAmbit(String id, Ambit ambit,Type type) {
+
+        ArrayList<Tuple> tuplesWithId = new ArrayList<>();
+        for (int i = 0; i < symbols.size(); i++) {
+            if (symbols.get(i).getName().equals(id) && symbols.get(i).getParameters() == null) {
+                tuplesWithId.add(symbols.get(i));
+            }
+        }
+        for (int i = 0; i < tuplesWithId.size(); i++) {
+            if (tuplesWithId.get(i).getAmbit().isSon(ambit)&&tuplesWithId.get(i).getType().equals(type)) {
+                return tuplesWithId.get(i);
+            }
+        }
+        return null;
+    }
 
     public Type getTypeWithAmbit(String id, Ambit ambit, MainFrame mainFrame, Symbol symbol) {
         ArrayList<Tuple> tuplesWithId = new ArrayList<>();
@@ -68,7 +85,7 @@ public class SymbolTable {
         return null;
     }
 
-    public Tuple insertFunction(String id, Type type, ParameterControl parameterControl,Symbol symbol,Ambit ambit) {
+    public Tuple insertFunction(String id, Type type, ParameterControl parameterControl,Symbol symbol,Ambit ambit, JTextPane textPane) {
 
         ArrayList<Tuple> tuplesWithId = new ArrayList<>();
        
@@ -79,6 +96,7 @@ public class SymbolTable {
         }
         for (int i = 0; i < tuplesWithId.size(); i++) {
             if (compateParameters(tuplesWithId.get(i).getParameters(),parameterControl.getTypes())) {
+            OutputErrors.alreadyDeclaredFunctions(textPane, id, symbol);
                 return null;
             }
         }
