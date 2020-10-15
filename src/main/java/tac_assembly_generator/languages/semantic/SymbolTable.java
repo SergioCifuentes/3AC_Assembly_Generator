@@ -33,15 +33,17 @@ public class SymbolTable {
     }
 
     public Tuple getTupleWithAmbit(String id, Ambit ambit) {
-
+        
         ArrayList<Tuple> tuplesWithId = new ArrayList<>();
         for (int i = 0; i < symbols.size(); i++) {
+            
             if (symbols.get(i).getName().equals(id) && symbols.get(i).getParameters() == null) {
                 tuplesWithId.add(symbols.get(i));
             }
         }
+        
         for (int i = 0; i < tuplesWithId.size(); i++) {
-            if (tuplesWithId.get(i).getAmbit().isSon(ambit)) {
+            if (ambit.isSon(tuplesWithId.get(i).getAmbit())) {
                 return tuplesWithId.get(i);
             }
         }
@@ -85,6 +87,25 @@ public class SymbolTable {
         return null;
     }
 
+    public ArrayList<Tuple> getLanguageFunctions(String language){
+        ArrayList<Tuple> tuplesOfLanguage = new ArrayList<>();
+        for (int i = 0; i < symbols.size(); i++) {
+            if (symbols.get(i).getLanguage()!=null&&symbols.get(i).getLanguage().equals(language)&&symbols.get(i).getParameters()!=null) {
+                tuplesOfLanguage.add(symbols.get(i));
+            }
+        }
+        return tuplesOfLanguage;
+    }
+       public ArrayList<Tuple> getLanguageFunctions(String language, String function){
+        ArrayList<Tuple> tuplesOfLanguage = new ArrayList<>();
+        for (int i = 0; i < symbols.size(); i++) {
+            if (symbols.get(i).getLanguage()!=null&&symbols.get(i).getLanguage().equals(language)&&symbols.get(i).getParameters()!=null&& symbols.get(i).getName().contains(function)) {
+                tuplesOfLanguage.add(symbols.get(i));
+            }
+        }
+        return tuplesOfLanguage;
+    }
+    
     public Tuple insertFunction(String id, Type type, ParameterControl parameterControl,Symbol symbol,Ambit ambit, JTextPane textPane) {
 
         ArrayList<Tuple> tuplesWithId = new ArrayList<>();

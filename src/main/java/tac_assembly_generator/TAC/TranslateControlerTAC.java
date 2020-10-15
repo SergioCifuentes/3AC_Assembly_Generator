@@ -37,6 +37,16 @@ public class TranslateControlerTAC {
         return boolQuadControl;
     }
 
+    public void addTempQuads(ArrayList<Object> quads){
+        
+        for (int i = 0; i < quads.size(); i++) {
+            currentQuadrupleTable.addIdQuad(quads.get(i));
+        }
+    }
+    public TempGenerator getTempGenerator() {
+        return tempGenerator;
+    }
+
     public TAC getTac() {
         return tac;
     }
@@ -289,7 +299,7 @@ public class TranslateControlerTAC {
         currentQuadrupleTable.acceptIdQuad(index);
     }
 
-    public void acceptAllIdQuas() {
+        public void acceptAllIdQuas() {
         for (int i = 0; i < currentQuadrupleTable.getIdQuads().size(); i++) {
             acceptIdQuad(i);
         }
@@ -335,6 +345,27 @@ public class TranslateControlerTAC {
         return quads;
     }
 
+    public ArrayList<Object> createArrayQuads(String id, ArrayList<Object>dimensions){
+    ArrayList<Object> quads= new ArrayList<>();
+        if (dimensions.size()==1) {
+            quads.add(new Quadruple(Operation.ARRAY, dimensions.get(0),null, id));
+        }else{
+            String result=(String)dimensions.get(0);
+            for (int i = 1; i < dimensions.size(); i++) {
+                String temp=tempGenerator.generateTemp();
+                quads.add( new Quadruple(Operation.MULTIPLICATION, result, dimensions.get(i), temp));
+                result=temp;
+            }
+            quads.add(new Quadruple(Operation.ARRAY, result,null, id));
+            
+            
+        }
+        
+        return quads;
+    
+    }
+    
+    
     public void addQuadsToCurrent(ArrayList<Object> quads) {
         currentQuadrupleTable.addQuads(quads);
     }

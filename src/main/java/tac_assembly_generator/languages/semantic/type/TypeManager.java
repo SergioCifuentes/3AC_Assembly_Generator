@@ -151,12 +151,9 @@ public class TypeManager {
        
         switch (languageType) {
             case VB_TYPES:
-                 System.out.println("SWWWWWWWWWWWWWWWWWWWWW JAVA");
                 loadTypes(JAVA_TYPES);
                 break;
-            case JAVA_TYPES:
-                System.out.println("SWWWWWWWWWWWWWWWWWWWWW pY");
-                
+            case JAVA_TYPES:                
                 loadTypes(PYTHON_TYPES);
                 break;
             case PYTHON_TYPES:

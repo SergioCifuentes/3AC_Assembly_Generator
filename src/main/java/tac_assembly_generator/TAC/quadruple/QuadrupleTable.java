@@ -52,6 +52,9 @@ public class QuadrupleTable {
     }
 
     public void addIdQuad(Object quadruple) {
+        
+        
+        System.out.println("QUUUUUUUUUUUUU "+idQuads.size() +" "+quadruple);
         if (idQuads.isEmpty()) {
             idQuads.add(new ArrayList<>());
         }

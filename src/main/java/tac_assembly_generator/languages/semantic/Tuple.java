@@ -16,13 +16,15 @@ import tac_assembly_generator.languages.semantic.type.TypeManager;
  */
 public class Tuple {
     private String name;
+    private String functionName;
     private Type type;
     private Object value;
     private Symbol symbol;
     private Ambit ambit;
     private ArrayList<Tuple> parameters;
+    private ArrayList<Object> dimensions;
     private Tuple classFather;
-    private String tacFunctionName;
+    private String language;
     private boolean constante;
     //0 normal type
     //1 one dimension array ...
@@ -40,6 +42,10 @@ public class Tuple {
         
     }
 
+    public String getLanguage() {
+        return language;
+    }
+
     public void setClassFather(Tuple classFather) {
         this.classFather = classFather;
     }
@@ -47,8 +53,22 @@ public class Tuple {
     public void setConstante(boolean constante) {
         this.constante = constante;
     }
+
+    public void setDimensions(ArrayList<Object> dimensions) {
+        this.dimensions = dimensions;
+    }
+
+    public String getFunctionName() {
+        return functionName;
+    }
+    
+    public ArrayList<Object> getDimension(){
+        return dimensions;
+    }
+    
     
     public String generateFunctionName(String language){
+        this.language=language;
         if (classFather!=null) {
              name=language+"_"+classFather.getName()+"_"+this.name;
         }else{
@@ -61,8 +81,6 @@ public class Tuple {
         }
         
         }
-        
-        tacFunctionName=name;
         String output="";
         if (type==null) {
             output+="void ";
@@ -122,7 +140,6 @@ public class Tuple {
 
     public String generateClassName(String language) {
          String name=language+"_"+this.name;
-        tacFunctionName=name;
         String output="";
             output+="class ";
         output+=name;
