@@ -147,18 +147,6 @@ public class TranslateControlerTAC {
         }
     }
 
-    public void printQuads() {
-        for (int i = 0; i < mainQuadrupleTable.getQuadruples().size(); i++) {
-            Object ob = mainQuadrupleTable.getQuadruples().get(i);
-            if (ob.getClass() == Quadruple.class) {
-                Quadruple qu = (Quadruple) ob;
-                System.out.println(i + " " + qu.getOp() + " " + qu.getArg1() + " " + qu.getArg2() + " " + qu.getResult());
-            } else {
-                System.out.println(ob.toString());
-            }
-
-        }
-    }
 
     public ArrayList<Object> getcurrentTempQuads() {
         ArrayList<Object> obList = new ArrayList<>();

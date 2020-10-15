@@ -17,7 +17,7 @@ public class LineNumber extends JPanel
     public final static float LEFT = 0.0f;
     public final static float CENTER = 0.5f;
     public final static float RIGHT = 1.0f;
-    private Color color1 = Color.gray;
+    private Color color1 = Color.WHITE;
     private final static Border OUTER = new MatteBorder(0, 0, 0, 2,Color.BLACK);
 
     private final static int HEIGHT = Integer.MAX_VALUE - 1000000;

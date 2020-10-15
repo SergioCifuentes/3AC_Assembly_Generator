@@ -97,11 +97,11 @@ action code{:
 terminal VB_SEPERATOR, ERROR;
 
 // Terminals Common Symbols & Keywords*/
-terminal EQUAL, PARENTHESIS_A, PARENTHESIS_B, PLUS, MINUS, MULTIPLICATION, DIVISION, MOD, LINE_BREAK,
+terminal EQUAL, PARENTHESIS_A, PARENTHESIS_B, PLUS, MINUS, MULTIPLICATION, DIVISION, MOD,
 POINT, AMPERSON, COMMA, INTEGER_TYPE, FLOAT_TYPE, CHAR_TYPE, OR, AND, NOT,
 INTINPUT, CHARINPUT, FLOATINPUT, PUBLIC, FOR, WHILE, DO,
 TRUE, FALSE, IF, ELSE, GREATER_THAN, RETURN, PRINT,SWITCH, DEFAULT, CASE,
-LESS_THAN, GREATER_THAN_EQUAL, LESS_THAN_EQUAL, EQUAL_BOOL;
+LESS_THAN, GREATER_THAN_EQUAL, LESS_THAN_EQUAL;
 
 terminal String STRING, ID, CHAR;
 
@@ -118,8 +118,8 @@ ELSE_IF_VB, THEN_VB, SELECT_VB, CASE_VB ;
 
 // Terminals Java */
 terminal PYTHON_SEPERATOR, CLASS_J, VOID_J, RETURN_J, SYSTEM_OUT_PRINTLN,
-SYSTEM_OUT_PRINT, SWITCH_J, CASE_J, DEFAULT_J, BREAK, SEMICOLON,
-LEFT_CB, RIGHT_CB, COLON, DIFERENT_J;
+SYSTEM_OUT_PRINT, SWITCH_J, BREAK, SEMICOLON,
+LEFT_CB, RIGHT_CB, COLON;
 
 // Terminals Python*/
 terminal PROGRAM_SEPERATOR, DEDENT, INDENT, DEF, IN, RANGE, ELIF;
@@ -142,12 +142,12 @@ DeTypeVb, IdsVb, AssiVb, AssignmentVb, ConditionVb, IfVb, IfVbHeader, ElseVb, El
 CasesVb, CasesVbHeader, CaseValue;
 
 //Non-terminals JAVA*/
-non terminal ClaseJ, ClaseJHeader,ConditionJHeader, ParametersJ, ParameterJ, JavaClassCode, ClassCodeJ,
+non terminal ClaseJ, ClaseJHeader,ConstructorJHeader, ParametersJ, ParameterJ, JavaClassCode, ClassCodeJ,
 FunctionJ, FunctionJHeader, ProcessJ, ProcessJHeader, LineCodesJ, LineCodeJ3, LineCodesJ2, StringValue,
 ValuesOutputJ, ValJ, LineCodeJ, OutputJ, InputJ, JavaClassCode1,
-CycleJ, ForJHeader, ForJHeaderStarter, AssignmentStepJ, WhileJHeader , DeclarationJ, AssignmentJ, ConditionJ, IfJ,
+CycleJ, ForJHeader, ForJHeaderStarter, AssignmentStepJ, WhileJHeader , DeclarationJ, AssignmentJ, ConditionJ,
 IfJHeader, ElseJ, ElseIfJHeader, ElseJHeader, SwitchJHeader, CasesJ1, CaseJHeader, CasesJ2, CaseJ, BreakJ,
-ExBoolJ, BoolValueJ, OpBoolJ, ConstructorJ; 
+ExBoolJ, BoolValueJ, ConstructorJ; 
 
 //Non-terminals PY*/
 non terminal FunctionPY, FunctionLinesPY1, FunctionPYHeader, ParametersPY, IdsPY, FunctionLinesPY, LinesPY,
@@ -165,8 +165,8 @@ Getch, Input, FuntionCall, FuntionIDs, ParametersC, ValueC, BoolValueC,FuntionID
 OpBoolC, OpBoolC2, OpBoolC3, ArrayVal;
 
 start with Inicio;
-Inicio 		::= VB Java Python  Program {:System.out.println("FIN Inicio");
-                                        sma.translateControlerTAC.printQuads();
+Inicio 		::= VB Java Python  Program {:
+                                        
                                         sma.testManager.finishAmbit();
                                     sma.translateControlerTAC.acceptCurrentBlock();
                                         sma.translateControlerTAC.convertQuads(sma.translateControlerTAC.getcurrentQuads());
@@ -645,8 +645,23 @@ ClassCodeJ  ::=FunctionJ
                 |DeclarationJ
                 |ConstructorJ
                 |error;
-ConstructorJ ::=ConditionJHeader LEFT_CB LineCodesJ RIGHT_CB;
-ConditionJHeader::=Public ID PARENTHESIS_A ParametersJ PARENTHESIS_B ;
+ConstructorJ ::=ConstructorJHeader:fun LEFT_CB LineCodesJ:ins RIGHT_CB{:ArrayList<Object>quad=new ArrayList<>();
+                                                                        if(fun!=null){
+                                                                            if(ins==null){
+                                                                                quad=sma.translateControlerTAC.tagFunction((String)fun,null);
+                                                                            }else{
+                                                                                quad=sma.translateControlerTAC.tagFunction((String)fun,(ArrayList<Object>) ins);
+                                                                            }
+                                                                        
+                                                                         
+                                                                          }
+                                                                         sma.testManager.finishAmbit();
+                                                    sma.translateControlerTAC.acceptCurrentBlock();
+                                                    sma.translateControlerTAC.addQuadsToCurrent(quad);:};
+ConstructorJHeader::=Public ID:id PARENTHESIS_A ParametersJ PARENTHESIS_B{:sma.testManager.creatSonAmbit();
+                                                                                            sma.translateControlerTAC.createNewQuadrupleBlock();
+                                                                                            String name =sma.testManager.insertFunction(id, null, ((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()),sma.testManager.getCurrentClass());
+                RESULT= name;:};
 FunctionJ       ::= FunctionJHeader:fun  LEFT_CB LineCodesJ:ins RIGHT_CB{:ArrayList<Object>quad=new ArrayList<>();
                                                                         if(fun!=null){
                                                                             if(ins==null){
@@ -1033,7 +1048,7 @@ Constantes ::= Constantes  Constante SEMICOLON{:sma.translateControlerTAC.accept
                 |Constante SEMICOLON {:sma.translateControlerTAC.acceptAllIdQuas();:};
 Constante::=CONST Type:type ID:id EQUAL NumberValueC:val{:sma.testManager.insertPreTuple(id,null,val,null,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
                                         if(val!=null){ 
-                                                       Quadruple quad=     sma.translateControlerTAC.createTempIdQuadAssign(val,id);
+                                                       Quadruple quad= sma.translateControlerTAC.createTempIdQuadAssign(val,id);
                                                        quad.setConstante(true);
                                                        }
                                         sma.translateControlerTAC.nextIdQuad();

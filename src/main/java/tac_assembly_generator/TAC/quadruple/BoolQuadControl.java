@@ -23,10 +23,6 @@ public class BoolQuadControl {
     public BoolQuad operateBoolQuad(Object boolQuad1, Object boolQuad2, Integer op) {
         BoolQuad bool1 = (BoolQuad) boolQuad1;
         BoolQuad bool2 = (BoolQuad) boolQuad2;
-        System.out.println("==================OP=======================");
-        System.out.println(bool1);
-        System.out.println(bool2);
-        System.out.println("==========================================");
         if (op == Operation.OP_AND) {
             String tagRemove = bool1.getFatherYesBool().getTag();
             tempGenerator.removeTag(tagRemove);
@@ -38,10 +34,6 @@ public class BoolQuadControl {
             bool2.setExit(bool1.getExit(), true);
             bool2.setSonExit(true);
             bool1.setFatherYesBool(bool2.getYesBool());
-            System.out.println("@@@@@@@@@@@@@@@@@@@@@@@return@@@@@@@");
-            System.out.println(bool1);
-            System.out.println(bool2);
-            System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
             return bool1;
         } else if (op == Operation.OP_OR) {
             String tagRemove = bool1.getNoBool().getTag();
@@ -53,10 +45,6 @@ public class BoolQuadControl {
             bool2.setFatherYesBool(bool1.getFatherYesBool());
             bool2.setExit(bool1.getExit(), true);
             bool1.setFatherNoBool(bool2.getNoBool());
-            System.out.println("@@@@@@@@@@@@@@@@@@@@@@@return@@@@@@@");
-            System.out.println(bool1);
-            System.out.println(bool2);
-            System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
             return bool1;
 
         } else if (op == Operation.CASE) {
@@ -67,24 +55,15 @@ public class BoolQuadControl {
             tempGenerator.removeTag(tagRemove);
             bool2.setExit(bool1.getExit(), true);
             bool1.setFatherNoBool(bool2.getNoBool());
-            System.out.println("@@@@@@@@@@@@@@@@@@@@@@@return@@@@@@@");
-            System.out.println(bool1);
-            System.out.println(bool2);
-            System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
             return bool1;
         }
         return null;
     }
 
     public BoolQuad convertQuadToBool(ArrayList<Object> quads) {
-        System.out.println("8888888888");
-        for (int i = 0; i < quads.size(); i++) {
-            System.out.println(quads.get(i));
-        }
+        
         BoolQuad bo = new BoolQuad(tempGenerator.generateTag(), quads, tempGenerator.generateTag(), tempGenerator.generateTag(), tempGenerator.generateTag());
-        System.out.println("9999999999999999999999999999 " + quads.size());
-        System.out.println(bo.toString());
-        System.out.println("9999999999999999999999999999");
+        
         return bo;
     }
 
@@ -98,12 +77,8 @@ public class BoolQuadControl {
     }
 
     public ArrayList<Object> convertBoolToQuad(BoolQuad boolQuad) {
-        System.out.println("15156156");
-        for (int i = 0; i < boolQuad.getQuadruple().size(); i++) {
-            System.out.println(boolQuad.getQuadruple().get(i));
-        }
 
-        System.out.println("15156156");
+
         if (boolQuad.getNoBool() != null) {
             ArrayList<Object> quads = new ArrayList<>();
             Object lastQuad = getLastQuad(boolQuad.getQuadruple());

@@ -135,6 +135,7 @@ public class FileMlg extends javax.swing.JPanel {
         tabsGenerated.setBackground(new java.awt.Color(0, 0, 0));
         tabsGenerated.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         tabsGenerated.setForeground(new java.awt.Color(255, 255, 255));
+        tabsGenerated.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
 
         tACText.setBackground(new java.awt.Color(32, 31, 31));
         tACText.setForeground(new java.awt.Color(255, 255, 255));
@@ -157,7 +158,7 @@ public class FileMlg extends javax.swing.JPanel {
         tabsGenerated.addTab("Assembler", assemblerScroll);
 
         jTabbedPane2.setForeground(new java.awt.Color(255, 255, 255));
-        jTabbedPane2.setFont(new java.awt.Font("Dialog", 1, 13)); // NOI18N
+        jTabbedPane2.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
 
         outputText.setBackground(new java.awt.Color(0, 0, 0));
         outputText.setForeground(new java.awt.Color(255, 255, 255));

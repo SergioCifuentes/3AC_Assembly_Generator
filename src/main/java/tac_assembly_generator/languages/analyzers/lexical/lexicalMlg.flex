@@ -249,7 +249,7 @@ Input_Ignore_Case= ("I"|"i")("N"|"n")("P"|"p")("U"|"u")("T"|"t")
                                                     if (yytext().charAt(i)=='\t') {
                                                             in++; 
                                                     }
-                                                    System.out.println(blockIndentation+"         "+in);
+                                                    
                                                     }if(blockIndentation==in){
                                                         
                                                     }else if(blockIndentation>in){
@@ -270,7 +270,7 @@ Input_Ignore_Case= ("I"|"i")("N"|"n")("P"|"p")("U"|"u")("T"|"t")
                                                     if (yytext().charAt(i)=='\t') {
                                                             in++; 
                                                     }
-                                                    System.out.println(blockIndentation+"         "+in);
+                                                    
                                                     }if(blockIndentation==in){
                                                         
                                                     }else if(blockIndentation>in){

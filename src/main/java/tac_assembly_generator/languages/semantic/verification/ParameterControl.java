@@ -29,7 +29,6 @@ public class ParameterControl {
     
  
     public void insertParameter(int num,String id,Symbol symbol){
-        System.out.println("-------INSE "+id);
         ids.add(id);
         types.add(typeManager.getType(num));
         symbols.add(symbol);

@@ -20,7 +20,6 @@ public class AmbitControler {
 
     public void createFatherAmbit(){
         Ambit newAmbit= new Ambit(ambitsExisting++, null);
-        System.out.println("Creating Ambit # "+ambitsExisting);
         currentAmbit=newAmbit;
     }
     public void createSonAmbit(){

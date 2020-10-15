@@ -164,14 +164,6 @@ public class FileManager {
         }
     }
 
-    public void openStarterFile(MainFrame frame) {
-        File file = new File("/home/sergio/AA/A.mlg");
-        FileMlg newMlg = new FileMlg(file.getName(), file);
-        newMlg.addMlgText(readFile(file));
-        frame.addFileMlg(newMlg);
-
-    }
-
     public void cleanTextPanes(int selectedIndex) {
         files.get(selectedIndex).getOptText().setText("");
         files.get(selectedIndex).gettACText().setText("");

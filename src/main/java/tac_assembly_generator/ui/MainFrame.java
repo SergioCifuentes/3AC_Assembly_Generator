@@ -28,8 +28,6 @@ public class MainFrame extends javax.swing.JFrame {
         FileMlg.uiManage();
         initComponents();
         setBackground();
-
-        fileManager.openStarterFile(this);
     }
 
     /**
@@ -67,7 +65,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         tabs.setBackground(new java.awt.Color(0, 0, 0));
         tabs.setForeground(new java.awt.Color(255, 255, 255));
-        tabs.setFont(new java.awt.Font("DejaVu Sans", 1, 12)); // NOI18N
+        tabs.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
         tabs.setOpaque(true);
 
         jMenuBar1.setBackground(new java.awt.Color(51, 51, 51));
@@ -189,14 +187,14 @@ public class MainFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tabs, javax.swing.GroupLayout.DEFAULT_SIZE, 956, Short.MAX_VALUE)
+                .addComponent(tabs, javax.swing.GroupLayout.DEFAULT_SIZE, 1102, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tabs, javax.swing.GroupLayout.DEFAULT_SIZE, 407, Short.MAX_VALUE)
+                .addComponent(tabs, javax.swing.GroupLayout.DEFAULT_SIZE, 470, Short.MAX_VALUE)
                 .addContainerGap())
         );
 

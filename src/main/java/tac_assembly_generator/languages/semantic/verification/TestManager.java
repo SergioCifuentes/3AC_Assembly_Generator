@@ -427,7 +427,6 @@ public class TestManager {
     }
 
     public void include(String language, String functions, Symbol s) {
-        System.out.println("finding " + language);
         if (language.equals("JAVA")) {
             if (functions == null || functions.equals("*")) {
                 includedTuples.addAll(symbolTable.getLanguageFunctions(language));
@@ -493,7 +492,6 @@ public class TestManager {
             if (function != null) {
                     String call = "call " + function.getName() + "," + parameters.size();
                     Quadruple quad = new Quadruple(Operation.EQUAL, call, null, tac.getTempGenerator().generateTemp());
-                    System.out.println(quad);
                     tac.addTempQuadToCurrent(quad);
                     return new SynthesizedOpAsst(quad, function.getType());
                 } else {
@@ -504,7 +502,6 @@ public class TestManager {
             Tuple function = null;
 
             for (int i = 0; i < includedTuples.size(); i++) {
-                System.out.println(includedTuples.get(i).getName());
                 if (includedTuples.get(i).getName().contains(id) && parameters.size() == includedTuples.get(i).getParameters().size()) {
                     function = includedTuples.get(i);
                 }
@@ -512,7 +509,6 @@ public class TestManager {
             if (function != null) {
                 String call = "call " + function.getName() + "," + parameters.size();
                 Quadruple quad = new Quadruple(Operation.EQUAL, call, null, tac.getTempGenerator().generateTemp());
-                System.out.println(quad);
                 tac.addTempQuadToCurrent(quad);
                 return new SynthesizedOpAsst(quad, function.getType());
             } else {
