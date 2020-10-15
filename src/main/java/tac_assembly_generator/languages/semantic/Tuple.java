@@ -21,6 +21,7 @@ public class Tuple {
     private Symbol symbol;
     private Ambit ambit;
     private ArrayList<Tuple> parameters;
+    private Tuple classFather;
     private String tacFunctionName;
     private boolean constante;
     //0 normal type
@@ -39,19 +40,28 @@ public class Tuple {
         
     }
 
+    public void setClassFather(Tuple classFather) {
+        this.classFather = classFather;
+    }
+
     public void setConstante(boolean constante) {
         this.constante = constante;
     }
     
     public String generateFunctionName(String language){
-        
-        String name=language+"_"+this.name;
+        if (classFather!=null) {
+             name=language+"_"+classFather.getName()+"_"+this.name;
+        }else{
+            name=language+"_"+this.name; 
+        }
+
         if (parameters!=null) {
             for (int i = 0; i < parameters.size(); i++) {
             name+="_"+TypeManager.getOutputTypeStatic(parameters.get(i).type.getNumber());
         }
         
         }
+        
         tacFunctionName=name;
         String output="";
         if (type==null) {
@@ -62,6 +72,7 @@ public class Tuple {
             }
             
         }
+        
         output+=name;
         return output;
         

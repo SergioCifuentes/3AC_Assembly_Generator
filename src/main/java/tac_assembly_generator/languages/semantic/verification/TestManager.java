@@ -34,6 +34,7 @@ public class TestManager {
     private AmbitControler ambitControler;
     private MainFrame mainFrame;
     private ParameterControl parameterControl;
+    private Tuple currentClass;
 
     public TestManager(MainFrame mainFrame) {
         typeManager = new TypeManager();
@@ -47,6 +48,15 @@ public class TestManager {
         parameterControl = new ParameterControl(typeManager);
     }
 
+    public Tuple getCurrentClass() {
+        return currentClass;
+    }
+
+    public void setCurrentClass(Tuple currentClass) {
+        this.currentClass = currentClass;
+    }
+
+    
     public void switchNextTypes() {
         typeManager.loadnextType();
     }
@@ -73,12 +83,10 @@ public class TestManager {
 
     public void insertPreTuplesToSymbolTable(Integer typeNumber, Integer dimension, Symbol symbol, TranslateControlerTAC tAC) {
         for (int i = 0; i < preTupleSymbols.size(); i++) {
-            System.out.println("PRETUPLE " + preTupleSymbols.get(i).getName() + " VAL_TYPE  " + preTupleSymbols.get(i).getType());
+ 
             if (preTupleSymbols.get(i).getValue() != null) {
 
                 SynthesizedOpAsst so = (SynthesizedOpAsst) preTupleSymbols.get(i).getValue();
-                System.out.println("TYPEEEEEEEEEEEE " + so.getType());
-                System.out.println("FORRRRRRRRRRRRRRRRR " + typeNumber);
                 if ((so.getType().getNumber() == typeNumber) || so.getType().isFather(typeManager.getType(typeNumber))) {
                     preTupleSymbols.get(i).setDimension(dimension);
                     preTupleSymbols.get(i).setType(typeManager.getType(typeNumber));
@@ -117,6 +125,39 @@ public class TestManager {
         Tuple tuple= new Tuple(id,typeManager.getType(type),null, 0, symbol,ambitControler.getCurrentAmbit());
         symbolTable.insertTuple(tuple);
     }
+    
+    public String  testInput(String id, String output,Symbol symbol){
+        Type type = getTypeFromST(id, symbol);
+        Integer inputType=null;
+        String split=null;
+        int types=0;
+        if (type!=null) {
+            if (output.contains(TypeManager.INT_INPUT)) {
+                split=TypeManager.INT_INPUT;
+                inputType=TypeManager.INTEGER_TYPE;
+                types+=1;
+            }else if (output.contains(TypeManager.CHAR_INPUT)) {
+                split=TypeManager.CHAR_INPUT;
+                inputType=TypeManager.CHAR_TYPE;
+                types+=1;
+            }else if (output.contains(TypeManager.FLOAT_INPUT)) {
+                split=TypeManager.FLOAT_INPUT;
+                inputType=TypeManager.FLOAT_TYPE;
+                types+=1;
+            }
+            if (types>1) {
+                OutputErrors.multipleMasks(mainFrame.getOutputPannel(), id, symbol);
+            }else if (types==0) {
+                OutputErrors.noMasks(mainFrame.getOutputPannel(), id, symbol);
+            }else{
+                if (verifyType(type.getNumber(), inputType, symbol, id)) {
+                    return split;
+                }
+            }
+        }
+        return null;
+    }
+
     
     public boolean  insertDeclaration(String id, Integer type, Object val, Symbol symbol){
         if (!checkExistence(id, symbol)) {
@@ -169,14 +210,45 @@ public class TestManager {
         }
 
     }
-        public String insertClass(String id, Symbol s) {
+    
+       public String insertFunction(String id, Integer type, Symbol s, Tuple tuple) {
+        Type ty = null;
+        if (type != null) {
+            ty = typeManager.getType(type);
+        }
+        for (int i = 0; i < parameterControl.getIds().size(); i++) {
+            for (int j = i + 1; j < parameterControl.getIds().size(); j++) {
+
+                if (i != j && parameterControl.getIds().get(i).equals(parameterControl.getIds().get(j))) {
+                    OutputErrors.alreadyDeclaredParameter(mainFrame.getOutputPannel(), parameterControl.getIds().get(i), parameterControl.getSymbols().get(i));
+                    return null;
+                }
+            }
+        }
+
+        Tuple tuple1 = symbolTable.insertFunction(id, ty, parameterControl, s, ambitControler.getCurrentAmbit(), mainFrame.getOutputPannel());
+        
+        if (tuple1 == null) {
+            parameterControl.removeParameters();
+            return null;
+        } else {
+            tuple1.setClassFather(tuple);
+            ArrayList<Tuple> paArrayList = insertParameters();
+            tuple1.setParameters(paArrayList);
+            parameterControl.removeParameters();
+            return tuple1.generateFunctionName(typeManager.getLanguage());
+        }
+
+    }
+    
+        public Tuple insertClass(String id, Symbol s) {
    
             if (symbolTable.getTupleWithAmbit(id, ambitControler.getCurrentAmbit(), TypeManager.CLASS)!=null) {
                 return null;
             }else{
                 Tuple tuple = new Tuple(id,TypeManager.CLASS, null, 0, s,ambitControler.getCurrentAmbit()) ;
                 symbolTable.insertTuple(tuple);
-                return tuple.generateClassName(typeManager.getLanguage());
+                return tuple;
                 
             }
         
@@ -257,7 +329,6 @@ public class TestManager {
     }
     
     public boolean verifyType(Integer type1,Integer type2,Symbol symbol, String id){
-        System.out.println("VVVVVVVVVVVVVVVV "+type1+" "+type2);
         if (type1.equals(type2) || typeManager.getType(type2).isFather(typeManager.getType(type1))) {
                     return true;
                 }
@@ -267,13 +338,6 @@ public class TestManager {
 
     public void insertPreTuple(String name, Integer typeNumber, Object value, Integer dimension, Symbol symbol) {
         Tuple newPreTuple;
-        System.out.println("Sy " + name + " " + symbol + " " + symbol.left + " " + symbol.right + " " + symbol.value + "===" + value);
-        if (symbol != null && symbol.value != null) {
-            System.out.println("inserting new tuple " + symbol.value.toString() + " name " + name);
-        } else {
-            System.out.println("inserting new tuple " + null + " name " + name);
-        }
-        System.out.println("PPPPPPPPPPPPPPPPPPPPPPPRRRRRRRRRRRRRRRRRRRRRRRRRREEEEEEEEEEEEEEEEEEEEE "+value);
         if (typeNumber != null) {
             newPreTuple = new Tuple(name, typeManager.getType(typeNumber), value, dimension, symbol, ambitControler.getCurrentAmbit());
         } else {

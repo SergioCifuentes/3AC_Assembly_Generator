@@ -31,6 +31,7 @@ public class Operation {
     public static final int PRINT = 18;
     public static final int CLRSCR = 19;
     public static final int READ = 20;
+    public static final int GETCH = 21;
 
     public static String getIntOpOutput(int op) {
         switch (op) {

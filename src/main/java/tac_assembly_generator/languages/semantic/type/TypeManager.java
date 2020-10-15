@@ -11,13 +11,13 @@ package tac_assembly_generator.languages.semantic.type;
  */
 public class TypeManager {
 
-    private static final String INTEGER_NAME = "Integer";
+    private static final String INTEGER_NAME = "int";
     public static final int INTEGER_TYPE = 2;
-    private static final String FLOAT_NAME = "Float";
+    private static final String FLOAT_NAME = "float";
     public static final int FLOAT_TYPE = 1;
-    private static final String CHAR_NAME = "Char";
+    private static final String CHAR_NAME = "char";
     public static final int CHAR_TYPE = 3;
-    private static final String BOOL_NAME = "Boolean";
+    private static final String BOOL_NAME = "boolean";
     public static final int BOOL_TYPE = 4;
     private static final String VAR_NAME = "var";
     public static final int VAR_TYPE = 5;
@@ -25,6 +25,12 @@ public class TypeManager {
     public static final int CLASS_TYPE = 6;
     public static final Type CLASS= new Type(CLASS_NAME, CLASS_TYPE,null);
 
+    public  static final String INT_INPUT = "%d";
+    public  static final String CHAR_INPUT = "%c";
+    public  static final String FLOAT_INPUT = "%f";
+    
+    
+    
     public static final int VB_TYPES = 1;
     public static final int JAVA_TYPES = 2;
     public static final int PYTHON_TYPES = 3;

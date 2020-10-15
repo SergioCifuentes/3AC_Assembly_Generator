@@ -90,6 +90,14 @@ public class TAC {
                 }else{
                      OutputText.appendToPane(mainFrame.getTACPannel(),"\n", Color.white, false);
                  }
+            }else if (quadAsst.getOp() == Operation.GETCH) {
+                
+                 OutputText.appendToPane(mainFrame.getTACPannel(),"getch ", Color.white, false);
+                 if (quadAsst.getResult()!=null) {
+                    OutputText.appendToPane(mainFrame.getTACPannel(),quadAsst.getResult() +"\n", Color.white, false);
+                }else{
+                     OutputText.appendToPane(mainFrame.getTACPannel(),"\n", Color.white, false);
+                 }
             }
             
         }

@@ -11,6 +11,7 @@ import tac_assembly_generator.TAC.asst.For;
 import tac_assembly_generator.TAC.asst.Switch;
 import tac_assembly_generator.TAC.quadruple.*;
 import tac_assembly_generator.languages.analyzers.syntax.SynthesizedOpAsst;
+import tac_assembly_generator.languages.semantic.type.TypeManager;
 
 /**
  *
@@ -104,9 +105,6 @@ public class TranslateControlerTAC {
     }
 
     public void acceptCurrentBlock() {
-        System.out.println(currentQuadrupleTable.equals(mainQuadrupleTable)+"ssssssssssssssssss");
-        System.out.println("MAIN");
-        System.out.println(mainQuadrupleTable.getQuadruples());
         if (currentQuadrupleTable.getFather() != null) {
             currentQuadrupleTable.transerQuadruples();
             currentQuadrupleTable = currentQuadrupleTable.getFather();
@@ -125,9 +123,6 @@ public class TranslateControlerTAC {
     }
     
     public void convertQuads(ArrayList<Object> obs) {
-        for (int i = 0; i < obs.size(); i++) {
-            System.out.println(obs.get(i));
-        }
         tac.translateQuads(obs);
     }
 
@@ -157,12 +152,10 @@ public class TranslateControlerTAC {
 
     public ArrayList<Object> getcurrentTempQuads() {
         ArrayList<Object> obList = new ArrayList<>();
-        System.out.println("GETTING TEMP CUADS");
         ArrayList<ArrayList<Object>> obAux = currentQuadrupleTable.getIdQuads();
         for (int i = 0; i < obAux.size(); i++) {
             obList.addAll(obAux.get(i));
         }
-        System.out.println(obList);
         currentQuadrupleTable.removeIdQuads();
         return obList;
     }
@@ -186,13 +179,40 @@ public class TranslateControlerTAC {
         }
 
     }
+    public ArrayList<Object> createInputQuads(String output, String id,String split){
+        ArrayList<Object> quads= new ArrayList<>();
+        output=output.replace("\"", "");
+        String[] outputs= output.split(split);
+       
+        if (outputs.length==2) {
+            if (outputs[0].length()>0&&!outputs[0].equals("\"")) {
+                quads.add(createPrintQuad(outputs[0]));
+            }
+            quads.add(createPrintQuad(id));
+            if (outputs[1].length()>0&&!outputs[1].equals("\"")) {
+                quads.add(createPrintQuad(outputs[1]));
+            }   
+        }else if(outputs.length==1){
+        if (outputs[0].length()>0&&!outputs[0].equals("\"")) {
+                quads.add(createPrintQuad(outputs[0]));
+            }
+            quads.add(createPrintQuad(id));
+        }else if(outputs.length==0){
+            quads.add(createPrintQuad(id));
+        }
+        
+            
+        return quads;
+        
+        
+        
+        
+    }
+    
 
     public ArrayList<Object> getcurrentQuads() {
       
         ArrayList<Object> obList = new ArrayList<>();
-        System.out.println("GEEETTTTTTTTTTTTTTTTTTTTTTTT");
-        System.out.println(currentQuadrupleTable.equals(mainQuadrupleTable));
-        System.out.println(currentQuadrupleTable.getQuadruples());
         obList.addAll(currentQuadrupleTable.getQuadruples());
 
         currentQuadrupleTable.removeQuads();
@@ -270,7 +290,6 @@ public class TranslateControlerTAC {
     }
 
     public void acceptAllIdQuas() {
-        System.out.println("ACCEPTINGGGGGGGGGGGGG   ++" + currentQuadrupleTable.getIdQuads().size());
         for (int i = 0; i < currentQuadrupleTable.getIdQuads().size(); i++) {
             acceptIdQuad(i);
         }
@@ -306,13 +325,17 @@ public class TranslateControlerTAC {
         //remove temperory variables
         currentQuadrupleTable.removeIdQuads();
     }
+    public ArrayList<Object> getch(String id){
+        ArrayList<Object> quads=new ArrayList<>();
+        if (id!=null) {
+            quads.add(new Quadruple(Operation.GETCH,null, null, id));
+        }else{
+            quads.add(new Quadruple(Operation.GETCH,null, null,null));
+        }
+        return quads;
+    }
 
     public void addQuadsToCurrent(ArrayList<Object> quads) {
-        System.out.println("ADD TO " + quads);
-        System.out.println(currentQuadrupleTable);
-        System.out.println(currentQuadrupleTable.getFather());
-        System.out.println(currentQuadrupleTable.equals(mainQuadrupleTable));
-        System.out.println(quads.size());
         currentQuadrupleTable.addQuads(quads);
     }
 
