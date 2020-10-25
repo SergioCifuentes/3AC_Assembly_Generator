@@ -1388,7 +1388,7 @@ public class MlgLexicAnalizer implements java_cup.runtime.Scanner {
                                                     if (yytext().charAt(i)=='\t') {
                                                             in++; 
                                                     }
-                                                    System.out.println(blockIndentation+"         "+in);
+                                                    
                                                     }if(blockIndentation==in){
                                                         
                                                     }else if(blockIndentation>in){
@@ -1411,7 +1411,7 @@ public class MlgLexicAnalizer implements java_cup.runtime.Scanner {
                                                     if (yytext().charAt(i)=='\t') {
                                                             in++; 
                                                     }
-                                                    System.out.println(blockIndentation+"         "+in);
+                                                    
                                                     }if(blockIndentation==in){
                                                         
                                                     }else if(blockIndentation>in){

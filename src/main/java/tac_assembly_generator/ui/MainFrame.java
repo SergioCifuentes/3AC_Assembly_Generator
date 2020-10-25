@@ -28,6 +28,7 @@ public class MainFrame extends javax.swing.JFrame {
         FileMlg.uiManage();
         initComponents();
         setBackground();
+        fileManager.loadExampleMLG(this);
     }
 
     /**
@@ -57,6 +58,8 @@ public class MainFrame extends javax.swing.JFrame {
         jMenuItem10 = new javax.swing.JMenuItem();
         jMenuItem11 = new javax.swing.JMenuItem();
         reportMenu = new javax.swing.JMenu();
+        stackMenu = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
 
         jMenu3.setText("jMenu3");
 
@@ -175,8 +178,21 @@ public class MainFrame extends javax.swing.JFrame {
 
         reportMenu.setForeground(new java.awt.Color(255, 255, 255));
         reportMenu.setText("Reports");
-        reportMenu.setEnabled(false);
         reportMenu.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+
+        stackMenu.setText("StackTAC");
+        stackMenu.setEnabled(false);
+        stackMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                stackMenuActionPerformed(evt);
+            }
+        });
+        reportMenu.add(stackMenu);
+
+        jMenuItem2.setText("Optimization");
+        jMenuItem2.setEnabled(false);
+        reportMenu.add(jMenuItem2);
+
         jMenuBar1.add(reportMenu);
 
         setJMenuBar(jMenuBar1);
@@ -234,7 +250,13 @@ public class MainFrame extends javax.swing.JFrame {
     private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
         fileManager.cleanTextPanes(tabs.getSelectedIndex());
         fileManager.getFiles().get(tabs.getSelectedIndex()).getLanguageManager().generateTAC(this);
+        stackMenu.setEnabled(true);
     }//GEN-LAST:event_jMenuItem6ActionPerformed
+
+    private void stackMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stackMenuActionPerformed
+        StackTable stackTable= new StackTable(fileManager.getFiles().get(tabs.getSelectedIndex()).getLanguageManager().getStack());
+        stackTable.setVisible(true);
+    }//GEN-LAST:event_stackMenuActionPerformed
     public void addFileMlg(FileMlg newFile) {
         fileManager.addFileMlg(newFile);
         tabs.add(newFile.getName(), newFile);
@@ -291,6 +313,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem10;
     private javax.swing.JMenuItem jMenuItem11;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JMenuItem jMenuItem8;
@@ -301,6 +324,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenu runMenu;
     private javax.swing.JMenuItem saveAsMenuItem;
     private javax.swing.JMenuItem saveMenuItem;
+    private javax.swing.JMenuItem stackMenu;
     private javax.swing.JTabbedPane tabs;
     // End of variables declaration//GEN-END:variables
 }

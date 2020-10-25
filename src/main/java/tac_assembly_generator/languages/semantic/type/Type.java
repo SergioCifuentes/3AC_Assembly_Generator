@@ -38,7 +38,7 @@ public class Type {
     }
     
     public boolean isFather(Type type){
-        System.out.println("FFFFFFFFFFFFFFFAAAAAAAAAAAAAAAAAAA"+father+" DD "+type.getName());
+        
         if (father==null) {
             return false;
         }else{

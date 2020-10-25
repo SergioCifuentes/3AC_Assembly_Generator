@@ -170,6 +170,12 @@ public class FileManager {
         files.get(selectedIndex).getOPText().setText("");
         files.get(selectedIndex).getAssemblerText().setText("");
     }
-
+public void loadExampleMLG(MainFrame frame){
+        File file = new File("/home/sergio/AA/A.mlg");
+        FileMlg newMlg = new FileMlg(file.getName(), file);
+        newMlg.addMlgText(readFile(file));
+                frame.addFileMlg(newMlg);
+        
+    }
 
 }

@@ -6,6 +6,8 @@
 package tac_assembly_generator.TAC;
 
 import java.util.ArrayList;
+import tac_assembly_generator.TAC.quadruple.Operation;
+import tac_assembly_generator.TAC.quadruple.Quadruple;
 
 /**
  *
@@ -69,11 +71,25 @@ public class TempGenerator {
                     minor = recentyRemovedTag.get(i);
                 }
             }
-            recentyRemovedTag.remove((Object) minor);
+            recentyRemovedTag.remove((Object) minor);   
             return PREFIX_TAG + minor;
         }
         currentTag++;
         return PREFIX_TAG + currentTag;
+    }
+
+    void addTempDeclarations(ArrayList<Object> obs) {
+        int asst=START_POINT+1;
+        System.out.println(currentTemp);
+        int aux=0;
+        while (asst<currentTemp) {
+            if (!recentyRemovedTemp.contains(obs)) {
+                obs.add(aux,new Quadruple(Operation.TEMP, null, null, "float "+PREFIX_TEMP+asst));
+                aux++;
+            }
+            
+            asst++;
+        }
     }
 
 }

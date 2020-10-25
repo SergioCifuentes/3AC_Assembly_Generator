@@ -220,4 +220,6 @@ public void addMlgText(String mlgText){
     public void setFile(File file) {
         this.file=file;
     }
+    
+    
 }

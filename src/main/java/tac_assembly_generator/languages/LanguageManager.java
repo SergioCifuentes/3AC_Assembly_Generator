@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import tac_assembly_generator.TAC.TAC;
 import tac_assembly_generator.TAC.TranslateControlerTAC;
+import tac_assembly_generator.TAC.stack.Stack;
 import tac_assembly_generator.languages.analyzers.lexical.MlgLexicAnalizer;
 import tac_assembly_generator.languages.analyzers.syntax.SyntaxMlgAnalyzer;
 import tac_assembly_generator.languages.semantic.verification.TestManager;
@@ -23,9 +24,14 @@ import tac_assembly_generator.ui.MainFrame;
  */
 public class LanguageManager {
     private FileMlg file;
+    private Stack stack;
 
     public LanguageManager(FileMlg file) {
         this.file = file;
+    }
+
+    public Stack getStack() {
+        return stack;
     }
     
     public void generateTAC(MainFrame mainframe){
@@ -34,7 +40,9 @@ public class LanguageManager {
             TAC tac = new TAC(mainframe);
             TestManager tm = new TestManager(mainframe);
             TranslateControlerTAC controler= new TranslateControlerTAC(tac);
-            
+            stack = new Stack();
+            controler.setStack(stack);
+            tm.setStack(stack);
             MlgLexicAnalizer mlgLexicAnalizer= new MlgLexicAnalizer(new StringReader(file.getMlgText()));
             mlgLexicAnalizer.addTac(controler);   
             SyntaxMlgAnalyzer sma= new SyntaxMlgAnalyzer(mlgLexicAnalizer);

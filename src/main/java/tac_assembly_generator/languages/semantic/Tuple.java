@@ -29,6 +29,9 @@ public class Tuple {
     //0 normal type
     //1 one dimension array ...
     private Integer dimension;
+    //Stack Info
+    private int size;
+    
 
     public Tuple(String name, Type type, Object value,Integer dimension, Symbol symbol,Ambit ambit) {
         
@@ -41,6 +44,24 @@ public class Tuple {
         constante=false;
         
     }
+    
+    public void setStackInfo(int size){
+        this.size=size;
+    }
+
+    public void setConstante(boolean constante) {
+        this.constante = constante;
+    }
+
+    public boolean isConstante() {
+        return constante;
+    }
+    
+
+    public int getSize() {
+        return size;
+    }
+    
 
     public String getLanguage() {
         return language;
@@ -50,9 +71,6 @@ public class Tuple {
         this.classFather = classFather;
     }
 
-    public void setConstante(boolean constante) {
-        this.constante = constante;
-    }
 
     public void setDimensions(ArrayList<Object> dimensions) {
         this.dimensions = dimensions;

@@ -33,7 +33,9 @@ public class Operation {
     public static final int READ = 20;
     public static final int GETCH = 21;
     public static final int ARRAY = 22;
-    public static final int PARAMS = 24;
+    public static final int PARAMS = 23;
+    public static final int TEMP = 24;
+    public static final int INCLUDE = 25;
 
     public static String getIntOpOutput(int op) {
         switch (op) {
@@ -65,6 +67,41 @@ public class Operation {
                 return "goto";
             case PRINT:
                 return "print";
+            default:
+                throw new AssertionError();
+        }
+    }
+    
+    
+    public static Object operateInteger(Object ob1,Object ob2,Integer op){
+        
+        switch (op) {
+            case PLUS:
+                return (Integer)ob1+(Integer)ob2;
+            case MINUS:
+                return (Integer)ob1-(Integer)ob2;
+            case MULTIPLICATION:
+                return (Integer)ob1*(Integer)ob2;
+            case DIVISION:
+                return (Integer)ob1/(Integer)ob2;
+            case MOD:
+                return (Integer)ob1%(Integer)ob2;
+            default:
+                throw new AssertionError();
+        }
+    }
+       public static Object operateFloat(Object ob1,Object ob2,Integer op){
+        switch (op) {
+            case PLUS:
+                return (Float)ob1+(Float)ob2;
+            case MINUS:
+                return (Float)ob1-(Float)ob2;
+            case MULTIPLICATION:
+                return (Float)ob1*(Float)ob2;
+            case DIVISION:
+                return (Float)ob1/(Float)ob2;
+            case MOD:
+                return (Float)ob1%(Float)ob2;
             default:
                 throw new AssertionError();
         }
