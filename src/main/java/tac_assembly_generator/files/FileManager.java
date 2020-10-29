@@ -53,16 +53,16 @@ public class FileManager {
         return files;
     }
 
-    public JTextPane getTextPane(int index) {
-        return files.get(index).getOptText();
+    public JTextPane getOutputPane(int index) {
+        return files.get(index).getOutPutText();
     }
 
     public JTextPane getTACPane(int index) {
         return files.get(index).gettACText();
     }
 
-    public JTextPane getOPPane(int index) {
-        return files.get(index).getOPText();
+    public JTextPane getOptimizedPane(int index) {
+        return files.get(index).getOptimizedText();
     }
 
     public void openFile(MainFrame frame) {
@@ -165,11 +165,16 @@ public class FileManager {
     }
 
     public void cleanTextPanes(int selectedIndex) {
-        files.get(selectedIndex).getOptText().setText("");
+        files.get(selectedIndex).getOutPutText().setText("");
         files.get(selectedIndex).gettACText().setText("");
-        files.get(selectedIndex).getOPText().setText("");
+        files.get(selectedIndex).getOptimizedText().setText("");
         files.get(selectedIndex).getAssemblerText().setText("");
     }
+    public void cleanOpText(int selectedIndex){
+        files.get(selectedIndex).getOptimizedText().setText("");
+    }
+    
+    
 public void loadExampleMLG(MainFrame frame){
         File file = new File("/home/sergio/AA/A.mlg");
         FileMlg newMlg = new FileMlg(file.getName(), file);

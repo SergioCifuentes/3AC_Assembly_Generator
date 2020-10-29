@@ -80,6 +80,9 @@ public class TestManager {
         ambitControler.createSonAmbit();
     }
 
+    public void setAmbitFuction(){
+        ambitControler.getCurrentAmbit().setFunction(true);
+    }
     public UniquenessTable createNewUniquenessTable() {
         return new UniquenessTable(mainFrame.getOutputPannel());
     }
@@ -93,8 +96,6 @@ public class TestManager {
     }
 
     public void insertPreTuplesToSymbolTable(Integer typeNumber, Integer dimension, Symbol symbol, TranslateControlerTAC tAC) {
-        
-        System.out.println("PPPPPPPPRRRRRRRRRR "+preTupleSymbols.toString()+" "+preTupleSymbols.size());
         for (int i = 0; i < preTupleSymbols.size(); i++) {
             System.out.println(preTupleSymbols.get(i).getName());
             System.out.println(preTupleSymbols.get(i).getValue());
@@ -108,7 +109,6 @@ public class TestManager {
                     preTupleSymbols.get(i).setStackInfo(1);
                     symbolTable.insertTuple(preTupleSymbols.get(i));
                     stack.addToCurrentStack(preTupleSymbols.get(i));
-                    System.out.println(" INSERTING TUPLE");
                     tAC.createTempIdQuadAssign(preTupleSymbols.get(i).getValue(), preTupleSymbols.get(i).getName());
                     tAC.acceptIdQuad(i);
 
@@ -143,6 +143,10 @@ public class TestManager {
 
     public void insertTuple(String id, Integer type, Symbol symbol) {
         Tuple tuple = new Tuple(id, typeManager.getType(type), null, 0, symbol, ambitControler.getCurrentAmbit());
+        tuple.setStackInfo(1);
+        if (stack.getIdPosition(id)==null) {
+            stack.addToCurrentStack(tuple);
+        }
         symbolTable.insertTuple(tuple);
     }
 
@@ -193,10 +197,7 @@ public class TestManager {
                     ArrayList<Object> quads = new ArrayList<Object>();
                     ArrayList<Object> sizes = tuple.getDimension();
                     ArrayList<String> results = new ArrayList<String>();
-                    System.out.println("DIM"+dimension);
-                    System.out.println("SIZE"+sizes);
                     for (int i = 0; i < dimension.size(); i++) {
-                        System.out.println("RES "+results);
                         String result = null;
                         if (i == dimension.size() - 1) {
                             results.add(tac.getTempGenerator().generateTemp());
@@ -322,6 +323,10 @@ public class TestManager {
         return false;
         
     }
+
+    public Stack getStack() {
+        return stack;
+    }
     
     
     
@@ -376,19 +381,23 @@ public class TestManager {
                 }
             }
         }
-        if (id != "main") {
-            stack.creatNewStack(id, typeManager.getLanguage());
-        }
+        
 
         Tuple tuple = symbolTable.insertFunction(id, ty, parameterControl, s, ambitControler.getCurrentAmbit(), mainFrame.getOutputPannel());
+        
         if (tuple == null) {
             parameterControl.removeParameters();
             return null;
         } else {
+            String name = tuple.generateFunctionName(typeManager.getLanguage());
+            if (id != "main") {
+            stack.creatNewStack(tuple.getName(), typeManager.getLanguage());
+        }
             ArrayList<Tuple> paArrayList = insertParameters();
             tuple.setParameters(paArrayList);
             parameterControl.removeParameters();
-            return tuple.generateFunctionName(typeManager.getLanguage());
+            
+            return name;
         }
 
     }
@@ -500,15 +509,17 @@ public class TestManager {
 
     public boolean assigValue(String id, Object value, Symbol symbol) {
         Type idType = symbolTable.getTypeWithAmbit(id, ambitControler.getCurrentAmbit(), mainFrame, symbol);
+        
         if (idType != null) {
             if (value != null) {
                 SynthesizedOpAsst soa = (SynthesizedOpAsst) value;
-                if (soa.getType().equals(idType) || soa.getType().isFather(idType)) {
+                if (soa.getType().getNumber()==idType.getNumber() || soa.getType().isFather(idType)) {
+                    System.out.println("TRUE");
                     return true;
                 }
             }
         }
-
+        System.out.println("FALSE");
         return false;
     }
 
@@ -569,6 +580,34 @@ public class TestManager {
         }
 
     }
+    
+    public void insertReturnValue(Object value,Symbol s,TranslateControlerTAC tac){
+        Integer posicion = stack.getIdPosition(Stack.RETURN);
+        if (posicion==null) {
+            Tuple tuple = new Tuple(Stack.RETURN, null, null, 0, s, ambitControler.getCurrentAmbit());
+            tuple.setStackInfo(1);
+            stack.addToCurrentStack(tuple);
+            posicion = stack.getIdPosition(Stack.RETURN);
+        }
+        String temp = tac.getTempGenerator().generateTemp();
+        SynthesizedOpAsst soa=(SynthesizedOpAsst)value;
+        tac.addTempQuadToCurrent(new Quadruple(Operation.PLUS, Stack.P, posicion, temp));
+        System.out.println("QUAD "+soa.getQuadruple().getResult());
+        tac.addTempQuadToCurrent(new Quadruple(Operation.EQUAL, soa.getQuadruple().getResult(), null, Stack.getOutputStack(temp)));
+        tac.acceptAllIdQuas();
+    }
+    
+    
+    public boolean  verifyFuctionForReturn(Symbol s){
+        if (ambitControler.getCurrentAmbit().isFunction()) {
+            return true;
+        }else{
+            OutputErrors.notFunctionForReturn(mainFrame.getOutputPannel(), s);
+            return false;
+        }
+            
+    }
+    
 
     public void include(String string, Symbol s, TranslateControlerTAC tac) {
         if (string.contains("JAVA") || string.contains("PY") || string.contains("VB")) {
@@ -603,9 +642,12 @@ public class TestManager {
                 }
 
             }
-            System.out.println("fFFF " + function);
+            int fatherStack=0;
             if (function != null) {
-                tac.addTempQuadToCurrent(new Quadruple(Operation.EQUAL, function.getName(), null, Stack.P));
+                fatherStack=stack.getCurrentP();
+                tac.addTempQuadToCurrent(new Quadruple(Operation.PLUS, Stack.P, stack.getFunctionIndex(function.getName()), Stack.P));
+                
+                stack.changeCurrent(function.getName());
                 ArrayList<String> strings = new ArrayList<>();
                 for (int i = 0; i < parameters.size(); i++) {
 
@@ -619,7 +661,6 @@ public class TestManager {
                     tac.addTempQuadToCurrent(new Quadruple(Operation.EQUAL, (String) parameters.get(i), null, Stack.getOutputStack(strings.get(i))));
                 }
                 String call = function.getName();
-
 //                Integer indexReturn =s
 //                if () {
 //                    
@@ -627,16 +668,20 @@ public class TestManager {
                 //Quadruple quad = new Quadruple(Operation.TEMP, null, null, call);
                 tac.addTempQuadToCurrent(new Quadruple(Operation.TEMP, null, null, call));
                 String temp = tac.getTempGenerator().generateTemp();
-                Integer ret = stack.getIdPosition("return");
+                Integer ret = stack.getIdPosition(Stack.RETURN);
                 if (ret != null) {
                     tac.addTempQuadToCurrent(new Quadruple(Operation.PLUS, Stack.P, ret, temp));
-
                     Quadruple quad2 = new Quadruple(Operation.EQUAL, null, null, Stack.getOutputStack(temp));
+                    tac.acceptAllIdQuas();
+                    stack.changeCurrent(fatherStack);
+                    tac.addTempQuadToCurrent(new Quadruple(Operation.MINUS, Stack.P,stack.getFunctionIndex(function.getName()), Stack.P));
+                    
                     tac.acceptAllIdQuas();
                     return new SynthesizedOpAsst(quad2, function.getType());
                 }
-
-                tac.addTempQuadToCurrent(new Quadruple(Operation.EQUAL, 0, null, Stack.P));
+                stack.changeCurrent(fatherStack);
+                tac.addTempQuadToCurrent(new Quadruple(Operation.MINUS, Stack.P, stack.getFunctionIndex(function.getName()), Stack.P));
+                
                 tac.acceptAllIdQuas();
                 return null;
             } else {

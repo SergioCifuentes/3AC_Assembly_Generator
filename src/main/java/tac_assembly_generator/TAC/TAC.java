@@ -34,82 +34,99 @@ public class TAC {
     public void translateQuads(ArrayList<Object> quads,Stack stack) {
 
         for (int i = 0; i < quads.size(); i++) {
-            translateQuad(quads.get(i),stack);
+            translateQuad(quads.get(i),stack,mainFrame.getTACPannel());
 
         }
 
     }
+        public void translateQuadsOP(ArrayList<Object> quads,Stack stack) {
 
-    public String translateQuad(Object quad,Stack stack) {
+        for (int i = 0; i < quads.size(); i++) {
+            translateQuad(quads.get(i),stack,mainFrame.getOptimizedPannel());
+
+        }
+
+    }
+    
+        public static void translateQuad(Object quad,Stack stack,JTextPane jtextPane) {
         if (quad.getClass().equals(String.class)) {
             if (!((String) quad).endsWith("\n")) {
                 if (((String) quad).startsWith("//") || ((String) quad).startsWith("/*")) {
-                    OutputText.appendToPane(mainFrame.getTACPannel(), (String) quad + "\n", Color.lightGray, false);
+                    OutputText.appendToPane(jtextPane, (String) quad + "\n", Color.lightGray, false);
                 } else {
-                    OutputText.appendToPane(mainFrame.getTACPannel(), (String) quad + "\n", Color.ORANGE, false);
+                    OutputText.appendToPane(jtextPane, (String) quad + "\n", Color.ORANGE, false);
                 }
             } else {
                 if (((String) quad).startsWith("//") || ((String) quad).startsWith("/*")) {
-                    OutputText.appendToPane(mainFrame.getTACPannel(), (String) quad, Color.lightGray, false);
+                    OutputText.appendToPane(jtextPane, (String) quad, Color.lightGray, false);
                 } else {
-                    OutputText.appendToPane(mainFrame.getTACPannel(), (String) quad, Color.orange, false);
+                    OutputText.appendToPane(jtextPane, (String) quad, Color.orange, false);
                 }
             }
         } else if (quad.getClass().equals(Quadruple.class)) {
 
             Quadruple quadAsst = (Quadruple) quad;
             if (quadAsst.getOp() == null) {
-                OutputText.appendToPane(mainFrame.getTACPannel(), quadAsst.getResult() + ":\n", Color.blue, false);
+                OutputText.appendToPane(jtextPane, quadAsst.getResult() + ":\n", Color.blue, false);
             } else if (quadAsst.getOp().equals(Operation.GO_TO)) {
-                OutputText.appendToPane(mainFrame.getTACPannel(), Operation.getIntOpOutput(quadAsst.getOp()) + " " + quadAsst.getResult() + ";\n", Color.white, false);
+                OutputText.appendToPane(jtextPane, Operation.getIntOpOutput(quadAsst.getOp()) + " " + quadAsst.getResult() + ";\n", Color.white, false);
             } else if (quadAsst.getOp() == Operation.EQUAL) {
                 if (quadAsst.getResult().equals(Stack.P)&&quadAsst.getArg1()!=Integer.valueOf(0)) {
-                    OutputText.appendToPane(mainFrame.getTACPannel(), Stack.P+" = " +stack.getFunctionIndex(quadAsst.getArg1().toString()) +";\n", Color.white, false);
+                    OutputText.appendToPane(jtextPane, Stack.P+" = " +stack.getFunctionIndex(quadAsst.getArg1().toString()) +";\n", Color.white, false);
                 }else{
                 if (quadAsst.isConstante()) {
-                    OutputText.appendToPane(mainFrame.getTACPannel(), "const ", Color.white, false);
+                    OutputText.appendToPane(jtextPane, "const ", Color.white, false);
                 }
                 String tacQuad = quadAsst.getResult() + Operation.getIntOpOutput(quadAsst.getOp()) + quadAsst.getArg1();
-                OutputText.appendToPane(mainFrame.getTACPannel(), tacQuad + ";\n", Color.white, false);
+                OutputText.appendToPane(jtextPane, tacQuad + ";\n", Color.white, false);
                 }
             } else if (quadAsst.getOp() <= Operation.MINUS) {
-                String tacQuad = quadAsst.getResult() + "=" + quadAsst.getArg1() + Operation.getIntOpOutput(quadAsst.getOp()) + quadAsst.getArg2();
-                OutputText.appendToPane(mainFrame.getTACPannel(), tacQuad + ";\n", Color.white, false);
+                if (quadAsst.getOp()==Operation.PLUS&&quadAsst.getResult().equals(Stack.P)) {
+                     OutputText.appendToPane(jtextPane, Stack.P+" = "+Stack.P +" + "+stack.getFunctionIndex(quadAsst.getArg2().toString()) +";\n", Color.white, false);
+                }else{
+                         String tacQuad = quadAsst.getResult() + "=" + quadAsst.getArg1() + Operation.getIntOpOutput(quadAsst.getOp()) + quadAsst.getArg2();
+                OutputText.appendToPane(jtextPane, tacQuad + ";\n", Color.white, false);
+           
+                }
             } else if (quadAsst.getOp() <= Operation.EQUAL_BOOL) {
-                OutputText.appendToPane(mainFrame.getTACPannel(), "If " + quadAsst.getArg1() + " " + Operation.getIntOpOutput(quadAsst.getOp()) + " " + quadAsst.getArg2() + " " + Operation.getIntOpOutput(Operation.GO_TO) + " " + quadAsst.getResult() + ";\n", Color.white, false);
+                OutputText.appendToPane(jtextPane, "If " + quadAsst.getArg1() + " " + Operation.getIntOpOutput(quadAsst.getOp()) + " " + quadAsst.getArg2() + " " + Operation.getIntOpOutput(Operation.GO_TO) + " " + quadAsst.getResult() + ";\n", Color.white, false);
             } else if (quadAsst.getOp() == Operation.PRINT) {
-                OutputText.appendToPane(mainFrame.getTACPannel(), Operation.getIntOpOutput(quadAsst.getOp()) + " " + quadAsst.getResult() + ";\n", Color.white, false);
+                OutputText.appendToPane(jtextPane, Operation.getIntOpOutput(quadAsst.getOp()) + " " + quadAsst.getResult() + ";\n", Color.white, false);
             } else if (quadAsst.getOp() == Operation.CLRSCR) {
-                OutputText.appendToPane(mainFrame.getTACPannel(), "clrscr();\n", Color.white, false);
+                OutputText.appendToPane(jtextPane, "clrscr();\n", Color.white, false);
             } else if (quadAsst.getOp() == Operation.READ) {
 
-                OutputText.appendToPane(mainFrame.getTACPannel(), "read ", Color.white, false);
+                OutputText.appendToPane(jtextPane, "read ", Color.white, false);
                 if (quadAsst.getResult() != null) {
-                    OutputText.appendToPane(mainFrame.getTACPannel(), quadAsst.getResult() + "\n", Color.white, false);
+                    OutputText.appendToPane(jtextPane, quadAsst.getResult() + "\n", Color.white, false);
                 } else {
-                    OutputText.appendToPane(mainFrame.getTACPannel(), "\n", Color.white, false);
+                    OutputText.appendToPane(jtextPane, "\n", Color.white, false);
                 }
             } else if (quadAsst.getOp() == Operation.GETCH) {
 
-                OutputText.appendToPane(mainFrame.getTACPannel(), "getch ", Color.white, false);
+                OutputText.appendToPane(jtextPane, "getch ", Color.white, false);
                 if (quadAsst.getResult() != null) {
-                    OutputText.appendToPane(mainFrame.getTACPannel(), quadAsst.getResult() + ";\n", Color.white, false);
+                    OutputText.appendToPane(jtextPane, quadAsst.getResult() + ";\n", Color.white, false);
                 } else {
-                    OutputText.appendToPane(mainFrame.getTACPannel(), ";\n", Color.white, false);
+                    OutputText.appendToPane(jtextPane, ";\n", Color.white, false);
                 }
             } else if (quadAsst.getOp() == Operation.ARRAY) {
-                OutputText.appendToPane(mainFrame.getTACPannel(), quadAsst.getResult() + "[ " + quadAsst.getArg1() + "];\n", Color.white, false);
+                OutputText.appendToPane(jtextPane, quadAsst.getResult() + "[ " + quadAsst.getArg1() + "];\n", Color.white, false);
             } else if (quadAsst.getOp() == Operation.PARAMS) {
-                OutputText.appendToPane(mainFrame.getTACPannel(), "param " + quadAsst.getResult() + "\n", Color.white, false);
+                OutputText.appendToPane(jtextPane, "param " + quadAsst.getResult() + "\n", Color.white, false);
             }else if (quadAsst.getOp() == Operation.TEMP) {
-                OutputText.appendToPane(mainFrame.getTACPannel(), quadAsst.getResult() + ";\n", Color.white, false);
+                OutputText.appendToPane(jtextPane, quadAsst.getResult() + ";\n", Color.white, false);
             }else if (quadAsst.getOp() == Operation.INCLUDE) {
-                OutputText.appendToPane(mainFrame.getTACPannel(),"#Include <"+ quadAsst.getResult() + ">\n", Color.white, false);
+                OutputText.appendToPane(jtextPane,"#Include <"+ quadAsst.getResult() + ">\n", Color.white, false);
             }
 
         }
-        return null;
+        
     }
+    
+    
+    
+    
 
     public void addCode(String tacCode, String block) {
 

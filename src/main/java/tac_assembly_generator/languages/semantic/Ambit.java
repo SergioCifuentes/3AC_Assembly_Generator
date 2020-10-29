@@ -12,12 +12,22 @@ package tac_assembly_generator.languages.semantic;
 public class Ambit {
     private int id;
     private Ambit father;
-
+    private boolean function;
     public Ambit(int id, Ambit father) {
         this.id = id;
         this.father = father;
+        function=false;
     }
 
+    public boolean isFunction() {
+        return function;
+    }
+
+    public void setFunction(boolean function) {
+        this.function = function;
+    }
+
+    
     public Ambit getFather() {
         return father;
     }

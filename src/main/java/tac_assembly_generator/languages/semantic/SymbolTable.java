@@ -30,6 +30,7 @@ public class SymbolTable {
 
     public void insertTuple(Tuple tuple) {
         symbols.add(tuple);
+        
     }
 
     public Tuple getTupleWithAmbit(String id, Ambit ambit) {

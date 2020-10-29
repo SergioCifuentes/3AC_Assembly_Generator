@@ -9,12 +9,14 @@ package tac_assembly_generator.languages;
 import java.io.StringReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import tac_assembly_generator.TAC.TAC;
 import tac_assembly_generator.TAC.TranslateControlerTAC;
 import tac_assembly_generator.TAC.stack.Stack;
 import tac_assembly_generator.languages.analyzers.lexical.MlgLexicAnalizer;
 import tac_assembly_generator.languages.analyzers.syntax.SyntaxMlgAnalyzer;
 import tac_assembly_generator.languages.semantic.verification.TestManager;
+import tac_assembly_generator.optimized.OptimizedManager;
 import tac_assembly_generator.ui.FileMlg;
 import tac_assembly_generator.ui.MainFrame;
 
@@ -25,6 +27,11 @@ import tac_assembly_generator.ui.MainFrame;
 public class LanguageManager {
     private FileMlg file;
     private Stack stack;
+    private ResultQuads resultQuads;
+    private ResultQuads resultQuadsOP;
+    private boolean recentError=true;
+    private TAC tac;
+    private OptimizedManager optimizedManager;
 
     public LanguageManager(FileMlg file) {
         this.file = file;
@@ -37,7 +44,7 @@ public class LanguageManager {
     public void generateTAC(MainFrame mainframe){
         
         try {
-            TAC tac = new TAC(mainframe);
+            tac = new TAC(mainframe);
             TestManager tm = new TestManager(mainframe);
             TranslateControlerTAC controler= new TranslateControlerTAC(tac);
             stack = new Stack();
@@ -49,6 +56,15 @@ public class LanguageManager {
             sma.setTestManager(tm);
             sma.setTranslateControlerTAC(controler);
             sma.parse();
+            if (!sma.getError()) {
+                resultQuads=sma.resultQuads;
+                resultQuads.setTac(tac);
+                resultQuads.convertQuads();
+                recentError=false;
+                
+            }else{
+                recentError=true;
+            }
             //error condition
             
             
@@ -56,9 +72,30 @@ public class LanguageManager {
             Logger.getLogger(LanguageManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+    public OptimizedManager getOptimizedManager() {
+        return optimizedManager;
+    }
+    
+        
+    
     
     public void generateOptimized(MainFrame mainframe){
-        
+        if (recentError) {
+            JOptionPane.showMessageDialog(mainframe, "No se puede optimizar ya que existen errores en el TAC", "Error", JOptionPane.ERROR_MESSAGE);
+        }else{
+            if (resultQuads==null) {
+                generateTAC(mainframe);
+                generateOptimized(mainframe);
+            }else{
+                optimizedManager= new OptimizedManager(resultQuads);
+                resultQuadsOP=optimizedManager.optimize();
+                resultQuadsOP.setTac(tac);
+                resultQuadsOP.convertQuadsOP();
+                recentError=false;
+                mainframe.enableOptimizedHtml();
+            }
+        }
     }
     
     public void generateAssembly(MainFrame mainframe){

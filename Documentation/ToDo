@@ -3,6 +3,8 @@ Seperate File Manager Methods
 Improve Ambit Errors
 fix comments with variable string in TranslateControler
 Fix printf in C
+Return type values
+
 
 Comprobador Estatico-> Comprobacion de tipos
 

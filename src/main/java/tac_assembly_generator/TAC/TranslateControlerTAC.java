@@ -31,7 +31,7 @@ public class TranslateControlerTAC {
 
     public TranslateControlerTAC(TAC tac) {
         this.tac = tac;
-        includeLibraries= new ArrayList<>();
+        includeLibraries = new ArrayList<>();
         mainQuadrupleTable = new QuadrupleTable(null, tempGenerator);
         currentQuadrupleTable = mainQuadrupleTable;
         tempGenerator = new TempGenerator();
@@ -72,9 +72,11 @@ public class TranslateControlerTAC {
     public Switch getSwitchAsst() {
         return currentQuadrupleTable.getSwitchAsst();
     }
-    public void addLibrary(String string){
+
+    public void addLibrary(String string) {
         includeLibraries.add(string);
     }
+
     public For createForAsst(ArrayList<Object> assigment, String step, BoolQuad quad, String id) {
         return new For(tempGenerator, assigment, step, quad, id);
     }
@@ -151,22 +153,10 @@ public class TranslateControlerTAC {
         return quads;
     }
 
-    public void convertQuads(ArrayList<Object> obs) {
-        tempGenerator.addTempDeclarations(obs);
-        obs.add(0, new Quadruple(Operation.ARRAY,stack.getStackSize(), null,"float stack"));
-        obs.add(1, new Quadruple(Operation.EQUAL,0, null,"int p"));
-        addLibraries(obs);
-        tac.translateQuads(obs,stack);
+    public ArrayList<String> getIncludeLibraries() {
+        return includeLibraries;
     }
 
-    private void addLibraries(ArrayList<Object> obs){
-        int aux= 0;
-        for (int i = 0; i < includeLibraries.size(); i++) {
-            obs.add(aux,new Quadruple(Operation.INCLUDE, null, null, includeLibraries.get(i)));
-            aux++;
-        }
-    }
-    
     public void rejectCurrentBlock() {
         if (currentQuadrupleTable.getFather() != null) {
             for (int i = 0; i < currentQuadrupleTable.getQuadruples().size(); i++) {
@@ -210,14 +200,14 @@ public class TranslateControlerTAC {
 
     public ArrayList<Object> createIdPrintQuad(String print) {
         ArrayList<Object> ob = new ArrayList<>();
-       Integer position = stack.getIdPosition(print);
-            if (position != null) {
-                String temp = tempGenerator.generateTemp();
-                ob.add(new Quadruple(Operation.PLUS, Stack.P, position, temp));
-                ob.add(new Quadruple(Operation.PRINT, null, null, Stack.getOutputStack(temp)));
-                
-            }
-            return ob;
+        Integer position = stack.getIdPosition(print);
+        if (position != null) {
+            String temp = tempGenerator.generateTemp();
+            ob.add(new Quadruple(Operation.PLUS, Stack.P, position, temp));
+            ob.add(new Quadruple(Operation.PRINT, null, null, Stack.getOutputStack(temp)));
+
+        }
+        return ob;
     }
 
     public ArrayList<Object> createInputQuads(String output, String id, String split) {
@@ -279,20 +269,33 @@ public class TranslateControlerTAC {
         if (result == null) {
             result = tempGenerator.generateTemp();
         }
-        Quadruple newQuad = new Quadruple(op, arg1, arg2, result);
-        currentQuadrupleTable.addIdQuad(newQuad);
+        Quadruple newQuad = null;
+        if (arg1.getClass().equals(Quadruple.class)) {
+            Quadruple quad = (Quadruple) arg1;
+            if (arg2==null && quad.getArg2()==null) {
+                newQuad = new Quadruple(op, quad.getArg1(), arg2, result);
+                currentQuadrupleTable.addIdQuad(newQuad);
+            } else {
+                newQuad = new Quadruple(op, quad.getResult(), arg2, result);
+                currentQuadrupleTable.addIdQuad(newQuad);
+            }
+        } else {
+            newQuad = new Quadruple(op, arg1, arg2, result);
+            currentQuadrupleTable.addIdQuad(newQuad);
+        }
+
         return newQuad;
     }
 
-    public String getIdForStack(String id) {
+    public Quadruple getIdForStack(String id) {
         Integer position = stack.getIdPosition(id);
         if (position != null) {
             String temp = tempGenerator.generateTemp();
             currentQuadrupleTable.addIdQuad(new Quadruple(Operation.PLUS, Stack.P, position, temp));
             String result = Stack.getOutputStack(temp);
             String temp2 = tempGenerator.generateTemp();
-            creatTempIdQuad(Operation.EQUAL, result, null, temp2);
-            return temp2;
+            return creatTempIdQuad(Operation.EQUAL, result, null, temp2);
+
         } else {
             // return creatTempIdQuad(Operation.EQUAL, soa.getQuadruple().getResult(), null, id);
         }
@@ -309,25 +312,15 @@ public class TranslateControlerTAC {
         currentQuadrupleTable.removeIdQuad(quadruple);
     }
 
-    public Quadruple operateQuadruple(Quadruple q1, Quadruple q2, int op) {
-        if (q1.getArg2() == null && q2.getArg2() == null) {
-            removeQuadruple(q1);
-            removeQuadruple(q2);
-            Quadruple newQuadruple = creatTempQuad(op, q1.getArg1(), q2.getArg1(), null);
-            return newQuadruple;
-        } else {
-            Quadruple quadruple = creatTempQuad(op, q1.getResult(), q2.getResult(), null);
-
-            return quadruple;
-        }
-    }
-
     public Quadruple createTempIdQuadAssign(Object val, String result) {
-        
+        System.out.println("RRRREEE");
+        System.out.println(result);
+        System.out.println(val);
         if (val.getClass().equals(SynthesizedOpAsst.class)) {
             SynthesizedOpAsst soa = (SynthesizedOpAsst) val;
+
             Integer position = stack.getIdPosition(result);
-            
+
             if (position != null) {
                 String temp = tempGenerator.generateTemp();
                 currentQuadrupleTable.addIdQuad(new Quadruple(Operation.PLUS, Stack.P, position, temp));
@@ -336,10 +329,10 @@ public class TranslateControlerTAC {
                 return creatTempIdQuad(Operation.EQUAL, soa.getQuadruple().getResult(), null, result);
             }
 
-        }else if (val.getClass().equals(SyntaxConstAsst.class)) {
-            SyntaxConstAsst sca = (SyntaxConstAsst)val;
+        } else if (val.getClass().equals(SyntaxConstAsst.class)) {
+            SyntaxConstAsst sca = (SyntaxConstAsst) val;
             Integer position = stack.getIdPosition(result);
-            
+
             if (position != null) {
                 String temp = tempGenerator.generateTemp();
                 currentQuadrupleTable.addIdQuad(new Quadruple(Operation.PLUS, Stack.P, position, temp));
@@ -347,8 +340,8 @@ public class TranslateControlerTAC {
             } else {
                 return creatTempIdQuad(Operation.EQUAL, sca.getValue(), null, result);
             }
-        }  else {
-            return creatTempIdQuad(Operation.EQUAL,  val, null, result);
+        } else {
+            return creatTempIdQuad(Operation.EQUAL, val, null, result);
         }
 
     }
@@ -369,15 +362,26 @@ public class TranslateControlerTAC {
     }
 
     public Quadruple operateIdQuadruple(Quadruple q1, Quadruple q2, int op) {
-        if (q1.getArg2() == null && q2.getArg2() == null) {
+        String q1String;
+        System.out.println(q1 + "<<<<<");
+        System.out.println(q2 + "<<<<<");
+
+        if (q1.getArg2() == null && q1.getArg1() != null && !q1.getArg1().toString().contains(Stack.STACK_NAME)) {
+            q1String = q1.getArg1().toString();
             removeIdQuadruple(q1);
-            removeIdQuadruple(q2);
-            Quadruple newQuadruple = creatTempIdQuad(op, q1.getArg1(), q2.getArg1(), null);
-            return newQuadruple;
         } else {
-            Quadruple quadruple = creatTempIdQuad(op, q1.getResult(), q2.getResult(), null);
-            return quadruple;
+            q1String = q1.getResult().toString();
         }
+        String q2String;
+        if (q2.getArg2() == null && q2.getArg1() != null && !q2.getArg1().toString().contains(Stack.STACK_NAME)) {
+            q2String = q2.getArg1().toString();
+            removeIdQuadruple(q2);
+        } else {
+            q2String = q2.getResult().toString();
+        }
+
+        Quadruple quadruple = creatTempIdQuad(op, q1String, q2String, null);
+        return quadruple;
     }
 
     public Quadruple operateIdBoolQuadruple(Quadruple q1, Quadruple q2, int op) {
@@ -431,7 +435,6 @@ public class TranslateControlerTAC {
     public void addQuadsToCurrent(ArrayList<Object> quads) {
         currentQuadrupleTable.addQuads(quads);
     }
-    
 
     public void addTempQuadToCurrent(Quadruple quad) {
         currentQuadrupleTable.addIdQuad(quad);

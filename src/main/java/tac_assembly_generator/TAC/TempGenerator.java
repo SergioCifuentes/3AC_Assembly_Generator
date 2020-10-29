@@ -78,7 +78,7 @@ public class TempGenerator {
         return PREFIX_TAG + currentTag;
     }
 
-    void addTempDeclarations(ArrayList<Object> obs) {
+    public void addTempDeclarations(ArrayList<Object> obs) {
         int asst=START_POINT+1;
         System.out.println(currentTemp);
         int aux=0;

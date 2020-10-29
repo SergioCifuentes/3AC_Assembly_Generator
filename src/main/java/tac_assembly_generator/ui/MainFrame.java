@@ -10,6 +10,7 @@ import java.awt.event.WindowEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTextPane;
+import tac_assembly_generator.optimized.HtmlCreator;
 
 /**
  *
@@ -59,7 +60,7 @@ public class MainFrame extends javax.swing.JFrame {
         jMenuItem11 = new javax.swing.JMenuItem();
         reportMenu = new javax.swing.JMenu();
         stackMenu = new javax.swing.JMenuItem();
-        jMenuItem2 = new javax.swing.JMenuItem();
+        menuOp = new javax.swing.JMenuItem();
 
         jMenu3.setText("jMenu3");
 
@@ -148,6 +149,11 @@ public class MainFrame extends javax.swing.JFrame {
 
         jMenuItem7.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         jMenuItem7.setText("Optimization");
+        jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem7ActionPerformed(evt);
+            }
+        });
         generateMenu.add(jMenuItem7);
 
         jMenuItem8.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
@@ -164,6 +170,11 @@ public class MainFrame extends javax.swing.JFrame {
 
         jMenuItem9.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         jMenuItem9.setText("3AC");
+        jMenuItem9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem9ActionPerformed(evt);
+            }
+        });
         runMenu.add(jMenuItem9);
 
         jMenuItem10.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
@@ -189,9 +200,13 @@ public class MainFrame extends javax.swing.JFrame {
         });
         reportMenu.add(stackMenu);
 
-        jMenuItem2.setText("Optimization");
-        jMenuItem2.setEnabled(false);
-        reportMenu.add(jMenuItem2);
+        menuOp.setText("Optimization");
+        menuOp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuOpActionPerformed(evt);
+            }
+        });
+        reportMenu.add(menuOp);
 
         jMenuBar1.add(reportMenu);
 
@@ -257,6 +272,21 @@ public class MainFrame extends javax.swing.JFrame {
         StackTable stackTable= new StackTable(fileManager.getFiles().get(tabs.getSelectedIndex()).getLanguageManager().getStack());
         stackTable.setVisible(true);
     }//GEN-LAST:event_stackMenuActionPerformed
+
+    private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenuItem9ActionPerformed
+
+    private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
+        fileManager.cleanTextPanes(tabs.getSelectedIndex());
+        fileManager.getFiles().get(tabs.getSelectedIndex()).getLanguageManager().generateOptimized(this);
+        stackMenu.setEnabled(true);
+    }//GEN-LAST:event_jMenuItem7ActionPerformed
+
+    private void menuOpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuOpActionPerformed
+        HtmlCreator hc= new HtmlCreator();
+        hc.createHtml(null, null, null);
+    }//GEN-LAST:event_menuOpActionPerformed
     public void addFileMlg(FileMlg newFile) {
         fileManager.addFileMlg(newFile);
         tabs.add(newFile.getName(), newFile);
@@ -277,6 +307,9 @@ public class MainFrame extends javax.swing.JFrame {
 
     }
 
+    public void enableOptimizedHtml(){
+        menuOp.setEnabled(true);
+    }
     /**
      * @param args the command line arguments
      */
@@ -294,15 +327,15 @@ public class MainFrame extends javax.swing.JFrame {
  
 
     public JTextPane getOutputPannel() {
-        return fileManager.getTextPane(tabs.getSelectedIndex());
+        return fileManager.getOutputPane(tabs.getSelectedIndex());
     }
 
     public JTextPane getTACPannel() {
         return fileManager.getTACPane(tabs.getSelectedIndex());
     }
 
-    public JTextPane getOPPannel() {
-        return fileManager.getOPPane(tabs.getSelectedIndex());
+    public JTextPane getOptimizedPannel() {
+        return fileManager.getOptimizedPane(tabs.getSelectedIndex());
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -313,11 +346,11 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem10;
     private javax.swing.JMenuItem jMenuItem11;
-    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JMenuItem jMenuItem8;
     private javax.swing.JMenuItem jMenuItem9;
+    private javax.swing.JMenuItem menuOp;
     private javax.swing.JMenuItem newMenuItem;
     private javax.swing.JMenuItem openMenuItem;
     private javax.swing.JMenu reportMenu;

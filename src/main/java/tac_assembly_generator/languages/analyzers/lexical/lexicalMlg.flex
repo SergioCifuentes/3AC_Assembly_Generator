@@ -74,7 +74,7 @@ Input_Ignore_Case= ("I"|"i")("N"|"n")("P"|"p")("U"|"u")("T"|"t")
     ("S"|"s")("U"|"u")("B"|"b")                                         { return new Symbol(SimbolosMlg.SUB_VB, yycolumn,yyline,yytext());}
     ("E"|"e")("N"|"n")("D"|"d")                                         { return new Symbol(SimbolosMlg.END_VB, yycolumn,yyline,yytext());}
     ("A"|"a")("S"|"s")                                                  { return new Symbol(SimbolosMlg.AS_VB, yycolumn,yyline,yytext());}
-    ("R"|"r")("E"|"e")("T"|"t")("I"|"i")("N"|"n")("P"|"p")              {  return new Symbol(SimbolosMlg.RETURN_VB, yycolumn,yyline,yytext());}
+    ("R"|"r")("E"|"e")("T"|"t")("U"|"u")("R"|"r")("N"|"n")              {  return new Symbol(SimbolosMlg.RETURN, yycolumn,yyline,yytext());}
     ("I"|"i")("N"|"n")("T"|"t")("I"|"i")("N"|"n")("P"|"p")("U"|"u")("T"|"t")                      {return new Symbol(SimbolosMlg.INTINPUT, yycolumn,yyline,yytext());}
     ("C"|"c")("H"|"h")("A"|"a")("R"|"r")("I"|"i")("N"|"n")("P"|"p")("U"|"u")("T"|"t")            { return new Symbol(SimbolosMlg.CHARINPUT, yycolumn,yyline,yytext());}
     ("F"|"f")("L"|"l")("O"|"o")("A"|"a")("T"|"t")("I"|"i")("N"|"n")("P"|"p")("U"|"u")("T"|"t")   { return new Symbol(SimbolosMlg.FLOATINPUT, yycolumn,yyline,yytext());}
@@ -100,7 +100,8 @@ Input_Ignore_Case= ("I"|"i")("N"|"n")("P"|"p")("U"|"u")("T"|"t")
     ("S"|"s")("E"|"e")("L"|"l")("E"|"e")("C"|"c")("T"|"t")              {  return new Symbol(SimbolosMlg.SELECT_VB, yycolumn,yyline,yytext());}
     ("C"|"c")("A"|"a")("S"|"s")("E"|"e")                                { return new Symbol(SimbolosMlg.CASE_VB, yycolumn,yyline,yytext());}
     ("M"|"m")("O"|"o")("D"|"d")                                         { return new Symbol(SimbolosMlg.MOD, yycolumn,yyline,yytext());}
-
+    ("B"|"b")("Y"|"y")("V"|"v")("A"|"a")("L"|"l")                       {  return new Symbol(SimbolosMlg.BY_VAL, yycolumn,yyline,yytext());}
+    
     "\"" [^\"] ~ "\""                                                   { return new Symbol(SimbolosMlg.STRING, yycolumn,yyline,yytext());}
      "\'' [^\''] "\''                                                   { return new Symbol(SimbolosMlg.CHAR, yycolumn,yyline,yytext());}
     ({Letra}|"_")({Letra}|{Digito}|"_")*                                { return new Symbol(SimbolosMlg.ID, yycolumn,yyline,yytext());}
@@ -141,7 +142,7 @@ Input_Ignore_Case= ("I"|"i")("N"|"n")("P"|"p")("U"|"u")("T"|"t")
     "class"                                    { return new Symbol(SimbolosMlg.CLASS_J, yycolumn,yyline,yytext());}
     "public"                                    { return new Symbol(SimbolosMlg.PUBLIC, yycolumn,yyline,yytext());}
     "void"                                    { return new Symbol(SimbolosMlg.VOID_J, yycolumn,yyline,yytext());}
-    "return"                                    { return new Symbol(SimbolosMlg.RETURN_J, yycolumn,yyline,yytext());}
+    "return"                                    { return new Symbol(SimbolosMlg.RETURN, yycolumn,yyline,yytext());}
     "System.out.println"                    { return new Symbol(SimbolosMlg.SYSTEM_OUT_PRINTLN, yycolumn,yyline,yytext());}
     "System.out.print"                    { return new Symbol(SimbolosMlg.SYSTEM_OUT_PRINT, yycolumn,yyline,yytext());}
     "intinput"                              { return new Symbol(SimbolosMlg.INTINPUT, yycolumn,yyline,yytext());}

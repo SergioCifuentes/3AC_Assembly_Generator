@@ -42,7 +42,7 @@ public class Type {
         if (father==null) {
             return false;
         }else{
-            if (father.equals(type)) {
+            if (father.number==type.number) {
                 return true;
             }else{
                 return father.isFather(type);

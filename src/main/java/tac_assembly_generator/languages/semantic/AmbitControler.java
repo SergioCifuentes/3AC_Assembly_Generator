@@ -12,7 +12,7 @@ package tac_assembly_generator.languages.semantic;
 public class AmbitControler {
     private int ambitsExisting;
     private Ambit currentAmbit;
-
+    
     
     public AmbitControler() {
         ambitsExisting=0;

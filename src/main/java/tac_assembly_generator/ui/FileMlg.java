@@ -45,12 +45,12 @@ public class FileMlg extends javax.swing.JPanel {
         return tACText;
     }
 
-    public JTextPane getOptText() {
+    public JTextPane getOutPutText() {
         return outputText;
     }
 
-    public JTextPane getOPText() {
-        return optText;
+    public JTextPane getOptimizedText() {
+        return optimizeText;
     }
 
     public JTextPane getAssemblerText() {
@@ -90,7 +90,7 @@ public class FileMlg extends javax.swing.JPanel {
         mlgscroll.setRowHeaderView(lnMLG);
         LineNumber lnTAC = new LineNumber(tACText);
         tacScroll.setRowHeaderView(lnTAC);
-        LineNumber lnOpt = new LineNumber(optText);
+        LineNumber lnOpt = new LineNumber(optimizeText);
         optScroll.setRowHeaderView(lnOpt);
         LineNumber lnAssy = new LineNumber(assemblerText);
         assemblerScroll.setRowHeaderView(lnAssy);
@@ -113,7 +113,7 @@ public class FileMlg extends javax.swing.JPanel {
         tacScroll = new javax.swing.JScrollPane();
         tACText = new javax.swing.JTextPane();
         optScroll = new javax.swing.JScrollPane();
-        optText = new javax.swing.JTextPane();
+        optimizeText = new javax.swing.JTextPane();
         assemblerScroll = new javax.swing.JScrollPane();
         assemblerText = new javax.swing.JTextPane();
         jTabbedPane2 = new javax.swing.JTabbedPane();
@@ -144,9 +144,9 @@ public class FileMlg extends javax.swing.JPanel {
 
         tabsGenerated.addTab("3AC", tacScroll);
 
-        optText.setBackground(new java.awt.Color(32, 31, 31));
-        optText.setForeground(new java.awt.Color(255, 255, 255));
-        optScroll.setViewportView(optText);
+        optimizeText.setBackground(new java.awt.Color(32, 31, 31));
+        optimizeText.setForeground(new java.awt.Color(255, 255, 255));
+        optScroll.setViewportView(optimizeText);
 
         tabsGenerated.addTab("Optimization", optScroll);
 
@@ -204,8 +204,8 @@ public void addMlgText(String mlgText){
     private javax.swing.JTextPane mlgText;
     private javax.swing.JScrollPane mlgscroll;
     private javax.swing.JScrollPane optScroll;
-    private javax.swing.JTextPane optText;
     private javax.swing.JTextPane optText1;
+    private javax.swing.JTextPane optimizeText;
     private javax.swing.JScrollPane outputScroll;
     private javax.swing.JTextPane outputText;
     private javax.swing.JTextPane tACText;

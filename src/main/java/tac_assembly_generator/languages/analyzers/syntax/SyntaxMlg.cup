@@ -10,11 +10,11 @@ import tac_assembly_generator.TAC.TranslateControlerTAC;
 import tac_assembly_generator.TAC.quadruple.Operation;
 import tac_assembly_generator.TAC.quadruple.Quadruple;
 import tac_assembly_generator.TAC.quadruple.BoolQuad;
-import tac_assembly_generator.languages.semantic.type.Type;
-import tac_assembly_generator.languages.semantic.type.TypeManager;
+import tac_assembly_generator.languages.semantic.type.*;
 import tac_assembly_generator.TAC.asst.Switch;
 import tac_assembly_generator.languages.semantic.UniquenessTable;
 import tac_assembly_generator.TAC.asst.For;
+import tac_assembly_generator.languages.ResultQuads;
 import tac_assembly_generator.languages.semantic.SemanticAsstIdQuad;
 import tac_assembly_generator.ui.backend.OutputErrors;
 
@@ -25,7 +25,15 @@ public boolean SyntaxError;
     public boolean SyntaxRecoverableError;
     public TestManager testManager;
     public TranslateControlerTAC translateControlerTAC;
+    public boolean error=false;
+    public ResultQuads resultQuads;
 
+    public boolean getError(){
+        return error;
+    }
+    public ResultQuads getResultQuad(){
+        return resultQuads;
+    }
     public void setTestManager(TestManager testManager) {
         this.testManager = testManager;
         testManager.creatFatherAmbit();
@@ -71,6 +79,7 @@ public void setTranslateControlerTAC(TranslateControlerTAC translateControlerTAC
 :}
 
 action code{:
+public boolean error=false;
      protected void mostrarErrores(int numero, Symbol s,SyntaxMlgAnalyzer sma) {
          JTextPane text= sma.testManager.getMainFrame().getOutputPannel();
     switch (numero) {
@@ -110,14 +119,14 @@ terminal String DECIMAL;
 
 // Terminals Visual Basic */
 terminal JAVA_SEPERATOR, DIM_VB, AS_VB,
-FUNCTION_VB, END_VB, SUB_VB,RETURN_VB, CONSOLE_VB, WRITE_VB,
-WRITELN_VB, TO_VB, STEP_VB, NEXT_VB,
+FUNCTION_VB, END_VB, SUB_VB, CONSOLE_VB, WRITE_VB,
+WRITELN_VB, TO_VB, STEP_VB, NEXT_VB, BY_VAL,
 DIFERENT_VB, LOOP_VB,
 ELSE_IF_VB, THEN_VB, SELECT_VB, CASE_VB ;
 
 
 // Terminals Java */
-terminal PYTHON_SEPERATOR, CLASS_J, VOID_J, RETURN_J, SYSTEM_OUT_PRINTLN,
+terminal PYTHON_SEPERATOR, CLASS_J, VOID_J, SYSTEM_OUT_PRINTLN,
 SYSTEM_OUT_PRINT, SWITCH_J, BREAK, SEMICOLON,
 LEFT_CB, RIGHT_CB, COLON;
 
@@ -135,7 +144,7 @@ VbCode, JavaCode, PythonCode, Program,VbSeperator, PythonSeperator,
 OpLogic, Type, Public, JavaSeperator, ProgramSeperator;
 
 //Non-terminals VB*/
-non terminal FunctionVB, FunctionVbHeader, Funct, SubVb, SubVbHeader, Parameters, Parameter, InstructionsFunctionVb, InstructionsFunctionVb2, LnInstructionsVb, Lines,
+non terminal FunctionVB, FunctionVbHeader, ByVal, Funct, SubVb, SubVbHeader, Parameters, Parameter, InstructionsFunctionVb, InstructionsFunctionVb2, LnInstructionsVb, Lines,
 OutputVb, ValuesVb, ValueVb, AsType, CycleVb, ForVb, ForVbHeader, ForVbHeaderStart, For, Step, NumberValue,
 Number2, Number3, WhileVb, WhileVbHeader, OpBool, OpBool2, OpBool3, BoolValueVb, ExBoolVb, DoWhileVb, DoHeader, DeclarationVb,
 DeTypeVb, IdsVb, AssiVb, AssignmentVb, ConditionVb, IfVb, IfVbHeader, ElseVb, ElseHeader, ElseIfHeader,  ThenVb, SwitchVb, SwitchVbHeader,
@@ -169,8 +178,11 @@ Inicio 		::= VB Java Python  Program {:
                                         
                                         sma.testManager.finishAmbit();
                                     sma.translateControlerTAC.acceptCurrentBlock();
-                                        sma.translateControlerTAC.convertQuads(sma.translateControlerTAC.getcurrentQuads());
-                                        :};
+                                           sma.testManager.finishAmbit();
+                                    sma.translateControlerTAC.acceptCurrentBlock();
+                                    sma.resultQuads=new ResultQuads(sma.translateControlerTAC.getcurrentQuads(), sma.testManager.getStack()
+                                            , sma.translateControlerTAC.getTempGenerator(), sma.translateControlerTAC.getIncludeLibraries());
+                                    sma.error=error; :};
                 
 /*
     VB
@@ -206,7 +218,8 @@ FunctionVB	::= FunctionVbHeader:fun InstructionsFunctionVb:ins END_VB FUNCTION_V
 FunctionVbHeader::= Public FUNCTION_VB ID:id PARENTHESIS_A Parameters PARENTHESIS_B AS_VB Type:type {:sma.testManager.creatSonAmbit();
                                                                                             sma.translateControlerTAC.createNewQuadrupleBlock();
                                                                                             String name =sma.testManager.insertFunction(id, (Integer) type, ((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
-                RESULT= name;:};
+                                                                                            sma.testManager.setAmbitFuction();
+                RESULT= name;:};                
 SubVb      ::=  SubVbHeader:sub InstructionsFunctionVb:lines END_VB SUB_VB {:ArrayList<Object>quad=new ArrayList<>();
                                                                         if(sub!=null){
                                                                         quad=sma.translateControlerTAC.tagFunction((String)sub,(ArrayList<Object>) lines);
@@ -223,18 +236,24 @@ Public::= PUBLIC
             |;
 Parameters::= Parameter 
             |;
-Parameter   ::= Parameter COMMA ID:id AS_VB Type:type {:sma.testManager.getParameterControl().insertParameter((Integer)type,id,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));:}
-                | ID:id AS_VB Type:type {:sma.testManager.getParameterControl().insertParameter((Integer)type,id,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));:} ;
+Parameter   ::= Parameter COMMA ByVal ID:id AS_VB Type:type {:sma.testManager.getParameterControl().insertParameter((Integer)type,id,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));:}
+                |ByVal ID:id AS_VB Type:type {:sma.testManager.getParameterControl().insertParameter((Integer)type,id,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));:} ;
 InstructionsFunctionVb  ::=InstructionsFunctionVb2{: RESULT=sma.translateControlerTAC.getcurrentQuads();
                                                     sma.testManager.finishAmbit();
                                                     sma.translateControlerTAC.acceptCurrentBlock();
                                                     :};
+ByVal      ::=BY_VAL
+                |;
 InstructionsFunctionVb2::= Lines LnInstructionsVb  
-                            |Lines RETURN_VB ValuesVb
-                            |Lines RETURN_VB
+                            |Lines RETURN NumberValue:val{:if(val!=null&&sma.testManager.verifyFuctionForReturn(((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()))){
+                                                            sma.testManager.insertReturnValue(val,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()),sma.translateControlerTAC);
+                                                        }:}
+                            |Lines RETURN
                             |LnInstructionsVb 
-                            |RETURN_VB ValuesVb
-                            |RETURN_VB;
+                            |RETURN NumberValue:val{:if(val!=null&&sma.testManager.verifyFuctionForReturn(((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()))){
+                                                            sma.testManager.insertReturnValue(val,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()),sma.translateControlerTAC);
+                                                        }:}
+                            |RETURN;
 Lines               ::=Lines LnInstructionsVb
                         |LnInstructionsVb;
 LnInstructionsVb::= Input:in   {:if(in!=null){
@@ -710,7 +729,7 @@ LineCodesJ      ::=LineCodesJ2 {: RESULT=sma.translateControlerTAC.getcurrentQua
                                                     sma.testManager.finishAmbit();
                                                     sma.translateControlerTAC.acceptCurrentBlock();
                                                     :};
-LineCodesJ2      ::=LineCodeJ3 RETURN_J NumberValue
+LineCodesJ2      ::=LineCodeJ3 RETURN NumberValue
                     | LineCodeJ3;
 LineCodeJ3      ::= LineCodeJ3 LineCodeJ
                 |LineCodeJ;
@@ -1169,10 +1188,9 @@ Number3C     ::=NUMBER:val{: Type type =sma.testManager.getTypeManager().operate
 		                    RESULT=new SynthesizedOpAsst(quadruple,type);:}
                 |ID:val {:Type type=sma.testManager.getTypeFromST(val,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
                             if(type!=null){
-                                Quadruple quadruple=sma.translateControlerTAC.creatTempIdQuad(Operation.EQUAL,sma.translateControlerTAC.getIdForStack(val),null,null);
+                                Quadruple quadruple=sma.translateControlerTAC.getIdForStack(val);
                                 RESULT=new SynthesizedOpAsst(quadruple,type);
                             }else{
-
                                 RESULT=null;
                             }:}
                 |PARENTHESIS_A NumberValueC:asst PARENTHESIS_B {:RESULT=asst;:}
@@ -1211,20 +1229,6 @@ Rows        ::= Rows COMMA LEFT_CB Nums RIGHT_BRACKET
 
 Globals     ::=Globals  DeclarationC SEMICOLON {::}
                 |DeclarationC SEMICOLON {::};
-DeclarationGlobalC::=   Type:type ID:id EQUAL NumberValueC:val{:sma.testManager.insertPreTuple(id,null,val,null,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
-                                        if(val!=null){ 
-                                                            sma.translateControlerTAC.createTempIdQuadAssign(val,id);}
-                                        sma.translateControlerTAC.nextIdQuad();
-                                        sma.testManager.insertPreTuplesToSymbolTable((Integer)type,null,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()),sma.translateControlerTAC);
-                                        :}
- //                   |Type ID Dimensions EQUAL ArrayValues{::}
-                    |Type:type ID:id DimensionsDec:dims {:if(dims!=null&&!sma.testManager.checkExistence(id,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()))){
-
-                        ArrayList<Object> dimensions=(ArrayList<Object>)dims;
-                        sma.testManager.insertArray(id, (Integer) type, dimensions, ((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
-                        sma.translateControlerTAC.addQuadsToCurrent(sma.translateControlerTAC.createArrayQuads(id,dimensions));
-                    }:}
-                    |Type ID;
 
 DimensionsDec ::= DimensionsDec:dims LEFT_BRACKET NumDecC:val RIGHT_BRACKET{:if(dims!=null){
                                                                             ArrayList<Object> dim=new ArrayList<>();
@@ -1515,8 +1519,6 @@ ParametersC::=ParametersC:paramsC COMMA NumberValueC:val {:ArrayList<Object> par
                                 params.add(soa.getQuadruple().getResult());
                             }
                             RESULT=params;:};
-ValueC::=NumberValueC:val {:RESULT=val;:};
-
 ArrayVal::= ID Dimensions;
 
 OpBoolC::=  OpBoolC:val1 OR OpBoolC2:val2 {:if(val1!=null &&val2!=null){
