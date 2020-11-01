@@ -18,6 +18,7 @@ public class Tuple {
     private String name;
     private String functionName;
     private Type type;
+    private String objectType;
     private Object value;
     private Symbol symbol;
     private Ambit ambit;
@@ -31,6 +32,14 @@ public class Tuple {
     private Integer dimension;
     //Stack Info
     private int size;
+
+    public String getObjectType() {
+        return objectType;
+    }
+
+    public void setObjectType(String objectType) {
+        this.objectType = objectType;
+    }
     
 
     public Tuple(String name, Type type, Object value,Integer dimension, Symbol symbol,Ambit ambit) {

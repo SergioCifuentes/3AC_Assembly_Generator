@@ -61,6 +61,9 @@ public class TestManager {
     }
 
     public void setCurrentClass(Tuple currentClass) {
+        if (currentClass == null) {
+            stack.changeCurrent("main");
+        }
         this.currentClass = currentClass;
     }
 
@@ -80,9 +83,10 @@ public class TestManager {
         ambitControler.createSonAmbit();
     }
 
-    public void setAmbitFuction(){
+    public void setAmbitFuction() {
         ambitControler.getCurrentAmbit().setFunction(true);
     }
+
     public UniquenessTable createNewUniquenessTable() {
         return new UniquenessTable(mainFrame.getOutputPannel());
     }
@@ -99,7 +103,7 @@ public class TestManager {
         for (int i = 0; i < preTupleSymbols.size(); i++) {
             System.out.println(preTupleSymbols.get(i).getName());
             System.out.println(preTupleSymbols.get(i).getValue());
-            
+
             if (preTupleSymbols.get(i).getValue() != null) {
 
                 SynthesizedOpAsst so = (SynthesizedOpAsst) preTupleSymbols.get(i).getValue();
@@ -144,7 +148,7 @@ public class TestManager {
     public void insertTuple(String id, Integer type, Symbol symbol) {
         Tuple tuple = new Tuple(id, typeManager.getType(type), null, 0, symbol, ambitControler.getCurrentAmbit());
         tuple.setStackInfo(1);
-        if (stack.getIdPosition(id)==null) {
+        if (stack.getIdPosition(id) == null) {
             stack.addToCurrentStack(tuple);
         }
         symbolTable.insertTuple(tuple);
@@ -201,11 +205,11 @@ public class TestManager {
                         String result = null;
                         if (i == dimension.size() - 1) {
                             results.add(tac.getTempGenerator().generateTemp());
-                            quads.add(new Quadruple(Operation.PLUS, results.get(results.size() - 2), dimension.get(dimension.size()-1-i), results.get(results.size() - 1)));
+                            quads.add(new Quadruple(Operation.PLUS, results.get(results.size() - 2), dimension.get(dimension.size() - 1 - i), results.get(results.size() - 1)));
                             break;
                         }
                         if (i < dimension.size() - 1) {
-                                result = String.valueOf( sizes.get(sizes.size() - 2 - i));
+                            result = String.valueOf(sizes.get(sizes.size() - 2 - i));
                         }
                         String temp = null;
                         if (i == dimension.size() - 2) {
@@ -219,7 +223,7 @@ public class TestManager {
                             result = temp;
                         }
                         String result2 = tac.getTempGenerator().generateTemp();
-                        quads.add(new Quadruple(Operation.MULTIPLICATION, dimension.get(dimension.size()-1-i), result, result2));
+                        quads.add(new Quadruple(Operation.MULTIPLICATION, dimension.get(dimension.size() - 1 - i), result, result2));
                         results.add(result2);
                         if (results.size() > 1) {
                             String result3 = tac.getTempGenerator().generateTemp();
@@ -228,15 +232,15 @@ public class TestManager {
                         }
 
                     }
-                    String temp=tac.getTempGenerator().generateTemp();
+                    String temp = tac.getTempGenerator().generateTemp();
                     quads.add(new Quadruple(Operation.PLUS, Stack.P, stack.getIdPosition(id), temp));
-                    
-                    String temp2=tac.getTempGenerator().generateTemp();
-                    
-                    quads.add(new Quadruple(Operation.PLUS, temp, results.get(results.size() - 1) ,temp2 ));
+
+                    String temp2 = tac.getTempGenerator().generateTemp();
+
+                    quads.add(new Quadruple(Operation.PLUS, temp, results.get(results.size() - 1), temp2));
                     tac.addTempQuads(quads);
-                    
-                    return new SynthesizedOpAsst(new Quadruple(Operation.EQUAL,null, null, Stack.getOutputStack(results.get(results.size() - 1))), tuple.getType());
+
+                    return new SynthesizedOpAsst(new Quadruple(Operation.EQUAL, null, null, Stack.getOutputStack(results.get(results.size() - 1))), tuple.getType());
                 }
             }
         }
@@ -245,18 +249,18 @@ public class TestManager {
     }
 
     public void insertArray(String id, Integer type, ArrayList<Object> objects, Symbol symbol) {
-        System.out.println("DIM of"+id);
+        System.out.println("DIM of" + id);
         for (int i = 0; i < objects.size(); i++) {
             System.out.println(objects.get(i));
         }
         Tuple tuple = new Tuple(id, typeManager.getType(type), null, objects.size(), symbol, ambitControler.getCurrentAmbit());
-        
+
         tuple.setDimensions(objects);
-        int size=(Integer)objects.get(0);
+        int size = (Integer) objects.get(0);
         for (int i = 1; i < objects.size(); i++) {
-            size*=(Integer)objects.get(i);
+            size *= (Integer) objects.get(i);
         }
-        System.out.println("SIZE "+size);
+        System.out.println("SIZE " + size);
         tuple.setStackInfo(size);
         stack.addToCurrentStack(tuple);
         symbolTable.insertTuple(tuple);
@@ -268,16 +272,16 @@ public class TestManager {
         if (type != null) {
             Tuple tuple = symbolTable.getTupleWithAmbit(id, ambitControler.getCurrentAmbit());
 
-            if (tuple != null&&tuple.isConstante()) {
+            if (tuple != null && tuple.isConstante()) {
                 if (type.equals(typeManager.getType(TypeManager.INTEGER_TYPE))) {
-                       return (Integer)tuple.getValue();
+                    return (Integer) tuple.getValue();
                 } else if (type.equals(typeManager.getType(TypeManager.CHAR_TYPE))) {
-                        char charValue=(char)tuple.getValue();
-                        return (int)charValue;
+                    char charValue = (char) tuple.getValue();
+                    return (int) charValue;
                 } else {
-                     //Not integer value error
+                    //Not integer value error
                 }
-            }else{
+            } else {
                 //Not const error
             }
 
@@ -285,21 +289,20 @@ public class TestManager {
         return null;
     }
 
-    
-    public SyntaxConstAsst operateConstAsst(Object const1,Object const2,Integer op, Symbol s){
-        SyntaxConstAsst sc1= (SyntaxConstAsst)const1;
-        SyntaxConstAsst sc2= (SyntaxConstAsst)const2;
+    public SyntaxConstAsst operateConstAsst(Object const1, Object const2, Integer op, Symbol s) {
+        SyntaxConstAsst sc1 = (SyntaxConstAsst) const1;
+        SyntaxConstAsst sc2 = (SyntaxConstAsst) const2;
         Type type = operateType(sc1.getType(), sc2.getType(), s);
-        if (type!=null) {
+        if (type != null) {
             switch (type.getNumber()) {
                 case TypeManager.INTEGER_TYPE:
-                    Object val=Operation.operateInteger(sc1.getValue(),sc2.getValue(),op);
+                    Object val = Operation.operateInteger(sc1.getValue(), sc2.getValue(), op);
                     return new SyntaxConstAsst(val, type.getNumber());
                 case TypeManager.FLOAT_TYPE:
-                    Object val2=Operation.operateFloat(sc1.getValue(),sc2.getValue(),op);
+                    Object val2 = Operation.operateFloat(sc1.getValue(), sc2.getValue(), op);
                     return new SyntaxConstAsst(val2, type.getNumber());
                 case TypeManager.CHAR_TYPE:
-                    Object val3=Operation.operateInteger(sc1.getValue(),sc2.getValue(),op);
+                    Object val3 = Operation.operateInteger(sc1.getValue(), sc2.getValue(), op);
                     return new SyntaxConstAsst(val3, type.getNumber());
                 default:
                     throw new AssertionError();
@@ -307,29 +310,27 @@ public class TestManager {
         }
         return null;
     }
-    
-    public boolean insertConst(String id, Integer type, Object val,Symbol s){
-        SyntaxConstAsst sc=(SyntaxConstAsst)val; 
-        if (typeManager.getType(sc.getType()).isFather(typeManager.getType(type))||typeManager.getType(type).equals(typeManager.getType(sc.getType()))) {
-            Tuple tuple = new Tuple(id, typeManager.getType(type), sc.getValue(),0, s, ambitControler.getCurrentAmbit());
+
+    public boolean insertConst(String id, Integer type, Object val, Symbol s) {
+        SyntaxConstAsst sc = (SyntaxConstAsst) val;
+        if (typeManager.getType(sc.getType()).isFather(typeManager.getType(type)) || typeManager.getType(type).equals(typeManager.getType(sc.getType()))) {
+            Tuple tuple = new Tuple(id, typeManager.getType(type), sc.getValue(), 0, s, ambitControler.getCurrentAmbit());
             tuple.setConstante(true);
             symbolTable.insertTuple(tuple);
             return true;
-                  
-        }else{
-            
+
+        } else {
+
             OutputErrors.typeOpError(mainFrame.getOutputPannel(), typeManager.getOutputType(type), typeManager.getOutputType(sc.getType()), s);
         }
         return false;
-        
+
     }
 
     public Stack getStack() {
         return stack;
     }
-    
-    
-    
+
     public boolean insertDeclaration(String id, Integer type, Object val, Symbol symbol) {
         if (!checkExistence(id, symbol)) {
             if (val != null) {
@@ -381,22 +382,21 @@ public class TestManager {
                 }
             }
         }
-        
 
         Tuple tuple = symbolTable.insertFunction(id, ty, parameterControl, s, ambitControler.getCurrentAmbit(), mainFrame.getOutputPannel());
-        
+
         if (tuple == null) {
             parameterControl.removeParameters();
             return null;
         } else {
             String name = tuple.generateFunctionName(typeManager.getLanguage());
             if (id != "main") {
-            stack.creatNewStack(tuple.getName(), typeManager.getLanguage());
-        }
+                stack.creatNewStack(tuple.getName(), typeManager.getLanguage());
+            }
             ArrayList<Tuple> paArrayList = insertParameters();
             tuple.setParameters(paArrayList);
             parameterControl.removeParameters();
-            
+
             return name;
         }
 
@@ -424,10 +424,14 @@ public class TestManager {
             return null;
         } else {
             tuple1.setClassFather(tuple);
+            stack.creatNewStack(tuple1.getName(), typeManager.getLanguage());
             ArrayList<Tuple> paArrayList = insertParameters();
             tuple1.setParameters(paArrayList);
             parameterControl.removeParameters();
-            return tuple1.generateFunctionName(typeManager.getLanguage());
+            String name = tuple1.generateFunctionName(typeManager.getLanguage());
+            stack.changeName(tuple1.getName());
+
+            return name;
         }
 
     }
@@ -439,6 +443,7 @@ public class TestManager {
         } else {
             Tuple tuple = new Tuple(id, TypeManager.CLASS, null, 0, s, ambitControler.getCurrentAmbit());
             symbolTable.insertTuple(tuple);
+            stack.creatNewStack(typeManager.getLanguage() + "_" + id, typeManager.getLanguage());
             return tuple;
 
         }
@@ -509,11 +514,11 @@ public class TestManager {
 
     public boolean assigValue(String id, Object value, Symbol symbol) {
         Type idType = symbolTable.getTypeWithAmbit(id, ambitControler.getCurrentAmbit(), mainFrame, symbol);
-        
+
         if (idType != null) {
             if (value != null) {
                 SynthesizedOpAsst soa = (SynthesizedOpAsst) value;
-                if (soa.getType().getNumber()==idType.getNumber() || soa.getType().isFather(idType)) {
+                if (soa.getType().getNumber() == idType.getNumber() || soa.getType().isFather(idType)) {
                     System.out.println("TRUE");
                     return true;
                 }
@@ -533,7 +538,7 @@ public class TestManager {
 
     public void insertPreTuple(String name, Integer typeNumber, Object value, Integer dimension, Symbol symbol) {
         Tuple newPreTuple;
-        System.out.println("VAL "+value);
+        System.out.println("VAL " + value);
         if (typeNumber != null) {
             newPreTuple = new Tuple(name, typeManager.getType(typeNumber), value, dimension, symbol, ambitControler.getCurrentAmbit());
         } else {
@@ -580,34 +585,32 @@ public class TestManager {
         }
 
     }
-    
-    public void insertReturnValue(Object value,Symbol s,TranslateControlerTAC tac){
+
+    public void insertReturnValue(Object value, Symbol s, TranslateControlerTAC tac) {
         Integer posicion = stack.getIdPosition(Stack.RETURN);
-        if (posicion==null) {
+        if (posicion == null) {
             Tuple tuple = new Tuple(Stack.RETURN, null, null, 0, s, ambitControler.getCurrentAmbit());
             tuple.setStackInfo(1);
             stack.addToCurrentStack(tuple);
             posicion = stack.getIdPosition(Stack.RETURN);
         }
         String temp = tac.getTempGenerator().generateTemp();
-        SynthesizedOpAsst soa=(SynthesizedOpAsst)value;
+        SynthesizedOpAsst soa = (SynthesizedOpAsst) value;
         tac.addTempQuadToCurrent(new Quadruple(Operation.PLUS, Stack.P, posicion, temp));
-        System.out.println("QUAD "+soa.getQuadruple().getResult());
+        System.out.println("QUAD " + soa.getQuadruple().getResult());
         tac.addTempQuadToCurrent(new Quadruple(Operation.EQUAL, soa.getQuadruple().getResult(), null, Stack.getOutputStack(temp)));
         tac.acceptAllIdQuas();
     }
-    
-    
-    public boolean  verifyFuctionForReturn(Symbol s){
+
+    public boolean verifyFuctionForReturn(Symbol s) {
         if (ambitControler.getCurrentAmbit().isFunction()) {
             return true;
-        }else{
+        } else {
             OutputErrors.notFunctionForReturn(mainFrame.getOutputPannel(), s);
             return false;
         }
-            
+
     }
-    
 
     public void include(String string, Symbol s, TranslateControlerTAC tac) {
         if (string.contains("JAVA") || string.contains("PY") || string.contains("VB")) {
@@ -625,7 +628,7 @@ public class TestManager {
 
     }
 
-    public SynthesizedOpAsst verifyFunction(String id, ArrayList<Object> parameters, Symbol s, TranslateControlerTAC tac) {
+    public SynthesizedOpAsst verifyFunction(String id, ArrayList<SynthesizedOpAsst> parameters, Symbol s, TranslateControlerTAC tac) {
         if (parameters == null) {
             parameters = new ArrayList<>();
         }
@@ -638,34 +641,45 @@ public class TestManager {
 
                 if (includedTuples.get(i).getName().contains(ids[1]) && parameters.size() == includedTuples.get(i).getParameters().size()
                         && includedTuples.get(i).getLanguage().equals(ids[0])) {
-                    function = includedTuples.get(i);
+                    boolean mismosTipos = true;
+                    for (int j = 0; j < parameters.size(); j++) {
+
+                        if (!(parameters.get(j).getType().getNumber() == includedTuples.get(i).getParameters().get(j).getType().getNumber()) && !parameters.get(j).getType().isFather(includedTuples.get(i).getParameters().get(j).getType())) {
+                            mismosTipos = false;
+                        }
+                    }
+                    if (mismosTipos) {
+                        function = includedTuples.get(i);
+                    }
+
                 }
 
             }
-            int fatherStack=0;
+            int fatherStack = 0;
             if (function != null) {
-                fatherStack=stack.getCurrentP();
-                tac.addTempQuadToCurrent(new Quadruple(Operation.PLUS, Stack.P, stack.getFunctionIndex(function.getName()), Stack.P));
-                
+                fatherStack = stack.getCurrentP();
+                Quadruple quad = new Quadruple(Operation.PLUS, Stack.P, stack.getCurrentSize(), Stack.P);
                 stack.changeCurrent(function.getName());
                 ArrayList<String> strings = new ArrayList<>();
                 for (int i = 0; i < parameters.size(); i++) {
+                    String temp1 = tac.getTempGenerator().generateTemp();
+                    tac.addTempQuadToCurrent(new Quadruple(Operation.PLUS, Stack.P, stack.getCurrentSize(), temp1));
 
                     String temp = tac.getTempGenerator().generateTemp();
-                    tac.addTempQuadToCurrent(new Quadruple(Operation.PLUS, Stack.P, i, temp));
+                    Integer param = stack.getIdPosition(function.getParameters().get(i).getName());
+                    tac.addTempQuadToCurrent(new Quadruple(Operation.PLUS, temp1, param, temp));
+
                     strings.add(temp);
 
                 }
                 for (int i = 0; i < strings.size(); i++) {
 
-                    tac.addTempQuadToCurrent(new Quadruple(Operation.EQUAL, (String) parameters.get(i), null, Stack.getOutputStack(strings.get(i))));
+                    tac.addTempQuadToCurrent(new Quadruple(Operation.EQUAL, (String) parameters.get(i).getQuadruple().getResult(), null, Stack.getOutputStack(strings.get(i))));
                 }
+                tac.addTempQuadToCurrent(quad);
+
                 String call = function.getName();
-//                Integer indexReturn =s
-//                if () {
-//                    
-//                }
-                //Quadruple quad = new Quadruple(Operation.TEMP, null, null, call);
+
                 tac.addTempQuadToCurrent(new Quadruple(Operation.TEMP, null, null, call));
                 String temp = tac.getTempGenerator().generateTemp();
                 Integer ret = stack.getIdPosition(Stack.RETURN);
@@ -674,14 +688,14 @@ public class TestManager {
                     Quadruple quad2 = new Quadruple(Operation.EQUAL, null, null, Stack.getOutputStack(temp));
                     tac.acceptAllIdQuas();
                     stack.changeCurrent(fatherStack);
-                    tac.addTempQuadToCurrent(new Quadruple(Operation.MINUS, Stack.P,stack.getFunctionIndex(function.getName()), Stack.P));
-                    
+                    tac.addTempQuadToCurrent(new Quadruple(Operation.MINUS, Stack.P, stack.getCurrentSize(), Stack.P));
+
                     tac.acceptAllIdQuas();
                     return new SynthesizedOpAsst(quad2, function.getType());
                 }
                 stack.changeCurrent(fatherStack);
                 tac.addTempQuadToCurrent(new Quadruple(Operation.MINUS, Stack.P, stack.getFunctionIndex(function.getName()), Stack.P));
-                
+
                 tac.acceptAllIdQuas();
                 return null;
             } else {
@@ -692,6 +706,7 @@ public class TestManager {
             Tuple function = null;
 
             for (int i = 0; i < includedTuples.size(); i++) {
+
                 if (includedTuples.get(i).getName().contains(id) && parameters.size() == includedTuples.get(i).getParameters().size()) {
                     function = includedTuples.get(i);
                 }
@@ -708,4 +723,93 @@ public class TestManager {
         return null;
     }
 
+    public SynthesizedOpAsst verifyClass(Object id1, Object id2,Object obId, ArrayList<SynthesizedOpAsst> parameters, Symbol s, TranslateControlerTAC tac) {
+        String stringid1 = (String) id1;
+        String stringid2 = (String) id2;
+        if (stringid1.equals(stringid2)&&insertObject((String)obId,stringid2 , s)!=null) {
+            
+            if (parameters == null) {
+                parameters = new ArrayList<>();
+            }
+
+            Tuple function = null;
+            String constructorName = "JAVA_" + id1 + "_" + id1;
+
+            System.out.println("INCLUDED" + constructorName);
+            for (int i = 0; i < includedTuples.size(); i++) {
+
+                if (includedTuples.get(i).getName().contains(constructorName) && parameters.size() == includedTuples.get(i).getParameters().size()) {
+                    boolean mismosTipos = true;
+                    for (int j = 0; j < parameters.size(); j++) {
+
+                        if (!(parameters.get(j).getType().getNumber() == includedTuples.get(i).getParameters().get(j).getType().getNumber()) && !parameters.get(j).getType().isFather(includedTuples.get(i).getParameters().get(j).getType())) {
+                            mismosTipos = false;
+                        }
+                    }
+                    if (mismosTipos) {
+                        function = includedTuples.get(i);
+                        break;
+                    }
+                }
+
+            }
+
+            int fatherStack = 0;
+            if (function != null) {
+
+                fatherStack = stack.getCurrentP();
+
+                Quadruple quad = new Quadruple(Operation.PLUS, Stack.P, stack.getCurrentSize(), Stack.P);
+                stack.changeCurrent(function.getName());
+                ArrayList<String> strings = new ArrayList<>();
+                for (int i = 0; i < parameters.size(); i++) {
+                    String temp1 = tac.getTempGenerator().generateTemp();
+                    tac.addTempQuadToCurrent(new Quadruple(Operation.PLUS, Stack.P, stack.getCurrentSize(), temp1));
+
+                    String temp = tac.getTempGenerator().generateTemp();
+                    Integer param = stack.getIdPosition(function.getParameters().get(i).getName());
+                    tac.addTempQuadToCurrent(new Quadruple(Operation.PLUS, temp1, param, temp));
+                    strings.add(temp);
+
+                }
+                for (int i = 0; i < strings.size(); i++) {
+
+                    tac.addTempQuadToCurrent(new Quadruple(Operation.EQUAL, (String) parameters.get(i).getQuadruple().getResult(), null, Stack.getOutputStack(strings.get(i))));
+                }
+                tac.addTempQuadToCurrent(quad);
+                String call = function.getName();
+
+                tac.addTempQuadToCurrent(new Quadruple(Operation.TEMP, null, null, call));
+                tac.addTempQuadToCurrent(new Quadruple(Operation.MINUS, Stack.P, stack.getCurrentSize(), Stack.P));
+                stack.changeCurrent(fatherStack);
+                String temp = tac.getTempGenerator().generateTemp();
+                tac.addTempQuadToCurrent(new Quadruple(Operation.PLUS, Stack.P, stack.getCurrentSize(), temp));
+                String temp2 = tac.getTempGenerator().generateTemp();
+                tac.addTempQuadToCurrent(new Quadruple(Operation.PLUS, temp, stack.getIdFromFunction(function.getName(), "this"), temp2));
+
+                Quadruple quad2 = new Quadruple(Operation.EQUAL, null, null, Stack.getOutputStack(temp));
+
+                tac.acceptAllIdQuas();
+                return new SynthesizedOpAsst(quad2, function.getType());
+
+            } else {
+                OutputErrors.functionNotFound(mainFrame.getOutputPannel(), stringid1, s);
+            }
+        } else {
+            //Not the same object 
+        }
+
+        return null;
+
+    }
+
+    public Tuple insertObject(String id, String name,Symbol symbol){
+        
+        Tuple tuple=symbolTable.insertObject(id, name, symbol, ambitControler.getCurrentAmbit(), mainFrame.getOutputPannel());
+        if (tuple!=null) {
+            stack.addToCurrentStack(tuple);
+        }
+        return tuple;
+    }
+    
 }

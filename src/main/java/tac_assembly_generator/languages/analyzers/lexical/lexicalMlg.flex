@@ -159,7 +159,8 @@ Input_Ignore_Case= ("I"|"i")("N"|"n")("P"|"p")("U"|"u")("T"|"t")
     "case"                              { return new Symbol(SimbolosMlg.CASE, yycolumn,yyline,yytext());}
     "default"                              { return new Symbol(SimbolosMlg.DEFAULT, yycolumn,yyline,yytext());}
     "break"                              { return new Symbol(SimbolosMlg.BREAK, yycolumn,yyline,yytext());}
-
+    "this"                                { return new Symbol(SimbolosMlg.THIS, yycolumn,yyline,yytext());}
+    "new"                                { return new Symbol(SimbolosMlg.NEW, yycolumn,yyline,yytext());}
    "."                                                     { return new Symbol(SimbolosMlg.POINT, yycolumn,yyline,yytext());}
     ","                                                     {return new Symbol(SimbolosMlg.COMMA, yycolumn,yyline,yytext());}
      
@@ -313,6 +314,7 @@ Input_Ignore_Case= ("I"|"i")("N"|"n")("P"|"p")("U"|"u")("T"|"t")
     "void"                                    { return new Symbol(SimbolosMlg.VOID_J, yycolumn,yyline,yytext());}
     "main"                                    { return new Symbol(SimbolosMlg.MAIN, yycolumn,yyline,yytext());}
     "#include"|"#Include"                                    { return new Symbol(SimbolosMlg.INCLUDE, yycolumn,yyline,yytext());}
+    "new"                                                    { return new Symbol(SimbolosMlg.NEW, yycolumn,yyline,yytext());}
     
     
     

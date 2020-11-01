@@ -121,13 +121,13 @@ terminal String DECIMAL;
 terminal JAVA_SEPERATOR, DIM_VB, AS_VB,
 FUNCTION_VB, END_VB, SUB_VB, CONSOLE_VB, WRITE_VB,
 WRITELN_VB, TO_VB, STEP_VB, NEXT_VB, BY_VAL,
-DIFERENT_VB, LOOP_VB,
+DIFERENT_VB, LOOP_VB, NEW,
 ELSE_IF_VB, THEN_VB, SELECT_VB, CASE_VB ;
 
 
 // Terminals Java */
 terminal PYTHON_SEPERATOR, CLASS_J, VOID_J, SYSTEM_OUT_PRINTLN,
-SYSTEM_OUT_PRINT, SWITCH_J, BREAK, SEMICOLON,
+SYSTEM_OUT_PRINT, SWITCH_J, BREAK, SEMICOLON, THIS,
 LEFT_CB, RIGHT_CB, COLON;
 
 // Terminals Python*/
@@ -165,7 +165,7 @@ WhilePY, WhilePYHeader, AssignmentPY, ConditionPY, IfPY, IfPYHeader, Elif, ElifH
 
 
 // non Terminals MAIN
-non terminal Library, Main, MainHeader, MainCode1, InputC, Constantes, Constante, Dimensions, ArrayValues,
+non terminal Library, Main, MainHeader, MainCode1, ClaseInstance, InputC, Constantes, Constante, Dimensions, ArrayValues,
 Nums, Rows, Globals, Include, MainCode, MainLineCode, DeclarationC, DeclarationGlobalC,IdsC,
 AssiC, AssignmentC, ConditionC, IfCHeader, ElseC, ElseCHeader, ElseIfCHeader, SwitchCHeader, CaseElseCHeader, CaseCHeader,
  CasesC, CasesC2, CaseValueC, AssignmentStepC, ForCHeaderStart,NumberValueC,
@@ -433,7 +433,8 @@ Number3     ::=NUMBER:val{: Type type =sma.testManager.getTypeManager().operateT
                             }else{
                                 RESULT=null;
                             }:}
-                |PARENTHESIS_A NumberValue:asst PARENTHESIS_B {:RESULT=asst;:};
+                |PARENTHESIS_A NumberValue:asst PARENTHESIS_B {:RESULT=asst;:}
+                |THIS POINT ID:id{::};
         
          
 
@@ -664,7 +665,7 @@ JavaClassCode1::=JavaClassCode1 ClassCodeJ
                 |;
 ClassCodeJ  ::=FunctionJ
                 |ProcessJ
-                |DeclarationJ 
+                |DeclarationJ SEMICOLON
                 |ConstructorJ
                 |error;
 ConstructorJ ::=ConstructorJHeader:fun LEFT_CB LineCodesJ:ins RIGHT_CB{:ArrayList<Object>quad=new ArrayList<>();
@@ -679,10 +680,13 @@ ConstructorJ ::=ConstructorJHeader:fun LEFT_CB LineCodesJ:ins RIGHT_CB{:ArrayLis
                                                                           }
                                                                          sma.testManager.finishAmbit();
                                                     sma.translateControlerTAC.acceptCurrentBlock();
-                                                    sma.translateControlerTAC.addQuadsToCurrent(quad);:};
+                                                    sma.translateControlerTAC.addQuadsToCurrent(quad);
+                                                    sma.testManager.getStack().endClassFunction();:};
 ConstructorJHeader::=Public ID:id PARENTHESIS_A ParametersJ PARENTHESIS_B{:sma.testManager.creatSonAmbit();
                                                                                             sma.translateControlerTAC.createNewQuadrupleBlock();
+                                                                                            
                                                                                             String name =sma.testManager.insertFunction(id, null, ((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()),sma.testManager.getCurrentClass());
+                                                                                            sma.testManager.getStack().addThis(); 
                 RESULT= name;:};
 FunctionJ       ::= FunctionJHeader:fun  LEFT_CB LineCodesJ:ins RIGHT_CB{:ArrayList<Object>quad=new ArrayList<>();
                                                                         if(fun!=null){
@@ -724,22 +728,26 @@ ParameterJ ::= ParametersJ COMMA Type:type ID:id {:sma.testManager.getParameterC
 LineCodesJ      ::=LineCodesJ2 {: RESULT=sma.translateControlerTAC.getcurrentQuads();
                                                     sma.testManager.finishAmbit();
                                                     sma.translateControlerTAC.acceptCurrentBlock();
-                                                    :}
-                    |{: 
-                                                    sma.testManager.finishAmbit();
-                                                    sma.translateControlerTAC.acceptCurrentBlock();
                                                     :};
-LineCodesJ2      ::=LineCodeJ3 RETURN NumberValue
-                    | LineCodeJ3;
+LineCodesJ2      ::=LineCodeJ3 RETURN NumberValue SEMICOLON
+                    | LineCodeJ3
+                    ;
 LineCodeJ3      ::= LineCodeJ3 LineCodeJ
-                |LineCodeJ;
+                    |;
 
 ValuesOutputJ   ::=ValuesOutputJ:vals PLUS ValJ:val {:ArrayList<Object> printQuad= new ArrayList<Object>();
-                                    printQuad.addAll((ArrayList<Object>)vals);
-                                    printQuad.addAll((ArrayList<Object>)val);
+                                    if (val!=null) {
+                           printQuad.addAll((ArrayList<Object>)val);
+                }
+                if (vals!=null) {
+                           printQuad.addAll((ArrayList<Object>)vals);
+                }
+                                    
                                     RESULT=printQuad;:}
                     |ValJ:val{:ArrayList<Object> printQuad= new ArrayList<Object>();
-                                    printQuad.addAll((ArrayList<Object>)val);
+                                    if (val!=null) {
+                           printQuad.addAll((ArrayList<Object>)val);
+                }
                                     RESULT=printQuad;:};
                     
 ValJ::=ID:id {:Type type = sma.testManager.getTypeFromST(id,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
@@ -758,7 +766,8 @@ ValJ::=ID:id {:Type type = sma.testManager.getTypeFromST(id,((Symbol) CUP$Syntax
                                     RESULT=printQuad;:}
                     |STRING:string {:ArrayList<Object> printQuad= new ArrayList<Object>();
                                     printQuad.add(sma.translateControlerTAC.createPrintQuad(string));
-                                    RESULT=printQuad;:};
+                                    RESULT=printQuad;:}
+        |THIS POINT ID:id{::};
 
 LineCodeJ   ::=OutputJ SEMICOLON
                 |Input:in SEMICOLON {:if(in!=null){
@@ -770,6 +779,7 @@ LineCodeJ   ::=OutputJ SEMICOLON
                 |DeclarationJ SEMICOLON  {:System.out.println("DECLARACION");:}
 				|AssignmentJ SEMICOLON  {:System.out.println("ASIGNACION");:}
                 |ConditionJ 
+                
                 |error;
 OutputJ     ::=SYSTEM_OUT_PRINT PARENTHESIS_A ValuesOutputJ:vals PARENTHESIS_B {: if(vals!=null){
                                                                                                 sma.translateControlerTAC.addQuadsToCurrent((ArrayList<Object>)vals);
@@ -865,7 +875,10 @@ AssignmentJ     ::= ID:id EQUAL NumberValue:val{:boolean bool= sma.testManager.a
                                                 if(sma.testManager.verifyType(type.getNumber(),sia.getType(),((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()),id)){
                                                     sma.translateControlerTAC.addQuadsToCurrent(sma.translateControlerTAC.createInputQuads(id,sia.getString()));
                                                 }
-                                            }:};
+                                            }:}
+                    |THIS POINT ID:id EQUAL NumberValue:val 
+                    |THIS POINT ID:id EQUAL Input:in;
+
 
 ConditionJ      ::= IfJHeader:ifBool LEFT_CB LineCodesJ:lines RIGHT_CB ElseJ:elseBool {:BoolQuad bool=(BoolQuad)ifBool;
                                                                                     if(lines!=null){bool.changeFatherYesBool((ArrayList<Object>)lines);}
@@ -1297,7 +1310,14 @@ MainLineCode ::= DeclarationC SEMICOLON
                 |Getch SEMICOLON {:sma.translateControlerTAC.addQuadsToCurrent(sma.translateControlerTAC.getch(null));:}
                 |InputJ SEMICOLON
                 |FuntionCall SEMICOLON{:sma.translateControlerTAC.acceptAllIdQuas();:}
+                |ClaseInstance SEMICOLON
                 |error;
+ClaseInstance   ::= ID:idClass ID:id EQUAL NEW ID:idClass2 PARENTHESIS_A ParametersC:para PARENTHESIS_B{:SynthesizedOpAsst sao=sma.testManager.verifyClass(idClass, idClass2,id, (ArrayList<SynthesizedOpAsst>)para, ((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()), sma.translateControlerTAC);
+                if(sao!=null){sma.translateControlerTAC.createTempIdQuadAssign(sao,id);
+                                                        sma.translateControlerTAC.acceptAllIdQuas();}:}
+                    | ID:idClass ID:id EQUAL NEW ID:idClass2 PARENTHESIS_A  PARENTHESIS_B{:SynthesizedOpAsst sao=sma.testManager.verifyClass(idClass, idClass2,null, (ArrayList<SynthesizedOpAsst>)para, ((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()), sma.translateControlerTAC);
+                if(sao!=null){sma.translateControlerTAC.createTempIdQuadAssign(sao,id);
+                                                        sma.translateControlerTAC.acceptAllIdQuas();}:};
 InputJ  ::= SCAN_F PARENTHESIS_A STRING:string COMMA AMPERSON ID:id PARENTHESIS_B{: String split= sma.testManager.testInput(id, string, ((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
                                                                         if(split!=null){
                                                                                 sma.translateControlerTAC.addQuadsToCurrent(sma.translateControlerTAC.createInputQuads(string,id,split));
@@ -1487,7 +1507,7 @@ Getch ::=GETCH PARENTHESIS_A PARENTHESIS_B;
 Input   ::= SCAN_F PARENTHESIS_A STRING COMMA AMPERSON ID PARENTHESIS_B ;
 
 FuntionCall::=FuntionIDsCall:ids PARENTHESIS_A ParametersC:para PARENTHESIS_B{:if(para!=null){
-                                                                            SynthesizedOpAsst sao=sma.testManager.verifyFunction((String)ids,(ArrayList<Object>)para,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()),sma.translateControlerTAC);
+                                                                            SynthesizedOpAsst sao=sma.testManager.verifyFunction((String)ids,(ArrayList<SynthesizedOpAsst>)para,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()),sma.translateControlerTAC);
                                                                             if(sao!=null){
                                                                                 RESULT= sao;
                                                                             }else{
@@ -1504,19 +1524,19 @@ FuntionCall::=FuntionIDsCall:ids PARENTHESIS_A ParametersC:para PARENTHESIS_B{:i
                                                                         :};
 FuntionIDsCall::= ID:id1 POINT ID:id2{:RESULT=id1+"."+id2;:}
             |ID:id{:RESULT = id;:};
-ParametersC::=ParametersC:paramsC COMMA NumberValueC:val {:ArrayList<Object> params=new ArrayList<Object>();
-                            if(paramsC!=null){params.addAll((ArrayList<Object>)paramsC);}
+ParametersC::=ParametersC:paramsC COMMA NumberValueC:val {:ArrayList<SynthesizedOpAsst> params=new ArrayList<SynthesizedOpAsst>();
+                            if(paramsC!=null){params.addAll((ArrayList<SynthesizedOpAsst>)paramsC);}
                                                         if(val!=null){
                                 SynthesizedOpAsst soa=(SynthesizedOpAsst)val;
                                 //sma.translateControlerTAC.creatTempIdQuad(Operation.PARAMS,null,null,soa.getQuadruple().getResult());
-                                params.add(soa.getQuadruple().getResult());
+                                params.add(soa);
                             }
                             RESULT=params;:} 
-            |NumberValueC:val{:ArrayList<Object> params=new ArrayList<Object>();
+            |NumberValueC:val{:ArrayList<SynthesizedOpAsst> params=new ArrayList<SynthesizedOpAsst>();
                             if(val!=null){
                                 SynthesizedOpAsst soa=(SynthesizedOpAsst)val;
                                 //sma.translateControlerTAC.creatTempIdQuad(Operation.PARAMS,null,null,soa.getQuadruple().getResult());
-                                params.add(soa.getQuadruple().getResult());
+                                params.add(soa);
                             }
                             RESULT=params;:};
 ArrayVal::= ID Dimensions;

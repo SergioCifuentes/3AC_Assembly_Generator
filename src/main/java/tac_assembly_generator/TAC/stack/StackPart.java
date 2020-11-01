@@ -16,17 +16,47 @@ public class StackPart {
     private String id;
     private String languaje;
     private ArrayList<Tuple> tuples;
+    private String className;
+    private boolean currentFunction;
+    private Integer current;
+    private Integer currentP;
 
     public StackPart(String id, String languaje) {
         this.id = id;
         this.languaje=languaje;
         tuples= new ArrayList<>();
+        className=null;
+        currentFunction=false;
+        
+    }
+
+    public Integer getCurrentP() {
+        return currentP;
+    }
+
+    public void setCurrentP(Integer currentP) {
+        this.currentP = currentP;
     }
 
     public String getLanguaje() {
         return languaje;
     }
 
+
+    public void setId(String id) {
+        this.id = id;
+    }
+    
+    public void endFunction(){
+        currentFunction=false;
+    }
+
+
+    public boolean isCurrentFunction() {
+        return currentFunction;
+    }
+        
+    
     public ArrayList<Tuple> getTuples() {
         return tuples;
     }
@@ -36,7 +66,16 @@ public class StackPart {
     }
 
     void addTuple(Tuple tuple) {
-        tuples.add(tuple);
+        
+            tuples.add(tuple);
+        
+        
+    }
+    void addAtTuple(Tuple tuple,int index) {
+       
+            tuples.add(index,tuple);
+        
+        
     }
 
     public String getId() {

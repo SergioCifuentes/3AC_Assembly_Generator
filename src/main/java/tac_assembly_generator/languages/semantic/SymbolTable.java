@@ -127,6 +127,39 @@ public class SymbolTable {
         return functionTuple;
 
     }
+    
+        public Tuple insertObject(String id, String type,Symbol symbol,Ambit ambit, JTextPane textPane) {
+
+        ArrayList<Tuple> tuplesWithId = new ArrayList<>();
+       
+        for (int i = 0; i < symbols.size(); i++) {
+            if (symbols.get(i).getName().equals(id) ) {
+                tuplesWithId.add(symbols.get(i));
+            }
+        }
+          boolean existe=false;
+
+         for (int i = 0; i < tuplesWithId.size(); i++) {
+            if (ambit.isSon(tuplesWithId.get(i).getAmbit())) {
+                existe=true;
+            }
+        }
+            if (existe) {
+                OutputErrors.alreadyDeclared(textPane, id, symbol);
+            }else{
+                Tuple tuple=new Tuple(id, null, null, 0, symbol, ambit);
+                tuple.setObjectType(type);
+                tuple.setStackInfo(1);
+                insertTuple(tuple);
+                return tuple;
+            }
+        
+        return null;
+        
+
+    }
+    
+    
 
     public boolean compateParameters(ArrayList<Tuple> parameters1, ArrayList<Type> parameter2) {
         boolean same=true;
