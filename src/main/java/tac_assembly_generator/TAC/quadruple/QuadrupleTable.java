@@ -68,6 +68,7 @@ public class QuadrupleTable {
     }
 
     public void acceptIdQuad(int index) {
+        
         addQuads(idQuads.get(index));
     }
 
@@ -75,6 +76,9 @@ public class QuadrupleTable {
         idQuads.removeAll(idQuads);
         
 
+    }
+    public void removeIdQuad(){
+        idQuads.remove(idQuads.size()-1);
     }
 
     public void nextIdQuad() {

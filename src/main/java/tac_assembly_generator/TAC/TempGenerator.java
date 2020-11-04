@@ -22,17 +22,23 @@ public class TempGenerator {
     private int currentTag;
     private ArrayList<Integer> recentyRemovedTemp;
     private ArrayList<Integer> recentyRemovedTag;
-
+    private ArrayList<String> integerTemps;
     public TempGenerator() {
         currentTemp = START_POINT;
         currentTag = START_POINT;
         recentyRemovedTemp = new ArrayList<>();
         recentyRemovedTag = new ArrayList<>();
+        integerTemps= new ArrayList<>();
     }
 
     public void removeTemp(String temp) {
         int value = Integer.parseInt(temp.replace(PREFIX_TEMP, ""));
         recentyRemovedTemp.add(value);
+        integerTemps.remove(temp);
+    }
+    
+    public void addIntegerTemp(String temp){
+        integerTemps.add(temp);
     }
 
     public String generateTemp() {
@@ -52,6 +58,29 @@ public class TempGenerator {
         }
         currentTemp++;
         return PREFIX_TEMP + currentTemp;
+    }
+        public String generateIntegerTemp() {
+        if (currentTemp == START_POINT) {
+            currentTemp++;
+            return PREFIX_TEMP + currentTemp;
+        }
+        if (!recentyRemovedTemp.isEmpty()) {
+            int minor = recentyRemovedTemp.get(0);
+            for (int i = 1; i < recentyRemovedTemp.size(); i++) {
+                if (recentyRemovedTemp.get(i) < minor) {
+                    minor = recentyRemovedTemp.get(i);
+                }
+            }
+            recentyRemovedTemp.remove((Object) minor);
+            String temp =PREFIX_TEMP + minor;
+            integerTemps.add(temp);
+            return temp;
+        }
+        currentTemp++;
+        
+        String temp =PREFIX_TEMP + currentTemp;
+        integerTemps.add(temp);
+        return temp;
     }
 
     public void removeTag(String tag) {
@@ -78,18 +107,34 @@ public class TempGenerator {
         return PREFIX_TAG + currentTag;
     }
 
-    public void addTempDeclarations(ArrayList<Object> obs) {
+    public String addTempDeclarations(String output) {
         int asst=START_POINT+1;
         System.out.println(currentTemp);
-        int aux=0;
+        
         while (asst<currentTemp) {
-            if (!recentyRemovedTemp.contains(obs)) {
-                obs.add(aux,new Quadruple(Operation.TEMP, null, null, "float "+PREFIX_TEMP+asst));
-                aux++;
+            if (!recentyRemovedTemp.contains(PREFIX_TEMP+asst)) {
+                if (compareIntegerType(PREFIX_TEMP+asst)) {
+                    output+="int "+PREFIX_TEMP+asst+";\n";
+                }else{
+                    output+="float "+PREFIX_TEMP+asst+";\n";
+                }
+                
+                
             }
-            
             asst++;
+            
         }
+        return output;
+    }
+    
+    public boolean compareIntegerType(String temp){
+        for (int i = 0; i < integerTemps.size(); i++) {
+            if (integerTemps.get(i).equals(temp)) {
+                integerTemps.remove(i);
+                return true;
+            }
+        }
+        return false;
     }
 
 }

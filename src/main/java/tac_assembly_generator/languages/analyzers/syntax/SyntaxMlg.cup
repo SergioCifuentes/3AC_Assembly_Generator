@@ -428,13 +428,18 @@ Number3     ::=NUMBER:val{: Type type =sma.testManager.getTypeManager().operateT
 		                    RESULT=new SynthesizedOpAsst(quadruple,type);:}
                 |ID:val {:Type type=sma.testManager.getTypeFromST(val,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
                             if(type!=null){
-                                Quadruple quadruple=sma.translateControlerTAC.creatTempIdQuad(Operation.EQUAL,sma.translateControlerTAC.getIdForStack(val),null,null);
+                                Quadruple quadruple=sma.translateControlerTAC.getIdForStack(val);
                                 RESULT=new SynthesizedOpAsst(quadruple,type);
                             }else{
                                 RESULT=null;
                             }:}
                 |PARENTHESIS_A NumberValue:asst PARENTHESIS_B {:RESULT=asst;:}
-                |THIS POINT ID:id{::};
+                |THIS POINT ID:id{:if(sma.testManager.testIfInClass()){
+                    Type type = sma.testManager.verifyClassId(id, ((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
+                    Quadruple quad =sma.translateControlerTAC.getThisIdForStack(id);
+                    SynthesizedOpAsst saOpAsst= new SynthesizedOpAsst(quad, type);
+                    RESULT=saOpAsst;
+                }:};
         
          
 
@@ -539,14 +544,12 @@ Type          ::=INTEGER_TYPE{:RESULT=TypeManager.INTEGER_TYPE;:}
                     |FLOAT_TYPE {:RESULT=TypeManager.FLOAT_TYPE;:}
                     |CHAR_TYPE{:RESULT=TypeManager.CHAR_TYPE;:};                   
 
-IdsVb           ::= IdsVb COMMA  ID:id AssiVb:val{:sma.testManager.insertPreTuple(id,null,val,null,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
-                                                        if(val!=null){ 
-                                                            sma.translateControlerTAC.createTempIdQuadAssign(val,id);}
+IdsVb           ::= IdsVb COMMA  ID:id AssiVb:val{:sma.testManager.insertPreTuple(id,null,val,0,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
+                                                        
                                                        
                                                         sma.translateControlerTAC.nextIdQuad();:}  
-                    |ID:id AssiVb:val{:sma.testManager.insertPreTuple(id,null,val,null,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
-                                        if(val!=null){ 
-                                                            sma.translateControlerTAC.createTempIdQuadAssign(val,id);}
+                    |ID:id AssiVb:val{:sma.testManager.insertPreTuple(id,null,val,0,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
+                                        
                                         sma.translateControlerTAC.nextIdQuad();:}; 
 
 AssiVb            ::= EQUAL NumberValue:val {:RESULT = val;:}
@@ -686,7 +689,9 @@ ConstructorJHeader::=Public ID:id PARENTHESIS_A ParametersJ PARENTHESIS_B{:sma.t
                                                                                             sma.translateControlerTAC.createNewQuadrupleBlock();
                                                                                             
                                                                                             String name =sma.testManager.insertFunction(id, null, ((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()),sma.testManager.getCurrentClass());
-                                                                                            sma.testManager.getStack().addThis(); 
+                                                                                            sma.testManager.getStack().addThis();
+                                                                                            sma.testManager.addHeapManagement(name);
+                                                                                             
                 RESULT= name;:};
 FunctionJ       ::= FunctionJHeader:fun  LEFT_CB LineCodesJ:ins RIGHT_CB{:ArrayList<Object>quad=new ArrayList<>();
                                                                         if(fun!=null){
@@ -776,8 +781,8 @@ LineCodeJ   ::=OutputJ SEMICOLON
                                 }
                                 :} 
                 |CycleJ
-                |DeclarationJ SEMICOLON  {:System.out.println("DECLARACION");:}
-				|AssignmentJ SEMICOLON  {:System.out.println("ASIGNACION");:}
+                |DeclarationJ SEMICOLON  {::}
+				|AssignmentJ SEMICOLON  {::}
                 |ConditionJ 
                 
                 |error;
@@ -855,7 +860,8 @@ WhileJHeader        ::= WHILE PARENTHESIS_A OpBool:op PARENTHESIS_B  {:sma.testM
                                         sma.translateControlerTAC.createNewQuadrupleBlock();
                                         RESULT=op;:}; 
   
-DeclarationJ    ::=Public Type:type IdsVb{:sma.testManager.insertPreTuplesToSymbolTable((Integer)type,null,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()),sma.translateControlerTAC);:}
+DeclarationJ    ::=Public Type:type IdsVb{:sma.testManager.insertPreTuplesToSymbolTable((Integer)type,0,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()),sma.translateControlerTAC);
+                                            :}
                     
                     |Public Type:type ID:id EQUAL Input:in {:if(in!=null&&!sma.testManager.checkExistence(id,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()))){
                                                         SyntaxInputAsst sia = (SyntaxInputAsst)in;
@@ -876,7 +882,16 @@ AssignmentJ     ::= ID:id EQUAL NumberValue:val{:boolean bool= sma.testManager.a
                                                     sma.translateControlerTAC.addQuadsToCurrent(sma.translateControlerTAC.createInputQuads(id,sia.getString()));
                                                 }
                                             }:}
-                    |THIS POINT ID:id EQUAL NumberValue:val 
+                    |THIS POINT ID:id EQUAL NumberValue:val{: if (val != null) {
+                    SynthesizedOpAsst soa = (SynthesizedOpAsst) val;
+                    Type type = sma.testManager.verifyClassId(id, ((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
+                    if (type != null) {
+                        if (sma.testManager.operateType(type.getNumber(), soa.getType().getNumber(), ((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek())) != null) {
+                            sma.translateControlerTAC.createTempThisIdQuad(val, id);
+                            sma.translateControlerTAC.acceptAllIdQuas();
+                        }
+                    }
+                }:} 
                     |THIS POINT ID:id EQUAL Input:in;
 
 
@@ -1315,9 +1330,7 @@ MainLineCode ::= DeclarationC SEMICOLON
 ClaseInstance   ::= ID:idClass ID:id EQUAL NEW ID:idClass2 PARENTHESIS_A ParametersC:para PARENTHESIS_B{:SynthesizedOpAsst sao=sma.testManager.verifyClass(idClass, idClass2,id, (ArrayList<SynthesizedOpAsst>)para, ((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()), sma.translateControlerTAC);
                 if(sao!=null){sma.translateControlerTAC.createTempIdQuadAssign(sao,id);
                                                         sma.translateControlerTAC.acceptAllIdQuas();}:}
-                    | ID:idClass ID:id EQUAL NEW ID:idClass2 PARENTHESIS_A  PARENTHESIS_B{:SynthesizedOpAsst sao=sma.testManager.verifyClass(idClass, idClass2,null, (ArrayList<SynthesizedOpAsst>)para, ((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()), sma.translateControlerTAC);
-                if(sao!=null){sma.translateControlerTAC.createTempIdQuadAssign(sao,id);
-                                                        sma.translateControlerTAC.acceptAllIdQuas();}:};
+                    | ID:idClass ID:id EQUAL NEW ID:idClass2 PARENTHESIS_A  PARENTHESIS_B{:sma.testManager.verifyClass(idClass, idClass2, id,null, ((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()), sma.translateControlerTAC);:};
 InputJ  ::= SCAN_F PARENTHESIS_A STRING:string COMMA AMPERSON ID:id PARENTHESIS_B{: String split= sma.testManager.testInput(id, string, ((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
                                                                         if(split!=null){
                                                                                 sma.translateControlerTAC.addQuadsToCurrent(sma.translateControlerTAC.createInputQuads(string,id,split));

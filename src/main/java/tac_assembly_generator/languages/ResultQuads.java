@@ -81,15 +81,7 @@ public class ResultQuads {
         //addLibraries(tempQuad);
         tac.translateQuads(tempQuad,stack);
     }
-        public void convertQuadsOP() {
-        ArrayList<Object> tempQuad= new ArrayList<>();
-        tempQuad.addAll(quadruples);
-        tempGenerator.addTempDeclarations(tempQuad);
-        tempQuad.add(0, new Quadruple(Operation.ARRAY,stack.getStackSize(), null,"float stack"));
-        tempQuad.add(1, new Quadruple(Operation.EQUAL,0, null,"int p"));
-        addLibraries(tempQuad);
-        tac.translateQuadsOP    (tempQuad,stack);
-    }
+        
     
        private void addLibraries(ArrayList<Object> obs){
         int aux= 0;

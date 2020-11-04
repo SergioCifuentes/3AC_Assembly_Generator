@@ -71,19 +71,19 @@ public class TAC {
             } else if (quadAsst.getOp().equals(Operation.GO_TO)) {
                 OutputText.appendToPane(jtextPane, Operation.getIntOpOutput(quadAsst.getOp()) + " " + quadAsst.getResult() + ";\n", Color.white, false);
             } else if (quadAsst.getOp() == Operation.EQUAL) {
-                if (quadAsst.getResult().equals(Stack.P)&&quadAsst.getArg1()!=Integer.valueOf(0)) {
-                    OutputText.appendToPane(jtextPane, Stack.P+" = " +stack.getFunctionIndex(quadAsst.getArg1().toString()) +";\n", Color.white, false);
-                }else{
+                
                 if (quadAsst.isConstante()) {
                     OutputText.appendToPane(jtextPane, "const ", Color.white, false);
                 }
                 String tacQuad = quadAsst.getResult() + Operation.getIntOpOutput(quadAsst.getOp()) + quadAsst.getArg1();
                 OutputText.appendToPane(jtextPane, tacQuad + ";\n", Color.white, false);
-                }
+                
             } else if (quadAsst.getOp() <= Operation.MINUS) {
-                if (quadAsst.getOp()==Operation.PLUS&&quadAsst.getResult().equals(Stack.P)) {
-                     OutputText.appendToPane(jtextPane, Stack.P+" = "+Stack.P +" + "+stack.getFunctionIndex(quadAsst.getArg2().toString()) +";\n", Color.white, false);
-                }else{
+                if ((quadAsst.getOp()==Operation.PLUS||quadAsst.getOp()==Operation.MINUS)&&quadAsst.getResult().equals(Stack.P)) {
+                     OutputText.appendToPane(jtextPane, Stack.P+" = "+Stack.P +" "+Operation.getIntOpOutput(quadAsst.getOp())+" "+stack.getFunctionSize(quadAsst.getArg2().toString()) +";\n", Color.white, false);
+                }else if ((quadAsst.getOp()==Operation.PLUS||quadAsst.getOp()==Operation.MINUS)&&quadAsst.getArg1().equals(Stack.P)&&quadAsst.getArg2().getClass().equals(String.class)) {
+                     OutputText.appendToPane(jtextPane, quadAsst.getResult()+" = "+Stack.P +" "+Operation.getIntOpOutput(quadAsst.getOp())+" "+stack.getFunctionSize(quadAsst.getArg2().toString()) +";\n", Color.white, false);
+                } else{
                          String tacQuad = quadAsst.getResult() + "=" + quadAsst.getArg1() + Operation.getIntOpOutput(quadAsst.getOp()) + quadAsst.getArg2();
                 OutputText.appendToPane(jtextPane, tacQuad + ";\n", Color.white, false);
            

@@ -15,8 +15,7 @@ import javax.swing.JTextPane;
  */
 public class OutputErrors {
 
-    
-        public static void notFunctionForReturn(JTextPane textPane,Symbol symbol) {
+    public static void notFunctionForReturn(JTextPane textPane, Symbol symbol) {
         OutputText.appendToPane(textPane, "SEMANTIC ERROR:\n", Color.red, false);
         OutputText.appendToPane(textPane, "\t Rerun invalido:  bloque no es una funcion \n", Color.white, false);
         OutputText.appendToPane(textPane, "\t Fila: ", Color.white, false);
@@ -24,7 +23,7 @@ public class OutputErrors {
         OutputText.appendToPane(textPane, "\t Columna: ", Color.white, false);
         OutputText.appendToPane(textPane, (symbol.left + 1) + "\n", Color.YELLOW, false);
     }
-    
+
     public static void alreadyDeclaredParameter(JTextPane textPane, String id, Symbol symbol) {
         OutputText.appendToPane(textPane, "SEMANTIC ERROR:\n", Color.red, false);
         OutputText.appendToPane(textPane, "\t Parametro: " + id + " ya ha sido declarado \n", Color.white, false);
@@ -82,6 +81,14 @@ public class OutputErrors {
     public static void notDeclared(JTextPane textPane, String id, Symbol symbol) {
         OutputText.appendToPane(textPane, "SEMANTIC ERROR:\n", Color.red, false);
         OutputText.appendToPane(textPane, "\t" + id + " no ha sido declarado \n", Color.white, false);
+        OutputText.appendToPane(textPane, "\t Fila: ", Color.white, false);
+        OutputText.appendToPane(textPane, (symbol.right + 1) + "\n", Color.YELLOW, false);
+        OutputText.appendToPane(textPane, "\t Columna: ", Color.white, false);
+        OutputText.appendToPane(textPane, (symbol.left + 1) + "\n", Color.YELLOW, false);
+    }
+        public static void notDeclaredThisId(JTextPane textPane, String id, String className, Symbol symbol) {
+        OutputText.appendToPane(textPane, "SEMANTIC ERROR:\n", Color.red, false);
+        OutputText.appendToPane(textPane, "\t" + id + " no ha sido declarado en la clase "+className+"\n", Color.white, false);
         OutputText.appendToPane(textPane, "\t Fila: ", Color.white, false);
         OutputText.appendToPane(textPane, (symbol.right + 1) + "\n", Color.YELLOW, false);
         OutputText.appendToPane(textPane, "\t Columna: ", Color.white, false);
@@ -204,8 +211,8 @@ public class OutputErrors {
         OutputText.appendToPane(textPane, "\t Columna: ", Color.white, false);
         OutputText.appendToPane(textPane, (symbol.left + 1) + "\n", Color.YELLOW, false);
     }
-    
-        public static void syntaxFunctionVB(JTextPane textPane, Symbol symbol) {
+
+    public static void syntaxFunctionVB(JTextPane textPane, Symbol symbol) {
         OutputText.appendToPane(textPane, "SYNTAX ERROR:\n", Color.red, false);
         OutputText.appendToPane(textPane, "\tPara Vb solo se permiten funcciones y subs eje: function id(parametros)\n\t\t ...\n\tEND Function\n", Color.white, false);
         OutputText.appendToPane(textPane, "\t Fila: ", Color.white, false);
