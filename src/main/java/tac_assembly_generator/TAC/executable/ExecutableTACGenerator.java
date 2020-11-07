@@ -54,11 +54,15 @@ public class ExecutableTACGenerator {
             output+="#include <"+resultQuads.getLiberies().get(i)+">\n";
         }
         
-        output+="float[1000] "+Stack.STACK_NAME+";\n";
-        output+="float[1000] "+Stack.HEAP_NAME+";\n";
+        output+="float "+Stack.STACK_NAME+"[1000];\n";
+        output+="float "+Stack.HEAP_NAME+"[1000];\n";
         output+="int "+Stack.P+";\n";
         output+="int "+Stack.H+";\n";
         output=resultQuads.getTempGenerator().addTempDeclarations(output);
+        
+        for (int i = 0; i < resultQuads.getQuadruples().size(); i++) {
+            output+=resultQuads.getTac().translateQuad(resultQuads.getQuadruples().get(i), resultQuads.getStack());
+        }
         try {
             FileWriter fw = new FileWriter(file);
             fw.write(output);

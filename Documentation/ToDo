@@ -5,7 +5,8 @@ fix comments with variable string in TranslateControler
 Fix printf in C
 Return type values
 Fix Declarations with Assigment JAVA
-Fix Id Search without 'this' JAVA 
+Fix Id Search without 'this' JAVA
+Verify Return Type 
 
 Comprobador Estatico-> Comprobacion de tipos
 

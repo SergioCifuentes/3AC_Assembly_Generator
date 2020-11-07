@@ -10,6 +10,7 @@ import java.io.StringReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import tac_assembly_generator.Assembly.QuadsToAssemblyManager;
 import tac_assembly_generator.TAC.TAC;
 import tac_assembly_generator.TAC.TranslateControlerTAC;
 import tac_assembly_generator.TAC.executable.ExecutableTACGenerator;
@@ -114,7 +115,17 @@ public class LanguageManager {
     
     
     public void generateAssembly(MainFrame mainframe){
-        
+           if (recentError) {
+            JOptionPane.showMessageDialog(mainframe, "No se puede optimizar ya que existen errores en el TAC", "Error", JOptionPane.ERROR_MESSAGE);
+        }else{
+            if (resultQuads==null) {
+                generateTAC(mainframe);
+                generateOptimized(mainframe);
+            }else{
+                QuadsToAssemblyManager quadsToAssemblyManager= new QuadsToAssemblyManager(resultQuads, file.getName());
+                quadsToAssemblyManager.translate();
+            }
+        }
     }
     
 }

@@ -66,10 +66,14 @@ public class QuadrupleTable {
     public Switch getSwitchAsst() {
         return switchAsst;
     }
-
+    
     public void acceptIdQuad(int index) {
-        
+        System.out.println("ACCEPTING "+idQuads.get(index));
         addQuads(idQuads.get(index));
+    }
+        public void acceptLastIdQuad() {
+        addQuads(idQuads.get(idQuads.size()-1));
+        idQuads.get(idQuads.size()-1).removeAll(idQuads.get(idQuads.size()-1));
     }
 
     public void removeIdQuads() {

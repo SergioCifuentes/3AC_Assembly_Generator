@@ -96,6 +96,9 @@ public class Tuple {
     
     public String generateFunctionName(String language){
         this.language=language;
+        if (name.equals("main")) {
+            return name;
+        }
         if (classFather!=null) {
              name=language+"_"+classFather.getName()+"_"+this.name;
         }else{

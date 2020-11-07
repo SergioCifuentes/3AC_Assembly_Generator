@@ -11,6 +11,7 @@ import tac_assembly_generator.TAC.quadruple.BoolQuad;
 import tac_assembly_generator.TAC.quadruple.BoolQuadControl;
 import tac_assembly_generator.TAC.quadruple.Operation;
 import tac_assembly_generator.TAC.quadruple.Quadruple;
+import tac_assembly_generator.TAC.stack.Stack;
 
 /**
  *
@@ -23,6 +24,7 @@ public class For {
     private ArrayList<Object> step;
     private String stepString=null;
     private TempGenerator tempGenerator;
+    private Stack stack;
     private String id;
     private String tag;
 
@@ -44,15 +46,27 @@ public class For {
         this.id=id;
     }
 
+    public void setStack(Stack stack) {
+        this.stack = stack;
+    }
+        
+        
+
     public void addCode(ArrayList<Object> code){
          tag = tempGenerator.generateTag(); 
         Quadruple stepQuadruple=null; 
         if (stepString!=null) {
+            Integer position = stack.getIdPosition(id);
+            String temp = tempGenerator.generateIntegerTemp();
+            code.add(new Quadruple(Operation.PLUS, Stack.P, position, temp));
+            String temp2 = tempGenerator.generateIntegerTemp();
+            code.add(new Quadruple(Operation.EQUAL, Stack.getOutputStack(temp), null, temp2));
+            
             if (stepString.startsWith("-")) {
                 stepString=stepString.replace("-", "");
-                 stepQuadruple= new Quadruple(Operation.PLUS,id, stepString, id);
+                 stepQuadruple= new Quadruple(Operation.MINUS,temp2, stepString, Stack.getOutputStack(temp));
             }else{
-                stepQuadruple= new Quadruple(Operation.PLUS,id, stepString, id);
+                stepQuadruple= new Quadruple(Operation.PLUS,temp2, stepString, Stack.getOutputStack(temp));
             }  
             code.add(stepQuadruple);
         }else{
@@ -69,7 +83,7 @@ public class For {
         quads.add(new Quadruple(null, null,null, tag));
         BoolQuadControl control = new BoolQuadControl(tempGenerator);
         quads.addAll(control.convertBoolToQuad(compare));
-        System.out.println("RETURNINGGGGOOGOGOGO +"+quads.size());
+        
         return quads;
     }
     

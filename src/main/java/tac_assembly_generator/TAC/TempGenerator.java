@@ -111,7 +111,7 @@ public class TempGenerator {
         int asst=START_POINT+1;
         System.out.println(currentTemp);
         
-        while (asst<currentTemp) {
+        while (asst<=currentTemp) {
             if (!recentyRemovedTemp.contains(PREFIX_TEMP+asst)) {
                 if (compareIntegerType(PREFIX_TEMP+asst)) {
                     output+="int "+PREFIX_TEMP+asst+";\n";

@@ -158,6 +158,11 @@ public class MainFrame extends javax.swing.JFrame {
 
         jMenuItem8.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         jMenuItem8.setText("Assembly");
+        jMenuItem8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem8ActionPerformed(evt);
+            }
+        });
         generateMenu.add(jMenuItem8);
 
         jMenuBar1.add(generateMenu);
@@ -289,6 +294,10 @@ public class MainFrame extends javax.swing.JFrame {
         HtmlCreator hc= new HtmlCreator();
         hc.createHtml(null, null, null);
     }//GEN-LAST:event_menuOpActionPerformed
+
+    private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
+        fileManager.getFiles().get(tabs.getSelectedIndex()).getLanguageManager().generateAssembly(this);
+    }//GEN-LAST:event_jMenuItem8ActionPerformed
     public void addFileMlg(FileMlg newFile) {
         fileManager.addFileMlg(newFile);
         tabs.add(newFile.getName(), newFile);
