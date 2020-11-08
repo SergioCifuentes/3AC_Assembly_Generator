@@ -252,40 +252,86 @@ Input_Ignore_Case= ("I"|"i")("N"|"n")("P"|"p")("U"|"u")("T"|"t")
                                                             in++; 
                                                     }
                                                     
-                                                    }if(blockIndentation==in){
-                                                        
+                                                    }
+                                                    
+                                                    if(blockIndentation==in){
+                                                       
                                                     }else if(blockIndentation>in){
                                                         Symbol sim=new Symbol(SimbolosMlg.DEDENT, yycolumn,yyline,yytext());
                                                         blockIndentation--;
-                                                        yypushback(in);
+                                                        if(in==0){
+                                                            yypushback(1);
+                                                        }else{
+                                                            yypushback(in);
+                                                        }
+                                                       
+                                                        
                                                         return sim;
                                                     }else{
                                                         Symbol sim=new Symbol(SimbolosMlg.INDENT, yycolumn,yyline,yytext());
                                                         blockIndentation++;
-                                                        yypushback(in);
+                                                            yypushback(in);
                                                         
+                                                        
+
+                                                       
                                                         return sim;
                                                     }}
-[ \b]                {}
-    ("\t")+                                 { int in=0;
+    ({LineTerminator})+ (" ")+                       { int in=0;
+                                                    for (int i = 0; i < yytext().length(); i++) {
+                                                    if (yytext().charAt(i)==' ') {
+                                                            in++; 
+                                                    }
+                                                    
+                                                    }
+                                                    in=in/4;
+                                                    if(blockIndentation==in){
+                                              
+                                                    }else if(blockIndentation>in){
+                                                        Symbol sim=new Symbol(SimbolosMlg.DEDENT, yycolumn,yyline,yytext());
+                                                        blockIndentation--;
+                                                        
+                                                            yypushback(in+1);
+                                                        
+                                              
+                                                        
+                                                        return sim;
+                                                    }else{
+                                                        Symbol sim=new Symbol(SimbolosMlg.INDENT, yycolumn,yyline,yytext());
+                                                        blockIndentation++;
+                                                            yypushback(in);
+                                                        
+                                                        
+
+                                              
+                                                        return sim;
+                                                    }}
+
+ " " { }
+    ("\t")+                                 { 
+    int in=0;
                                                     for (int i = 0; i < yytext().length(); i++) {
                                                     if (yytext().charAt(i)=='\t') {
                                                             in++; 
                                                     }
                                                     
-                                                    }if(blockIndentation==in){
-                                                        
+                                                    }
+                                                    if(blockIndentation==in){
+                                             
                                                     }else if(blockIndentation>in){
                                                         Symbol sim=new Symbol(SimbolosMlg.DEDENT, yycolumn,yyline,yytext());
                                                         blockIndentation--;
                                                         yypushback(in);
-                                                        
+                                             
                                                         return sim;
                                                     }else{
                                                         Symbol sim=new Symbol(SimbolosMlg.INDENT, yycolumn,yyline,yytext());
                                                         blockIndentation++;
+                                                        
                                                         yypushback(in);
+                                             
                                                         return sim;
+
                                                     }}
     [^]                                     { }
     
@@ -354,5 +400,5 @@ Input_Ignore_Case= ("I"|"i")("N"|"n")("P"|"p")("U"|"u")("T"|"t")
     {LineTerminator}                        {}
      [ \t\b]                {}
     {CommentC}                               {tac.addComment(yytext());}
-     .                                            {System.out.println("ERROR "+yytext()); return new Symbol(SimbolosMlg.ERROR,yycolumn,yyline,yytext());}
+     .                                            { return new Symbol(SimbolosMlg.ERROR,yycolumn,yyline,yytext());}
 }
