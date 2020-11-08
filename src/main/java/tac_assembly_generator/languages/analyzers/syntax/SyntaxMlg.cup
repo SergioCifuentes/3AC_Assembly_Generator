@@ -156,7 +156,7 @@ FunctionJ, FunctionJHeader, ProcessJ, ProcessJHeader, LineCodesJ, LineCodeJ3, Li
 ValuesOutputJ, ValJ, LineCodeJ, OutputJ, InputJ, JavaClassCode1,
 CycleJ, ForJHeader, ForJHeaderStarter, AssignmentStepJ, WhileJHeader , DeclarationJ, AssignmentJ, ConditionJ,
 IfJHeader, ElseJ, ElseIfJHeader, ElseJHeader, SwitchJHeader, CasesJ1, CaseJHeader, CasesJ2, CaseJ, BreakJ,
-ExBoolJ, BoolValueJ, ConstructorJ; 
+ExBoolJ, BoolValueJ, ConstructorJ, FunctionCallJ; 
 
 //Non-terminals PY*/
 non terminal FunctionPY, FunctionLinesPY1, FunctionPYHeader, ParametersPY, IdsPY, FunctionLinesPY, LinesPY,
@@ -789,8 +789,24 @@ LineCodeJ   ::=OutputJ SEMICOLON
                 |DeclarationJ SEMICOLON  {::}
 				|AssignmentJ SEMICOLON  {::}
                 |ConditionJ 
-                
+                |FunctionCallJ SEMICOLON
                 |error;
+FunctionCallJ    ::= ID:id PARENTHESIS_A ParametersC:para PARENTHESIS_B{:if(para!=null){
+                                                                            SynthesizedOpAsst sao=sma.testManager.verifyJavaFunction(id,(ArrayList<SynthesizedOpAsst>)para,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()),sma.translateControlerTAC);
+                                                                            if(sao!=null){
+                                                                                RESULT= sao;
+                                                                            }else{
+                                                                                sma.translateControlerTAC.removeIdQuads();
+                                                                            }
+                                                                        }:}
+                |ID:id PARENTHESIS_A PARENTHESIS_B{:
+                                                                            SynthesizedOpAsst sao=sma.testManager.verifyJavaFunction(id,null,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()),sma.translateControlerTAC);
+                                                                            if(sao!=null){
+                                                                                RESULT =sao;
+                                                                            }else{
+                                                                                sma.translateControlerTAC.removeIdQuads();
+                                                                            }
+                                                                        :};
 OutputJ     ::=SYSTEM_OUT_PRINT PARENTHESIS_A ValuesOutputJ:vals PARENTHESIS_B {: if(vals!=null){
                                                                                                 sma.translateControlerTAC.addQuadsToCurrent((ArrayList<Object>)vals);
                                                                                                 
@@ -1505,10 +1521,9 @@ AssignmentStepC::= ID:id EQUAL NumberValueC:val {:boolean bool= sma.testManager.
 
 
 OutputC         ::= PRINTF PARENTHESIS_A  OutputValuesC:vals PARENTHESIS_B {: if(vals!=null){
-                                                                                            ArrayList<Object> prints=sma.testManager.verifyPrints((ArrayList<Object>)vals,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()),sma.translateControlerTAC);
-                                                                                                if(prints!=null){
+                                                                                              sma.testManager.verifyPrints((ArrayList<Object>)vals,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()),sma.translateControlerTAC);        
 
-                                                                                                }
+                                                                                                
                                                                                                 
                                                                                             }:}
                     |CLRSCR PARENTHESIS_A PARENTHESIS_B {:sma.translateControlerTAC.addClrScrToCurrent();:};

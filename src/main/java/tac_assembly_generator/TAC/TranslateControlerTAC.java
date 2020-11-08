@@ -187,11 +187,12 @@ public class TranslateControlerTAC {
 
     public ArrayList<Object> tagFunction(String function, ArrayList<Object> quads) {
         ArrayList<Object> aux = new ArrayList<>();
-        aux.add(function + "(){");
+        aux.add(new Quadruple(Operation.FUNCTION, null, null, function + "(){"));
         if (quads != null) {
             aux.addAll(quads);
         }
-        aux.add("}");
+        aux.add(new Quadruple(Operation.FUNCTION, null, null,"}"));
+        
         return aux;
     }
 

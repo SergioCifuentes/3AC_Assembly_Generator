@@ -25,6 +25,7 @@ public class TAC {
     private String tac;
     private JTextPane jtp;
     public MainFrame mainFrame;
+    
 
     public TAC(MainFrame mainFrame) {
         tac = "";
@@ -61,12 +62,13 @@ public class TAC {
                 if (((String) quad).startsWith("//") || ((String) quad).startsWith("/*")) {
                     OutputText.appendToPane(jtextPane, (String) quad, Color.lightGray, false);
                 } else {
-                    OutputText.appendToPane(jtextPane, (String) quad, Color.orange, false);
+                    OutputText.appendToPane(jtextPane, (String) quad, Color.green, false);
                 }
             }
         } else if (quad.getClass().equals(Quadruple.class)) {
-
+            
             Quadruple quadAsst = (Quadruple) quad;
+            
             if (quadAsst.getOp() == null) {
                 OutputText.appendToPane(jtextPane, quadAsst.getResult() + ":\n", Color.blue, false);
             } else if (quadAsst.getOp().equals(Operation.GO_TO)) {
@@ -119,7 +121,10 @@ public class TAC {
                 OutputText.appendToPane(jtextPane, quadAsst.getResult() + ";\n", Color.white, false);
             } else if (quadAsst.getOp() == Operation.INCLUDE) {
                 OutputText.appendToPane(jtextPane, "#Include <" + quadAsst.getResult() + ">\n", Color.white, false);
+            }else if (quadAsst.getOp() == Operation.FUNCTION) {
+                OutputText.appendToPane(jtextPane, quadAsst.getResult()+"\n", Color.orange, false);
             }
+
 
         }
 

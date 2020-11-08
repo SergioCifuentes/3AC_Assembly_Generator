@@ -19,6 +19,24 @@ public class AssemblyObject {
         textSection= new TextSection();
         bss= new BSS();
     }
+
+    @Override
+    public String toString() {
+        return dataSection.toString()+bss.toString()+textSection.toString();
+    }
+
+    public DataSection getDataSection() {
+        return dataSection;
+    }
+
+    public TextSection getTextSection() {
+        return textSection;
+    }
+
+    public BSS getBss() {
+        return bss;
+    }
+    
     
     
     

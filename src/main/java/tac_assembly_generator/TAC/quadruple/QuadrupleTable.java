@@ -68,7 +68,7 @@ public class QuadrupleTable {
     }
     
     public void acceptIdQuad(int index) {
-        System.out.println("ACCEPTING "+idQuads.get(index));
+        
         addQuads(idQuads.get(index));
     }
         public void acceptLastIdQuad() {

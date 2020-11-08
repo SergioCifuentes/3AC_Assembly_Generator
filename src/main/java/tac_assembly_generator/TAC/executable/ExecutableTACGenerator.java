@@ -42,7 +42,7 @@ public class ExecutableTACGenerator {
             }
         }
         File file = new File(folder.getPath() + "/" + filename.replace(".mlg", ".c"));
-        System.out.println(file.getPath());
+        
         if (!file.exists()) {
             try {
                 file.createNewFile();

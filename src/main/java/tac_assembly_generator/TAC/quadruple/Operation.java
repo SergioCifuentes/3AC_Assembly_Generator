@@ -36,6 +36,7 @@ public class Operation {
     public static final int PARAMS = 23;
     public static final int TEMP = 24;
     public static final int INCLUDE = 25;
+    public static final int FUNCTION = 26;
 
     public static String getIntOpOutput(int op) {
         switch (op) {

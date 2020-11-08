@@ -33,6 +33,10 @@ public class SymbolTable {
 
     }
 
+    public ArrayList<Tuple> getSymbols() {
+        return symbols;
+    }
+
     public Tuple getTupleWithAmbit(String id, Ambit ambit) {
 
         ArrayList<Tuple> tuplesWithId = new ArrayList<>();

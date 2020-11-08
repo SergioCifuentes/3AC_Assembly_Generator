@@ -150,7 +150,8 @@ public class TestManager {
     public void verifyPrints(ArrayList<Object> obs, Symbol s, TranslateControlerTAC tac) {
         
         if (obs.get(0).getClass().equals(String.class) && obs.size() == 1) {
-            tac.createIdPrintQuad((String) obs.get(0));
+            System.out.println("PRINTS "+obs.get(0));
+            tac.addTempQuadToCurrent(tac.createPrintQuad((String) obs.get(0)));
             tac.acceptAllIdQuas();
         } else {
             if (obs.get(0).getClass().equals(String.class)) {
@@ -853,6 +854,98 @@ public class TestManager {
         }
         return null;
     }
+    
+    
+    public SynthesizedOpAsst verifyJavaFunction(String id, ArrayList<SynthesizedOpAsst> parameters, Symbol s, TranslateControlerTAC tac) {
+        String objectType = stack.getCurrentClassName();
+        objectType=objectType.replace("JAVA_", "");
+        if (objectType != null) {
+            if (parameters == null) {
+                parameters = new ArrayList<>();
+            }
+            String name = "JAVA_" + objectType + "_" + id;
+            System.out.println("JAVA FUN "+name);
+            Tuple function = null;
+            ArrayList<Tuple> tuples = symbolTable.getSymbols();
+            for (int i = 0; i < tuples.size(); i++) {
+                if (tuples.get(i).getName().contains(name) && parameters.size() == tuples.get(i).getParameters().size()) {
+                    boolean mismosTipos = true;
+                    for (int j = 0; j < parameters.size(); j++) {
+                        if (!(parameters.get(j).getType().getNumber() == tuples.get(i).getParameters().get(j).getType().getNumber()) && !parameters.get(j).getType().isFather(tuples.get(i).getParameters().get(j).getType())) {
+                            mismosTipos = false;
+                        }
+                    }
+                    if (mismosTipos) {
+                        function = tuples.get(i);
+                        break;
+                    }
+                }
+
+            }
+            int fatherStack = 0;
+            if (function != null) {
+                fatherStack = stack.getCurrentP();
+                
+                Quadruple quad = new Quadruple(Operation.PLUS, Stack.P, stack.getCurrentId(), Stack.P);
+                String temp0 = tac.getTempGenerator().generateIntegerTemp();
+                Quadruple quad0 = new Quadruple(Operation.PLUS, Stack.P, "this", temp0);
+                String temp01 = tac.getTempGenerator().generateTemp();
+                Quadruple quad01 = new Quadruple(Operation.EQUAL, Stack.getOutputStack(temp0), null, temp01);
+                String temp02 = tac.getTempGenerator().generateTemp();
+                Quadruple quad02 = new Quadruple(Operation.PLUS, Stack.P, stack.getCurrentId(), temp02);
+                String fun=stack.getCurrentId();
+                stack.changeCurrent(function.getName());
+                
+                ArrayList<String> strings = new ArrayList<>();
+                for (int i = 0; i < parameters.size(); i++) {
+                    String temp1 = tac.getTempGenerator().generateTemp();
+                    
+                    tac.addTempQuadToCurrent(new Quadruple(Operation.PLUS, Stack.P, fun, temp1));
+                    String temp = tac.getTempGenerator().generateTemp();
+                    
+                    Integer param = stack.getIdPosition(function.getParameters().get(i).getName());
+                    tac.addTempQuadToCurrent(new Quadruple(Operation.PLUS, temp1, param, temp));
+                    strings.add(temp);
+                }
+                for (int i = 0; i < strings.size(); i++) {
+                    tac.getTempGenerator().addIntegerTemp(strings.get(i));
+                    tac.addTempQuadToCurrent(new Quadruple(Operation.EQUAL, (String) parameters.get(i).getQuadruple().getResult(), null, Stack.getOutputStack(strings.get(i))));
+                }
+                tac.addTempQuadToCurrent(quad0);
+                tac.addTempQuadToCurrent(quad01);
+                tac.addTempQuadToCurrent(quad02);
+                String temp03 = tac.getTempGenerator().generateIntegerTemp();
+                tac.addTempQuadToCurrent(new Quadruple(Operation.PLUS, temp02, stack.getIdPosition("this"), temp03));
+                tac.addTempQuadToCurrent(new Quadruple(Operation.EQUAL, temp01, null, Stack.getOutputStack(temp03)));
+
+                tac.addTempQuadToCurrent(quad);
+
+                tac.addTempQuadToCurrent(new Quadruple(Operation.TEMP, null, null, function.getName()));
+                stack.changeCurrent(fatherStack);
+
+                Integer ret = stack.getIdFromFunction(function.getName(), Stack.RETURN);
+                if (ret != null) {
+                    String temp = tac.getTempGenerator().generateIntegerTemp();
+                    tac.addTempQuadToCurrent(new Quadruple(Operation.PLUS, Stack.P, ret, temp));
+                    Quadruple quad2 = new Quadruple(Operation.EQUAL, null, null, Stack.getOutputStack(temp));
+                    tac.addTempQuadToCurrent(new Quadruple(Operation.MINUS, Stack.P, stack.getCurrentId(), Stack.P));
+
+                    tac.acceptAllIdQuas();
+                    return new SynthesizedOpAsst(quad2, function.getType());
+                }
+                tac.addTempQuadToCurrent(new Quadruple(Operation.MINUS, Stack.P, stack.getCurrentId(), Stack.P));
+                tac.acceptAllIdQuas();
+
+            } else {
+                OutputErrors.functionNotFound(mainFrame.getOutputPannel(), id, s);
+            }
+        } else {
+            //OBJECT DOES NOT EXISTE
+        }
+
+        return null;
+    }
+    
 
     public SynthesizedOpAsst verifyClass(Object id1, Object id2, Object obId, ArrayList<SynthesizedOpAsst> parameters, Symbol s, TranslateControlerTAC tac) {
         String stringid1 = (String) id1;
@@ -924,12 +1017,14 @@ public class TestManager {
     }
 
     public SynthesizedOpAsst verifyHeapFunction(String id, String functionName, ArrayList<SynthesizedOpAsst> parameters, Symbol s, TranslateControlerTAC tac) {
+        System.out.println("HEEEAAAP "+id+"  "+functionName);
         String objectType = symbolTable.getObjectClass(id, ambitControler.getCurrentAmbit());
         if (objectType != null) {
             if (parameters == null) {
                 parameters = new ArrayList<>();
             }
             String name = "JAVA_" + objectType + "_" + functionName;
+            System.out.println("NAME "+name);
             Tuple function = null;
             for (int i = 0; i < includedTuples.size(); i++) {
                 if (includedTuples.get(i).getName().contains(name) && parameters.size() == includedTuples.get(i).getParameters().size()) {
@@ -949,20 +1044,22 @@ public class TestManager {
             int fatherStack = 0;
             if (function != null) {
                 fatherStack = stack.getCurrentP();
-
+                System.out.println("ID "+stack.getCurrentId());
                 Quadruple quad = new Quadruple(Operation.PLUS, Stack.P, stack.getCurrentId(), Stack.P);
                 String temp0 = tac.getTempGenerator().generateIntegerTemp();
+                System.out.println("POS "+stack.getIdPosition(id));
                 Quadruple quad0 = new Quadruple(Operation.PLUS, Stack.P, stack.getIdPosition(id), temp0);
                 String temp01 = tac.getTempGenerator().generateTemp();
                 Quadruple quad01 = new Quadruple(Operation.EQUAL, Stack.getOutputStack(temp0), null, temp01);
                 String temp02 = tac.getTempGenerator().generateTemp();
                 Quadruple quad02 = new Quadruple(Operation.PLUS, Stack.P, stack.getCurrentId(), temp02);
+               String fun=stack.getCurrentId();
                 stack.changeCurrent(function.getName());
 
                 ArrayList<String> strings = new ArrayList<>();
                 for (int i = 0; i < parameters.size(); i++) {
                     String temp1 = tac.getTempGenerator().generateTemp();
-                    tac.addTempQuadToCurrent(new Quadruple(Operation.PLUS, Stack.P, stack.getCurrentId(), temp1));
+                    tac.addTempQuadToCurrent(new Quadruple(Operation.PLUS, Stack.P, fun, temp1));
                     String temp = tac.getTempGenerator().generateTemp();
                     Integer param = stack.getIdPosition(function.getParameters().get(i).getName());
                     tac.addTempQuadToCurrent(new Quadruple(Operation.PLUS, temp1, param, temp));
