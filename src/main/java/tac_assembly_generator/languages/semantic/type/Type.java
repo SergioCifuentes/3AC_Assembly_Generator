@@ -38,7 +38,9 @@ public class Type {
     }
     
     public boolean isFather(Type type){
-        
+        if (number==TypeManager.VAR_TYPE) {
+            return true;
+        }
         if (father==null) {
             return false;
         }else{

@@ -36,7 +36,7 @@ public class Ambit {
         return id;
     }
         
-    public boolean isSon(Ambit ambitFatherbit){
+        public boolean isSon(Ambit ambitFatherbit){
         if (id==ambitFatherbit.id) {
             return true;
         }else{

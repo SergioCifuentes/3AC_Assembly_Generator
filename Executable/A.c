@@ -42,9 +42,9 @@ float t36;
 int t37;
 float t38;
 int t39;
-float t40;
-int t41;
-int t42;
+int t40;
+float t41;
+float t42;
 float t43;
 int t44;
 float t45;
@@ -52,81 +52,104 @@ float t46;
 float t47;
 int t48;
 int t49;
-int t50;
-float t51;
+float t50;
+int t51;
 int t52;
 float t53;
 int t54;
-int t55;
-float t56;
+float t55;
+int t56;
 int t57;
 float t58;
 int t59;
 float t60;
 int t61;
-float t62;
+int t62;
 float t63;
-float t64;
+int t64;
 float t65;
 int t66;
 float t67;
 int t68;
-int t69;
+float t69;
 float t70;
 int t71;
-float t72;
+int t72;
 float t73;
 float t74;
-int t75;
-int t76;
-float t77;
-float t78;
-int t79;
-float t80;
-int t81;
+float t75;
+float t76;
+int t77;
+int t78;
+float t79;
+int t80;
+float t81;
 float t82;
 float t83;
-float t84;
-int t85;
-int t86;
-int t87;
-float t88;
+int t84;
+float t85;
+float t86;
+float t87;
+int t88;
 int t89;
-float t90;
-int t91;
-float t92;
-float t93;
+int t90;
+float t91;
+int t92;
+int t93;
 float t94;
 int t95;
-int t96;
+float t96;
 float t97;
-int t98;
+float t98;
 int t99;
-float t100;
+int t100;
 float t101;
-float t102;
-int t103;
+int t102;
+float t103;
 float t104;
-int t105;
+float t105;
 int t106;
 float t107;
-int t108;
-float t109;
+float t108;
+int t109;
 float t110;
 int t111;
 float t112;
-int t113;
-int t114;
-float t115;
+float t113;
+float t114;
+int t115;
 int t116;
-int t117;
-float t118;
-float t119;
-int t120;
-int t121;
-int t122;
+float t117;
+int t118;
+int t119;
+float t120;
+float t121;
+float t122;
 int t123;
 float t124;
+int t125;
+int t126;
+float t127;
+int t128;
+float t129;
+float t130;
+int t131;
+float t132;
+int t133;
+int t134;
+float t135;
+int t136;
+float t137;
+int t138;
+float t139;
+float t140;
+float t141;
+int t142;
+int t143;
+int t144;
+int t145;
+int t146;
+float t147;
 void VB_Saludo(){
 printf ("Segundo Proyecto de Compiladores 2");
 printf ("Segundo Proyecto de Compiladores 2");
@@ -152,9 +175,8 @@ t12=p+0;
 t13=stack[t12];
 stack[t12]=t13+1;
 goto etv5;
-goto etv4;
 etv4:
-}
+;}
 void VB_Factorial(){
 t14=5;
 t17=p+1;
@@ -185,185 +207,229 @@ t29=p+6;
 t30=stack[t29];
 t31=p+7;
 stack[t31]=t30;
-}
+goto etv6;
+etv6:
+;}
 void JAVA_Calc_Calc_int(){
 t32=p+0;
 stack[t32]=h;
 h=h+2;
-t33=p+2;
+t33=p+1;
 t34=stack[t33];
 t35=p+0;
 t36=stack[t35];
 t37=t36+0;
 heap[t37]=t34;
 t38=0;
-t39=p+0;
-t40=stack[t39];
-t41=t40+1;
-heap[t41]=t38;
-t42=p+0;
-t43=stack[t42];
-t44=t43+0;
-t45=heap[t44];
-t46=6;
+t39=p+2;
+stack[t39]=t38;
+etv11:
+t40=p+2;
+t41=stack[t40];
+t42=10;
+if (t41 < t42) goto etv8;
+goto etv9;
+etv8:
+t49=p+2;
+t50=stack[t49];
+printf ("%f",t50);
+printf ("\n");
+t44=p+2;
+t45=stack[t44];
+t46=1;
 t47=t45+t46;
-t48=p+3;
+t48=p+2;
 stack[t48]=t47;
+goto etv11;
+etv9:
+goto etv10;
+etv10:
 printf ("este es el valor de n1 y n2:");
 printf ("\n");
 printf ("\n");
 printf ("\n");
-}
+;}
 void JAVA_Calc_Calc_int_int(){
-t49=p+0;
-stack[t49]=h;
+t51=p+0;
+stack[t51]=h;
 h=h+2;
-t50=p+2;
-t51=stack[t50];
-t52=p+0;
+t52=p+1;
 t53=stack[t52];
-t54=t53+0;
-heap[t54]=t51;
-t55=p+3;
-t56=stack[t55];
-t57=p+0;
+t54=p+0;
+t55=stack[t54];
+t56=t55+0;
+heap[t56]=t53;
+t57=p+2;
 t58=stack[t57];
-t59=t58+1;
-heap[t59]=t56;
+t59=p+0;
+t60=stack[t59];
+t61=t60+1;
+heap[t61]=t58;
 //for(int i=0;i<=2;i=i+1){
 //this.n1=this.n1+1		
 //}
-}
-void JAVA_Calc_sumar(){
-t60=2;
-t61=p+1;
-stack[t61]=t60;
-}
-void JAVA_Calc_factorial(){
-t62=1;
-t63=1;
-if (t62 <= t63) goto etv7;
-goto etv8;
-etv7:
-t65=1;
-t66=p+1;
-stack[t66]=t65;
-goto etv9;
-etv8:
-goto etv9;
-etv9:
-t67=1;
-//* factorial();
-t68=p+1;
-stack[t68]=t67;
-}
-void PY_edadmeses(){
-printf ("Ingrese su edad:");
-t69=p+0;
-scanf ("%f",&(t70));
-stack[t69]=t70;
-t71=p+0;
-t72=stack[t71];
-t73=12;
-t74=t72*t73;
-t75=p+1;
-stack[t75]=t74;
-printf ("meses = ");
-t76=p+1;
-t77=stack[t76];
-printf ("%f",t77);
-t78=0;
-t79=p+2;
-stack[t79]=t78;
-etv14:
-t80=3;
-t81=p+2;
-t82=stack[t81];
-if (t82 = t80) goto etv11;
+;}
+void JAVA_Calc_sumar_int_int(){
+t62=p+0;
+t63=stack[t62];
+t64=t63+0;
+t65=heap[t64];
+t66=p+0;
+t67=stack[t66];
+t68=t67+1;
+t69=heap[t68];
+t70=t65+t69;
+t71=p+1;
+stack[t71]=t70;
 goto etv12;
-etv11:
-goto etv13;
 etv12:
-t84=3;
-t85=p+0;
-stack[t85]=t84;
-t86=p+2;
-t87=stack[t86];
-stack[t86]=t87+1;
-goto etv14;
+;}
+void JAVA_Calc_factorial_int(){
+t72=p+2;
+t73=stack[t72];
+t74=1;
+if (t73 <= t74) goto etv15;
+goto etv16;
+etv15:
+t76=1;
+t77=p+1;
+stack[t77]=t76;
+goto etv13;
+etv16:
+goto etv17;
+etv17:
+t78=p+2;
+t79=stack[t78];
+t80=p+2;
+t81=stack[t80];
+t82=1;
+t83=t81-t82;
+t87 = p + 3;
+t88=t87+2;
+stack[t88]=t83;
+t84 = p + 0;
+t85=stack[t84];
+t86 = p + 3;
+t89=t86+0;
+stack[t89]=t85;
+p = p + 3;
+JAVA_Calc_factorial_int();
+t90=p+1;
+p = p - 3;
+t91=t79*stack[t90];
+//* factorial();
+t92=p+1;
+stack[t92]=t91;
 goto etv13;
 etv13:
-printf ("\n");
-scanf ();
-}
+;}
+void PY_edadmeses(){
+printf ("Ingrese su edad:");
+t93=p+0;
+scanf ("%f",&(t94));
+stack[t93]=t94;
+t95=p+0;
+t96=stack[t95];
+t97=12;
+t98=t96*t97;
+t99=p+1;
+stack[t99]=t98;
+printf ("meses = ");
+t100=p+1;
+t101=stack[t100];
+printf ("%f",t101);
+t102=p+0;
+t103=stack[t102];
+t104=12;
+if (t103 > t104) goto etv20;
+goto etv21;
+etv20:
+printf ("edad = ");
+t106=p+0;
+t107=stack[t106];
+printf ("%f",t107);
+goto etv22;
+etv21:
+goto etv22;
+etv22:
+etv18:
+;}
+void PY_holaMundo(){
+printf ("hola MUNDO");
+etv23:
+;}
 void main(){
 // Constantes
 // Variables globales
-t88=8;
-t89=p+2;
-stack[t89]=t88;
-t90='y';
-t91=p+243;
-stack[t91]=t90;
-t93=3/2;
-t92=8+t93;
-t95=p+244;
-stack[t95]=t92;
-t94=2;
-t96=p+245;
-stack[t96]=t94;
-t97=5+2;
-t98=p+0;
-stack[t98]=t97;
-t99=p+0;
-t100=stack[t99];
-t101=6;
-t102=t100+t101;
-t103=p+1;
-stack[t103]=t102;
-t104=2;
-t105=p+246;
-stack[t105]=t104;
+t108=8;
+t109=p+2;
+stack[t109]=t108;
+t110='y';
+t111=p+243;
+stack[t111]=t110;
+t113=3/2;
+t112=8+t113;
+t115=p+244;
+stack[t115]=t112;
+t114=2;
+t116=p+245;
+stack[t116]=t114;
+t117=5+2;
+t118=p+0;
+stack[t118]=t117;
+t119=p+0;
+t120=stack[t119];
+t121=6;
+t122=t120+t121;
+t123=p+1;
+stack[t123]=t122;
+t124=2;
+t125=p+246;
+stack[t125]=t124;
 //Arreglo1[0][3][1]=6;
-t106=p+244;
-t107=stack[t106];
-t108=p+246;
-t109=stack[t108];
-t110 = p + 4;
-t111=t110+2;
-t112 = p + 4;
-t113=t112+3;
-stack[t111]=t107;
-stack[t113]=t109;
+t126=p+244;
+t127=stack[t126];
+t128=p+246;
+t129=stack[t128];
+t130 = p + 249;
+t131=t130+1;
+t132 = p + 249;
+t133=t132+2;
+stack[t131]=t127;
+stack[t133]=t129;
 p = p + 249;
 JAVA_Calc_Calc_int_int();
 p = p - 249;
-t114 = p + 249;
-t115=t114+0;
-t116=p+247;
-stack[t116]=stack[t114];
+t134 = p + 249;
+t135=t134+0;
+t136=p+247;
+stack[t136]=stack[t134];
 //z=VB.Factorial(x);
-t117=p+247;
-t118=stack[t117];
-t119 = p + 249;
-t120=t119+0;
-stack[t120]=t118;
+t137=5;
+t141 = p + 249;
+t142=t141+2;
+stack[t142]=t137;
+t138=p+247;
+t139=stack[t138];
+t140 = p + 249;
+t143=t140+0;
+stack[t143]=t139;
 p = p + 249;
-JAVA_Calc_sumar();
-t121=p+1;
+JAVA_Calc_factorial_int();
+t144=p+1;
 p = p - 249;
-t122=p+248;
-stack[t122]=stack[t121];
-t122=p+248;
-stack[t122]=stack[t121];
-printf ("%d");
-t123=p+248;
-t124=stack[t123];
-printf ("%f",t124);
+t145=p+248;
+stack[t145]=stack[t144];
+t145=p+248;
+stack[t145]=stack[t144];
+t146=p+248;
+t147=stack[t146];
+printf ("%f",t147);
+printf ("prueba");
 //PY.edadmeses(x,3);
 //for(x=4;x>2; x=x+1){
 //	scanf("Hola %d", &x);
 //	w=w+7;
 //}
 getchar();
-}
+;}

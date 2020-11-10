@@ -127,9 +127,8 @@ Input_Ignore_Case= ("I"|"i")("N"|"n")("P"|"p")("U"|"u")("T"|"t")
     "&"                                                     { return new Symbol(SimbolosMlg.AMPERSON, yycolumn,yyline,yytext());}
     [ \t\b]                {}
     {LineTerminator}                        { }
-
+    .                                            { return new Symbol(SimbolosMlg.ERROR,yycolumn,yyline,yytext());}
     
-
     
 }
 
@@ -167,7 +166,7 @@ Input_Ignore_Case= ("I"|"i")("N"|"n")("P"|"p")("U"|"u")("T"|"t")
     ":"                                                     {return new Symbol(SimbolosMlg.COLON, yycolumn,yyline,yytext());}
     "="                                                     {return new Symbol(SimbolosMlg.EQUAL, yycolumn,yyline,yytext());}
     "=="                                                     {return new Symbol(SimbolosMlg.EQUAL, yycolumn,yyline,yytext());}
-    "=!"                                                    { return new Symbol(SimbolosMlg.DIFERENT_VB, yycolumn,yyline,yytext());}
+    ("=!"|"!=")                                                     { return new Symbol(SimbolosMlg.DIFERENT_VB, yycolumn,yyline,yytext());}
     ">"                                                     { return new Symbol(SimbolosMlg.GREATER_THAN, yycolumn,yyline,yytext());}
     "<"                                                     { return new Symbol(SimbolosMlg.LESS_THAN, yycolumn,yyline,yytext());}
     (">="|"=>")                                             { return new Symbol(SimbolosMlg.GREATER_THAN_EQUAL, yycolumn,yyline,yytext());}
@@ -192,7 +191,7 @@ Input_Ignore_Case= ("I"|"i")("N"|"n")("P"|"p")("U"|"u")("T"|"t")
     ({Digito})+                                             {  return new Symbol(SimbolosMlg.NUMBER, yycolumn,yyline,yytext());}
     ({Digito})+"."({Digito})+                               { return new Symbol(SimbolosMlg.DECIMAL, yycolumn,yyline,yytext());}
     {CommentC}                               {tac.addComment(yytext());}
-    
+    "\"\""                                                   { return new Symbol(SimbolosMlg.STRING, yycolumn,yyline,yytext());}
     "\"" [^\"] ~ "\""                                                   { return new Symbol(SimbolosMlg.STRING, yycolumn,yyline,yytext());}
      {LineTerminator}                        {}
      [ \t\b]                {}
@@ -223,7 +222,7 @@ Input_Ignore_Case= ("I"|"i")("N"|"n")("P"|"p")("U"|"u")("T"|"t")
     ":"                                                     {return new Symbol(SimbolosMlg.COLON, yycolumn,yyline,yytext());}
     "="                                                     {return new Symbol(SimbolosMlg.EQUAL, yycolumn,yyline,yytext());}
     ("=="|"is")                                                     {return new Symbol(SimbolosMlg.EQUAL, yycolumn,yyline,yytext());}
-    ("=!"|"is not")                                                    {return new Symbol(SimbolosMlg.DIFERENT_VB, yycolumn,yyline,yytext());}
+    ("=!"|"is not"|"!=")                                                    {return new Symbol(SimbolosMlg.DIFERENT_VB, yycolumn,yyline,yytext());}
     ">"                                                     {return new Symbol(SimbolosMlg.GREATER_THAN, yycolumn,yyline,yytext());}
     "<"                                                     {return new Symbol(SimbolosMlg.LESS_THAN, yycolumn,yyline,yytext());}
     (">=")                                             { return new Symbol(SimbolosMlg.GREATER_THAN_EQUAL, yycolumn,yyline,yytext());}
@@ -333,7 +332,7 @@ Input_Ignore_Case= ("I"|"i")("N"|"n")("P"|"p")("U"|"u")("T"|"t")
                                                         return sim;
 
                                                     }}
-    [^]                                     { }
+   .                                            { return new Symbol(SimbolosMlg.ERROR,yycolumn,yyline,yytext());}
     
 }
 
@@ -380,7 +379,8 @@ Input_Ignore_Case= ("I"|"i")("N"|"n")("P"|"p")("U"|"u")("T"|"t")
     
     ":"                                                     { return new Symbol(SimbolosMlg.COLON, yycolumn,yyline,yytext());}
     "="                                                     { return new Symbol(SimbolosMlg.EQUAL, yycolumn,yyline,yytext());}
-    "=!"                                                    { return new Symbol(SimbolosMlg.DIFERENT_VB, yycolumn,yyline,yytext());}
+     "=="                                                     {return new Symbol(SimbolosMlg.EQUAL, yycolumn,yyline,yytext());}
+    ("=!"|"!=")                                                    { return new Symbol(SimbolosMlg.DIFERENT_VB, yycolumn,yyline,yytext());}
     ">"                                                     { return new Symbol(SimbolosMlg.GREATER_THAN, yycolumn,yyline,yytext());}
     "<"                                                     {return new Symbol(SimbolosMlg.LESS_THAN, yycolumn,yyline,yytext());}
     (">="|"=>")                                             {return new Symbol(SimbolosMlg.GREATER_THAN_EQUAL, yycolumn,yyline,yytext());}

@@ -84,7 +84,7 @@ public class Stack {
     
     public Integer getIdPosition(String id) {
         
-        int space = 0;
+        Integer space = 0;
         
         for (int i = 0; i < stacks.get(currentP).getTuples().size(); i++) {
             
@@ -95,6 +95,13 @@ public class Stack {
             space += stacks.get(currentP).getTuples().get(i).getSize();
             
         }
+        String x=getCurrentClassName();
+        if (x!=null) {
+            space=getIdFromFunction(x, id);
+            return space;
+        }
+        
+        
         return null;
     }
     

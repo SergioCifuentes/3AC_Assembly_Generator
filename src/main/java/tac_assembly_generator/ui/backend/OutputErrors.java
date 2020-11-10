@@ -17,7 +17,7 @@ public class OutputErrors {
 
     public static void notFunctionForReturn(JTextPane textPane, Symbol symbol) {
         OutputText.appendToPane(textPane, "SEMANTIC ERROR:\n", Color.red, false);
-        OutputText.appendToPane(textPane, "\t Rerun invalido:  bloque no es una funcion \n", Color.white, false);
+        OutputText.appendToPane(textPane, "\t Return invalido:  bloque no es una funcion \n", Color.white, false);
         OutputText.appendToPane(textPane, "\t Fila: ", Color.white, false);
         OutputText.appendToPane(textPane, (symbol.right + 1) + "\n", Color.YELLOW, false);
         OutputText.appendToPane(textPane, "\t Columna: ", Color.white, false);
@@ -86,9 +86,10 @@ public class OutputErrors {
         OutputText.appendToPane(textPane, "\t Columna: ", Color.white, false);
         OutputText.appendToPane(textPane, (symbol.left + 1) + "\n", Color.YELLOW, false);
     }
-        public static void notDeclaredThisId(JTextPane textPane, String id, String className, Symbol symbol) {
+
+    public static void notDeclaredThisId(JTextPane textPane, String id, String className, Symbol symbol) {
         OutputText.appendToPane(textPane, "SEMANTIC ERROR:\n", Color.red, false);
-        OutputText.appendToPane(textPane, "\t" + id + " no ha sido declarado en la clase "+className+"\n", Color.white, false);
+        OutputText.appendToPane(textPane, "\t" + id + " no ha sido declarado en la clase " + className + "\n", Color.white, false);
         OutputText.appendToPane(textPane, "\t Fila: ", Color.white, false);
         OutputText.appendToPane(textPane, (symbol.right + 1) + "\n", Color.YELLOW, false);
         OutputText.appendToPane(textPane, "\t Columna: ", Color.white, false);
@@ -211,14 +212,76 @@ public class OutputErrors {
         OutputText.appendToPane(textPane, "\t Columna: ", Color.white, false);
         OutputText.appendToPane(textPane, (symbol.left + 1) + "\n", Color.YELLOW, false);
     }
-
-    public static void syntaxFunctionVB(JTextPane textPane, Symbol symbol) {
-        OutputText.appendToPane(textPane, "SYNTAX ERROR:\n", Color.red, false);
-        OutputText.appendToPane(textPane, "\tPara Vb solo se permiten funcciones y subs eje: function id(parametros)\n\t\t ...\n\tEND Function\n", Color.white, false);
+        public static void functionNotFound2(JTextPane textPane, String id, Symbol symbol) {
+        OutputText.appendToPane(textPane, "SEMANTIC ERROR:\n", Color.red, false);
+        OutputText.appendToPane(textPane, "\tval " + id + " no reconocido, se esperaba una instancea o ID de Lenguaje(JAVA - PY - VB) \n", Color.white, false);
         OutputText.appendToPane(textPane, "\t Fila: ", Color.white, false);
         OutputText.appendToPane(textPane, (symbol.right + 1) + "\n", Color.YELLOW, false);
         OutputText.appendToPane(textPane, "\t Columna: ", Color.white, false);
         OutputText.appendToPane(textPane, (symbol.left + 1) + "\n", Color.YELLOW, false);
+    }
+    
+        public static void printsParameters(JTextPane textPane, Symbol symbol) {
+        OutputText.appendToPane(textPane, "SEMANTIC ERROR:\n", Color.red, false);
+        OutputText.appendToPane(textPane, "\t Este compilador solo permite 2 parametros para prints \n", Color.white, false);
+        OutputText.appendToPane(textPane, "\t Fila: ", Color.white, false);
+        OutputText.appendToPane(textPane, (symbol.right + 1) + "\n", Color.YELLOW, false);
+        OutputText.appendToPane(textPane, "\t Columna: ", Color.white, false);
+        OutputText.appendToPane(textPane, (symbol.left + 1) + "\n", Color.YELLOW, false);
+    }
+        
+        
+                public static void metodNotFunction(JTextPane textPane, Symbol symbol) {
+        OutputText.appendToPane(textPane, "SEMANTIC ERROR:\n", Color.red, false);
+        OutputText.appendToPane(textPane, "\t No puedes obtener valor de metodo, se debe usar una funcion \n", Color.white, false);
+        OutputText.appendToPane(textPane, "\t Fila: ", Color.white, false);
+        OutputText.appendToPane(textPane, (symbol.right + 1) + "\n", Color.YELLOW, false);
+        OutputText.appendToPane(textPane, "\t Columna: ", Color.white, false);
+        OutputText.appendToPane(textPane, (symbol.left + 1) + "\n", Color.YELLOW, false);
+    }
+    
+
+    public static void syntaxFunctionVB(JTextPane textPane, Symbol symbol) {
+        OutputText.appendToPane(textPane, "\tPara Vb solo se permiten funcciones y subs eje: function id(parametros)\n\t\t ...\n\tEND Function\n", Color.white, false);
+
+    }
+
+    public static void syntaxFunctionVBEnd(JTextPane textPane, Symbol symbol) {
+        OutputText.appendToPane(textPane, "\tPara Vb solo las funciones se cierran con END Function\n", Color.white, false);
+    }
+
+    public static void numValueError(JTextPane textPane, Symbol symbol) {
+        OutputText.appendToPane(textPane, "\tValores deber ser numericos, chars o ids \n", Color.white, false);
+    }
+
+    public static void TypeError(JTextPane textPane, Symbol symbol) {
+        OutputText.appendToPane(textPane, "\tLos tipos de datos permitodos son int, char y float \n", Color.white, false);
+    }
+       public static void VBSubAndFun(JTextPane textPane, Symbol symbol) {
+        OutputText.appendToPane(textPane, "\tPara Visual Basic Solo se permiten \n", Color.white, false);
+        OutputText.appendToPane(textPane, "\t\tFunciones (Function)\n", Color.white, false);
+        OutputText.appendToPane(textPane, "\t\tMetodos  (Sub)\n", Color.white, false);
+    }
+
+    public static void showError(int number, Symbol s, JTextPane textPane) {
+        switch (number) {
+            case 1:
+                syntaxFunctionVB(textPane, s);
+                break;
+            case 2:
+                syntaxFunctionVBEnd(textPane, s);
+                break;
+            case 3:
+                numValueError(textPane, s);
+            case 4:
+                TypeError(textPane, s);
+                break;
+                 case 5:
+                VBSubAndFun(textPane, s);
+                break;
+            default:
+                throw new AssertionError();
+        }
     }
 
 }

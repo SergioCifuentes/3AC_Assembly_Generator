@@ -30,6 +30,7 @@ public class TextSection {
     private static final String INC = "inc";
     private static final String CMP = "cmp";
     private static final String CL = "cl";
+    private static final String JMP = "jmp";
     private static final String JNE = "jne";
     
     private static final String SYSCALL = "syscall";
@@ -56,7 +57,10 @@ public class TextSection {
         return s;
 
     }
-
+    public void addJump(String label){
+        lines.add("\t" + JMP + " _" + label );
+    }
+    
     public void closeStart() {
         lines.add("\t" + MOV + " " + RAX + ", 60");
         lines.add("\t" + MOV + " " + RDI + ", 0");

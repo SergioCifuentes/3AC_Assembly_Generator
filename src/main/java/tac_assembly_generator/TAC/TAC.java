@@ -33,9 +33,10 @@ public class TAC {
     }
 
     public void translateQuads(ArrayList<Object> quads, Stack stack) {
-
+        
         for (int i = 0; i < quads.size(); i++) {
             translateQuad(quads.get(i), stack, mainFrame.getTACPannel());
+        
 
         }
 
@@ -56,6 +57,7 @@ public class TAC {
                 if (((String) quad).startsWith("//") || ((String) quad).startsWith("/*")) {
                     OutputText.appendToPane(jtextPane, (String) quad + "\n", Color.lightGray, false);
                 } else {
+                    
                     OutputText.appendToPane(jtextPane, (String) quad + "\n", Color.ORANGE, false);
                 }
             } else {
@@ -75,11 +77,10 @@ public class TAC {
                 OutputText.appendToPane(jtextPane, Operation.getIntOpOutput(quadAsst.getOp()) + " " + quadAsst.getResult() + ";\n", Color.white, false);
             } else if (quadAsst.getOp() == Operation.EQUAL) {
 
-                if (!quadAsst.isConstante()) {
                 String tacQuad = quadAsst.getResult() + Operation.getIntOpOutput(quadAsst.getOp()) + quadAsst.getArg1();
                 OutputText.appendToPane(jtextPane, tacQuad + ";\n", Color.white, false);
                 
-                }
+                
                 
             } else if (quadAsst.getOp() <= Operation.MINUS) {
                 if ((quadAsst.getOp() == Operation.PLUS || quadAsst.getOp() == Operation.MINUS) && quadAsst.getResult().equals(Stack.P)) {
@@ -138,8 +139,9 @@ public class TAC {
                return (String)quad;
             }
         } else if (quad.getClass().equals(Quadruple.class)) {
-
+            
             Quadruple quadAsst = (Quadruple) quad;
+            System.out.println(quadAsst);
             if (quadAsst.getOp() == null) {
                 return quadAsst.getResult() + ":\n";
                 
@@ -147,10 +149,7 @@ public class TAC {
                 return Operation.getIntOpOutput(quadAsst.getOp()) + " " + quadAsst.getResult() + ";\n";
             } else if (quadAsst.getOp() == Operation.EQUAL) {
                 String aux="";
-                if (quadAsst.isConstante()) {
-                   return "";
-                    
-                }
+                
                 aux+=quadAsst.getResult() + Operation.getIntOpOutput(quadAsst.getOp()) + quadAsst.getArg1()+";\n";
                 return aux;
                 
@@ -209,6 +208,14 @@ public class TAC {
                 
             } else if (quadAsst.getOp() == Operation.INCLUDE) {
                 return "#Include <" + quadAsst.getResult() + ">\n";
+                
+            }else if (quadAsst.getOp() == Operation.FUNCTION) {
+                if (quadAsst.getResult().equals("}")) {
+                    return ";}\n";
+                }else{
+                    return  quadAsst.getResult()+"\n";
+                }
+                
                 
             }
             

@@ -34,6 +34,10 @@ public class QuadsToAssemblyManager {
         
         currentMain = false;
     }
+
+    public AssemblyObject getAssemblyObject() {
+        return assemblyObject;
+    }
     
     public void translate() {
         for (int i = 0; i < resultQuads.getQuadruples().size(); i++) {
@@ -41,9 +45,8 @@ public class QuadsToAssemblyManager {
             if (resultQuads.getQuadruples().get(i).getClass().equals(Quadruple.class)) {
                 Quadruple quad = (Quadruple) resultQuads.getQuadruples().get(i);
                 if (quad.getOp()==null) {
-                    
+                    assemblyObject.getTextSection().openLable(quad.getResult());
                 }else if (quad.getOp() == Operation.PRINT) {
-                    System.out.println(quad);
                     if (((String) quad.getResult()).startsWith("\"")) {
                         String stringData = assemblyObject.getDataSection().createDB((String) quad.getResult());
                         assemblyObject.getTextSection().createPrint(stringData);
@@ -65,6 +68,9 @@ public class QuadsToAssemblyManager {
                         function=function.replace(" ", "");
                         assemblyObject.getTextSection().openLable(function);
                     }
+                    
+                }else if(quad.getOp() == Operation.GO_TO){
+                    assemblyObject.getTextSection().addJump(quad.getResult());
                     
                 }
                 

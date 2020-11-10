@@ -170,30 +170,35 @@ public class TypeManager {
         languageType = typeOfTypes;
         switch (typeOfTypes) {
             case VB_TYPES:
-                types[0] = new Type(FLOAT_NAME, FLOAT_TYPE, null);
+                types[4] = new Type(VAR_NAME, VAR_TYPE, null);
+                types[0] = new Type(FLOAT_NAME, FLOAT_TYPE, types[4] );
                 types[1] = new Type(INTEGER_NAME, INTEGER_TYPE, types[0]);
-                types[2] = new Type(CHAR_NAME, CHAR_TYPE, null);
-                types[3] = new Type(BOOL_NAME, BOOL_TYPE, null);
+                types[2] = new Type(CHAR_NAME, CHAR_TYPE, types[4] );
+                types[3] = new Type(BOOL_NAME, BOOL_TYPE, types[4] );
+                
                 break;
             case JAVA_TYPES:
-                types[0] = new Type(FLOAT_NAME, FLOAT_TYPE, null);
+                types[4] = new Type(VAR_NAME, VAR_TYPE, null);
+                types[0] = new Type(FLOAT_NAME, FLOAT_TYPE, types[4] );
                 types[1] = new Type(INTEGER_NAME, INTEGER_TYPE, types[0]);
                 types[2] = new Type(CHAR_NAME, CHAR_TYPE, types[1]);
-                types[3] = new Type(BOOL_NAME, BOOL_TYPE, null);
+                types[3] = new Type(BOOL_NAME, BOOL_TYPE, types[4] );
 
                    break;
             case PYTHON_TYPES:
-                types[0] = new Type(FLOAT_NAME, FLOAT_TYPE, null);
+                types[4] = new Type(VAR_NAME, VAR_TYPE, null);
+                types[0] = new Type(FLOAT_NAME, FLOAT_TYPE, types[4] );
                 types[1] = new Type(INTEGER_NAME, INTEGER_TYPE, types[0]);
                 types[2] = new Type(CHAR_NAME, CHAR_TYPE, types[1]);
-                types[3] = new Type(BOOL_NAME, BOOL_TYPE, null);
-                types[4] = new Type(VAR_NAME, VAR_TYPE, null);
+                types[3] = new Type(BOOL_NAME, BOOL_TYPE, types[4] );
+                
                 break;
             case C_TYPES:
-                types[0] = new Type(FLOAT_NAME, FLOAT_TYPE, null);
+                types[4] = new Type(VAR_NAME, VAR_TYPE, null);
+                types[0] = new Type(FLOAT_NAME, FLOAT_TYPE, types[4] );
                 types[1] = new Type(INTEGER_NAME, INTEGER_TYPE, types[0]);
-                types[2] = new Type(CHAR_NAME, CHAR_TYPE, null);
-                types[3] = new Type(BOOL_NAME, BOOL_TYPE, null);
+                types[2] = new Type(CHAR_NAME, CHAR_TYPE, types[4] );
+                types[3] = new Type(BOOL_NAME, BOOL_TYPE, types[4] );
                 break;
             default:
                 throw new AssertionError();

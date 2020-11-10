@@ -90,5 +90,31 @@ public class ResultQuads {
             aux++;
         }
     }
+       
+       public  void reduceQuads(){
+           boolean gotoBool=false;
+           ArrayList<Integer> toDelete= new ArrayList<>();
+            for (int i = 0; i < quadruples.size(); i++) {
+                if (quadruples.get(i).getClass().equals(Quadruple.class)) {
+                    Quadruple quad = (Quadruple) quadruples.get(i);
+                    if (quad.getOp()==null) {
+                        gotoBool=false;
+                    } else if (quad.getOp()==Operation.GO_TO) {
+                        if (gotoBool) {
+                            toDelete.add(i);
+                        }else{
+                            gotoBool=true;
+                        }
+                    }else{
+                        gotoBool=false;
+                    }
+                }
+           }
+            for (int i = toDelete.size()-1; i >= 0; i--) {
+               quadruples.remove(toDelete.get(i).intValue());
+           }
+       }
+       
+       
     
 }

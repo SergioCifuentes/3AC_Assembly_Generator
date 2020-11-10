@@ -14,6 +14,7 @@ import tac_assembly_generator.TAC.quadruple.Operation;
 import tac_assembly_generator.TAC.quadruple.Quadruple;
 import tac_assembly_generator.TAC.stack.Stack;
 import tac_assembly_generator.languages.analyzers.syntax.SyntaxConstAsst;
+import tac_assembly_generator.languages.analyzers.syntax.SyntaxMlgAnalyzer;
 import tac_assembly_generator.languages.analyzers.syntax.SynthesizedOpAsst;
 import tac_assembly_generator.languages.semantic.AmbitControler;
 import tac_assembly_generator.languages.semantic.SymbolTable;
@@ -32,6 +33,7 @@ import tac_assembly_generator.ui.backend.OutputText;
 public class TestManager {
 
     private SymbolTable symbolTable;
+    private SyntaxMlgAnalyzer sma;
     private boolean semanticError;
     private boolean semanticRecoverableError;
     private ArrayList<Tuple> preTupleSymbols;
@@ -60,6 +62,10 @@ public class TestManager {
         return currentClass;
     }
 
+    public void setSma(SyntaxMlgAnalyzer sma) {
+        this.sma = sma;
+    }
+
     public void setCurrentClass(Tuple currentClass) {
         if (currentClass == null) {
             stack.changeCurrent("main");
@@ -82,6 +88,10 @@ public class TestManager {
     public void creatSonAmbit() {
         ambitControler.createSonAmbit();
     }
+    public void creatSonAmbit2(String id) {
+        System.out.println("ID "+id);
+        ambitControler.createSonAmbit();
+    }
 
     public void setAmbitFuction() {
         ambitControler.getCurrentAmbit().setFunction(true);
@@ -100,10 +110,8 @@ public class TestManager {
     }
 
     public void insertPreTuplesToSymbolTable(Integer typeNumber, Integer dimension, Symbol symbol, TranslateControlerTAC tAC) {
-        System.out.println("PRE TUPLE");
         tAC.nextIdQuad();
         for (int i = 0; i < preTupleSymbols.size(); i++) {
-            System.out.println("ins " + preTupleSymbols.get(i).getName() + " " + preTupleSymbols.get(i).getValue());
             if (preTupleSymbols.get(i).getValue() != null) {
 
                 SynthesizedOpAsst so = (SynthesizedOpAsst) preTupleSymbols.get(i).getValue();
@@ -138,7 +146,6 @@ public class TestManager {
 
             }
         }
-        System.out.println("END");
         tAC.removeIdQuads();
         preTupleSymbols.removeAll(preTupleSymbols);
     }
@@ -148,19 +155,27 @@ public class TestManager {
     }
 
     public void verifyPrints(ArrayList<Object> obs, Symbol s, TranslateControlerTAC tac) {
-        
-        if (obs.get(0).getClass().equals(String.class) && obs.size() == 1) {
-            System.out.println("PRINTS "+obs.get(0));
+        int aux = 0;
+        for (int i = 0; i < obs.size(); i++) {
+            if (obs.get(i).getClass().equals(SynthesizedOpAsst.class)) {
+                aux++;
+            }
+        }
+        if (aux >= 2) {
+            sma.error = true;
+            OutputErrors.printsParameters(mainFrame.getOutputPannel(), s);
+        } else if (obs.get(0).getClass().equals(String.class) && obs.size() == 1) {
+
             tac.addTempQuadToCurrent(tac.createPrintQuad((String) obs.get(0)));
             tac.acceptAllIdQuas();
         } else {
+
             if (obs.get(0).getClass().equals(String.class)) {
                 if (obs.get(obs.size() - 1).getClass().equals(SynthesizedOpAsst.class)) {
                     SynthesizedOpAsst soa = (SynthesizedOpAsst) obs.get(obs.size() - 1);
                     Integer inte = soa.getType().getNumber();
                     String text = (String) obs.get(0);
                     String[] st;
-                    System.out.println(inte);
                     switch (inte) {
                         case TypeManager.CHAR_TYPE:
                             st = text.split("%c");
@@ -175,7 +190,7 @@ public class TestManager {
 
                                 tac.addTempQuadToCurrent(tac.createPrintQuad(soa));
                                 if (!st[1].equals("\"")) {
-                                    tac.addTempQuadToCurrent(tac.createPrintQuad("\"" + st[0]));
+                                    tac.addTempQuadToCurrent(tac.createPrintQuad("\"" + st[1]));
 
                                 }
                                 break;
@@ -183,6 +198,7 @@ public class TestManager {
 
                         case TypeManager.INTEGER_TYPE:
                             st = text.split("%d");
+                            
                             if (st.length > 1) {
                                 if (!st[0].equals("\"")) {
 
@@ -194,7 +210,7 @@ public class TestManager {
 
                                 tac.addTempQuadToCurrent(tac.createPrintQuad(soa));
                                 if (!st[1].equals("\"")) {
-                                    tac.addTempQuadToCurrent(tac.createPrintQuad("\"" + st[0]));
+                                    tac.addTempQuadToCurrent(tac.createPrintQuad("\"" + st[1]));
 
                                 }
                                 break;
@@ -213,7 +229,7 @@ public class TestManager {
 
                                 tac.addTempQuadToCurrent(tac.createPrintQuad(soa));
                                 if (!st[1].equals("\"")) {
-                                    tac.addTempQuadToCurrent(tac.createPrintQuad("\"" + st[0]));
+                                    tac.addTempQuadToCurrent(tac.createPrintQuad("\"" + st[1]));
 
                                 }
                             } else {
@@ -265,7 +281,6 @@ public class TestManager {
     }
 
     public void insertTuple(String id, Integer type, Symbol symbol) {
-        System.out.println("INSERTING " + id);
         Tuple tuple = new Tuple(id, typeManager.getType(type), null, 0, symbol, ambitControler.getCurrentAmbit());
         tuple.setStackInfo(1);
         if (stack.getIdPosition(id) == null) {
@@ -307,6 +322,11 @@ public class TestManager {
     }
 
     public SynthesizedOpAsst getArrayType(String id, Object dimensions, Symbol symbol, TranslateControlerTAC tac) {
+        System.out.println("IDDD "+id);
+        System.out.println("DII"+ dimensions);
+        System.out.println(symbol.right);
+
+        System.out.println(symbol.left);
         Tuple tuple = symbolTable.getTupleWithAmbit(id, ambitControler.getCurrentAmbit());
         ArrayList<Object> dimension = (ArrayList<Object>) dimensions;
         if (tuple == null) {
@@ -321,7 +341,12 @@ public class TestManager {
                     ArrayList<Object> quads = new ArrayList<Object>();
                     ArrayList<Object> sizes = tuple.getDimension();
                     ArrayList<String> results = new ArrayList<String>();
-                    for (int i = 0; i < dimension.size(); i++) {
+                    if (dimension.size()==1) {
+                        System.out.println("STTTTT "+dimension.get(0).toString());
+                        results.add(dimension.get(0).toString());
+                        
+                    }else{
+                        for (int i = 0; i < dimension.size(); i++) {
                         String result = null;
                         if (i == dimension.size() - 1) {
                             results.add(tac.getTempGenerator().generateTemp());
@@ -349,14 +374,22 @@ public class TestManager {
                         }
 
                     }
+                    }
+                    
                     String temp = tac.getTempGenerator().generateTemp();
                     quads.add(new Quadruple(Operation.PLUS, Stack.P, stack.getIdPosition(id), temp));
 
                     String temp2 = tac.getTempGenerator().generateIntegerTemp();
 
                     quads.add(new Quadruple(Operation.PLUS, temp, results.get(results.size() - 1), temp2));
+                    System.out.println("===========");
+                    for (int i = 0; i < quads.size(); i++) {
+                        System.out.println(quads.get(i));
+                    }
+                    System.out.println("$$$$$$$$$$");
                     tac.addTempQuads(quads);
-
+                    tac.acceptAllIdQuas();
+                    System.out.println("RETURNING "+Stack.getOutputStack(temp2));
                     return new SynthesizedOpAsst(new Quadruple(Operation.EQUAL, null, null, Stack.getOutputStack(temp2)), tuple.getType());
                 }
             }
@@ -428,8 +461,10 @@ public class TestManager {
         SyntaxConstAsst sc = (SyntaxConstAsst) val;
         if (typeManager.getType(sc.getType()).isFather(typeManager.getType(type)) || typeManager.getType(type).equals(typeManager.getType(sc.getType()))) {
             Tuple tuple = new Tuple(id, typeManager.getType(type), sc.getValue(), 0, s, ambitControler.getCurrentAmbit());
+            tuple.setStackInfo(1);
             tuple.setConstante(true);
             symbolTable.insertTuple(tuple);
+            stack.addToCurrentStack(tuple);
             return true;
 
         } else {
@@ -648,15 +683,21 @@ public class TestManager {
         if (idType != null) {
             if (value != null) {
                 SynthesizedOpAsst soa = (SynthesizedOpAsst) value;
+                
                 if (soa.getType().getNumber() == idType.getNumber() || soa.getType().isFather(idType)) {
 
                     return true;
                 }
+                OutputErrors.typeOpError(mainFrame.getOutputPannel(),TypeManager.getOutputTypeStatic(soa.getType().getNumber()), TypeManager.getOutputTypeStatic(idType.getNumber()), symbol);
             }
+            
         }
-
+        
         return false;
     }
+    
+
+    
 
     public boolean verifyType(Integer type1, Integer type2, Symbol symbol, String id) {
         if (type1.equals(type2) || typeManager.getType(type2).isFather(typeManager.getType(type1))) {
@@ -700,6 +741,7 @@ public class TestManager {
                 includedTuples.addAll(tu);
             }
         } else if (language.equals("PY")) {
+
             if (functions == null || functions.equals("*")) {
                 includedTuples.addAll(symbolTable.getLanguageFunctions(language));
             } else {
@@ -727,7 +769,9 @@ public class TestManager {
         SynthesizedOpAsst soa = (SynthesizedOpAsst) value;
         tac.addTempQuadToCurrent(new Quadruple(Operation.PLUS, Stack.P, posicion, temp));
         tac.addTempQuadToCurrent(new Quadruple(Operation.EQUAL, soa.getQuadruple().getResult(), null, Stack.getOutputStack(temp)));
+        tac.addTempQuadToCurrent(new Quadruple(Operation.GO_TO, null, null, tac.getReturnLabel()));
         tac.acceptAllIdQuas();
+
     }
 
     public boolean verifyFuctionForReturn(Symbol s) {
@@ -735,6 +779,7 @@ public class TestManager {
         if (ambitControler.getCurrentAmbit().isFunction() || ambitControler.isSonOfAFuncion()) {
             return true;
         } else {
+            sma.error=true;
             OutputErrors.notFunctionForReturn(mainFrame.getOutputPannel(), s);
             return false;
         }
@@ -758,6 +803,7 @@ public class TestManager {
     }
 
     public SynthesizedOpAsst verifyFunction(String id, ArrayList<SynthesizedOpAsst> parameters, Symbol s, TranslateControlerTAC tac) {
+
         if (parameters == null) {
             parameters = new ArrayList<>();
         }
@@ -765,19 +811,20 @@ public class TestManager {
             id = id.replace('.', '_');
             String[] ids = id.split("_");
             Tuple function = null;
-            if (!ids[0].equals("JAVA") && !ids[0].equals("PH") && !ids[0].equals("VB")) {
+            if (!ids[0].equals("JAVA") && !ids[0].equals("PY") && !ids[0].equals("VB")) {
                 return verifyHeapFunction(ids[0], ids[1], parameters, s, tac);
             }
             for (int i = 0; i < includedTuples.size(); i++) {
-
                 if (includedTuples.get(i).getName().contains(ids[1]) && parameters.size() == includedTuples.get(i).getParameters().size()
                         && includedTuples.get(i).getLanguage().equals(ids[0])) {
                     boolean mismosTipos = true;
                     for (int j = 0; j < parameters.size(); j++) {
-
-                        if (!(parameters.get(j).getType().getNumber() == includedTuples.get(i).getParameters().get(j).getType().getNumber()) && !parameters.get(j).getType().isFather(includedTuples.get(i).getParameters().get(j).getType())) {
-                            mismosTipos = false;
+                        if (includedTuples.get(i).getParameters().get(j).getType().getNumber() != TypeManager.VAR_TYPE) {
+                            if (!(parameters.get(j).getType().getNumber() == includedTuples.get(i).getParameters().get(j).getType().getNumber()) && !parameters.get(j).getType().isFather(includedTuples.get(i).getParameters().get(j).getType())) {
+                                mismosTipos = false;
+                            }
                         }
+
                     }
                     if (mismosTipos) {
                         function = includedTuples.get(i);
@@ -790,11 +837,12 @@ public class TestManager {
             if (function != null) {
                 fatherStack = stack.getCurrentP();
                 Quadruple quad = new Quadruple(Operation.PLUS, Stack.P, stack.getCurrentId(), Stack.P);
+                String name = stack.getCurrentId();
                 stack.changeCurrent(function.getName());
                 ArrayList<String> strings = new ArrayList<>();
                 for (int i = 0; i < parameters.size(); i++) {
                     String temp1 = tac.getTempGenerator().generateTemp();
-                    tac.addTempQuadToCurrent(new Quadruple(Operation.PLUS, Stack.P, stack.getCurrentId(), temp1));
+                    tac.addTempQuadToCurrent(new Quadruple(Operation.PLUS, Stack.P, name, temp1));
 
                     String temp = tac.getTempGenerator().generateTemp();
                     Integer param = stack.getIdPosition(function.getParameters().get(i).getName());
@@ -817,11 +865,12 @@ public class TestManager {
                 if (ret != null) {
                     String temp = tac.getTempGenerator().generateIntegerTemp();
                     tac.addTempQuadToCurrent(new Quadruple(Operation.PLUS, Stack.P, ret, temp));
-                    Quadruple quad2 = new Quadruple(Operation.EQUAL, null, null, Stack.getOutputStack(temp));
+                    String temp2 = tac.getTempGenerator().generateIntegerTemp();
+                    Quadruple quad2 = new Quadruple(Operation.EQUAL, Stack.getOutputStack(temp), null,temp2 );
+                    tac.addTempQuadToCurrent(quad2);
                     tac.acceptAllIdQuas();
                     stack.changeCurrent(fatherStack);
                     tac.addTempQuadToCurrent(new Quadruple(Operation.MINUS, Stack.P, stack.getCurrentId(), Stack.P));
-
                     tac.acceptAllIdQuas();
                     return new SynthesizedOpAsst(quad2, function.getType());
                 }
@@ -854,98 +903,100 @@ public class TestManager {
         }
         return null;
     }
-    
-    
+
     public SynthesizedOpAsst verifyJavaFunction(String id, ArrayList<SynthesizedOpAsst> parameters, Symbol s, TranslateControlerTAC tac) {
         String objectType = stack.getCurrentClassName();
-        objectType=objectType.replace("JAVA_", "");
-        if (objectType != null) {
-            if (parameters == null) {
-                parameters = new ArrayList<>();
-            }
-            String name = "JAVA_" + objectType + "_" + id;
-            System.out.println("JAVA FUN "+name);
-            Tuple function = null;
-            ArrayList<Tuple> tuples = symbolTable.getSymbols();
-            for (int i = 0; i < tuples.size(); i++) {
-                if (tuples.get(i).getName().contains(name) && parameters.size() == tuples.get(i).getParameters().size()) {
-                    boolean mismosTipos = true;
-                    for (int j = 0; j < parameters.size(); j++) {
-                        if (!(parameters.get(j).getType().getNumber() == tuples.get(i).getParameters().get(j).getType().getNumber()) && !parameters.get(j).getType().isFather(tuples.get(i).getParameters().get(j).getType())) {
-                            mismosTipos = false;
+
+        if (objectType.contains("JAVA")) {
+            objectType = objectType.replace("JAVA_", "");
+            if (objectType != null) {
+                if (parameters == null) {
+                    parameters = new ArrayList<>();
+                }
+                String name = "JAVA_" + objectType + "_" + id;
+                Tuple function = null;
+                ArrayList<Tuple> tuples = symbolTable.getSymbols();
+                for (int i = 0; i < tuples.size(); i++) {
+                    if (tuples.get(i).getName().contains(name) && parameters.size() == tuples.get(i).getParameters().size()) {
+                        boolean mismosTipos = true;
+                        for (int j = 0; j < parameters.size(); j++) {
+                            if (!(parameters.get(j).getType().getNumber() == tuples.get(i).getParameters().get(j).getType().getNumber()) && !parameters.get(j).getType().isFather(tuples.get(i).getParameters().get(j).getType())) {
+                                mismosTipos = false;
+                            }
+                        }
+                        if (mismosTipos) {
+                            function = tuples.get(i);
+                            break;
                         }
                     }
-                    if (mismosTipos) {
-                        function = tuples.get(i);
-                        break;
+
+                }
+                int fatherStack = 0;
+                if (function != null) {
+                    fatherStack = stack.getCurrentP();
+
+                    Quadruple quad = new Quadruple(Operation.PLUS, Stack.P, stack.getCurrentId(), Stack.P);
+                    String temp0 = tac.getTempGenerator().generateIntegerTemp();
+                    Quadruple quad0 = new Quadruple(Operation.PLUS, Stack.P, "this", temp0);
+                    String temp01 = tac.getTempGenerator().generateTemp();
+                    Quadruple quad01 = new Quadruple(Operation.EQUAL, Stack.getOutputStack(temp0), null, temp01);
+                    String temp02 = tac.getTempGenerator().generateTemp();
+                    Quadruple quad02 = new Quadruple(Operation.PLUS, Stack.P, stack.getCurrentId(), temp02);
+                    String fun = stack.getCurrentId();
+                    stack.changeCurrent(function.getName());
+
+                    ArrayList<String> strings = new ArrayList<>();
+                    for (int i = 0; i < parameters.size(); i++) {
+                        String temp1 = tac.getTempGenerator().generateTemp();
+
+                        tac.addTempQuadToCurrent(new Quadruple(Operation.PLUS, Stack.P, fun, temp1));
+                        String temp = tac.getTempGenerator().generateTemp();
+
+                        Integer param = stack.getIdPosition(function.getParameters().get(i).getName());
+                        tac.addTempQuadToCurrent(new Quadruple(Operation.PLUS, temp1, param, temp));
+                        strings.add(temp);
                     }
-                }
+                    for (int i = 0; i < strings.size(); i++) {
+                        tac.getTempGenerator().addIntegerTemp(strings.get(i));
+                        tac.addTempQuadToCurrent(new Quadruple(Operation.EQUAL, (String) parameters.get(i).getQuadruple().getResult(), null, Stack.getOutputStack(strings.get(i))));
+                    }
+                    tac.addTempQuadToCurrent(quad0);
+                    tac.addTempQuadToCurrent(quad01);
+                    tac.addTempQuadToCurrent(quad02);
+                    String temp03 = tac.getTempGenerator().generateIntegerTemp();
+                    tac.addTempQuadToCurrent(new Quadruple(Operation.PLUS, temp02, stack.getIdPosition("this"), temp03));
+                    tac.addTempQuadToCurrent(new Quadruple(Operation.EQUAL, temp01, null, Stack.getOutputStack(temp03)));
 
-            }
-            int fatherStack = 0;
-            if (function != null) {
-                fatherStack = stack.getCurrentP();
-                
-                Quadruple quad = new Quadruple(Operation.PLUS, Stack.P, stack.getCurrentId(), Stack.P);
-                String temp0 = tac.getTempGenerator().generateIntegerTemp();
-                Quadruple quad0 = new Quadruple(Operation.PLUS, Stack.P, "this", temp0);
-                String temp01 = tac.getTempGenerator().generateTemp();
-                Quadruple quad01 = new Quadruple(Operation.EQUAL, Stack.getOutputStack(temp0), null, temp01);
-                String temp02 = tac.getTempGenerator().generateTemp();
-                Quadruple quad02 = new Quadruple(Operation.PLUS, Stack.P, stack.getCurrentId(), temp02);
-                String fun=stack.getCurrentId();
-                stack.changeCurrent(function.getName());
-                
-                ArrayList<String> strings = new ArrayList<>();
-                for (int i = 0; i < parameters.size(); i++) {
-                    String temp1 = tac.getTempGenerator().generateTemp();
-                    
-                    tac.addTempQuadToCurrent(new Quadruple(Operation.PLUS, Stack.P, fun, temp1));
-                    String temp = tac.getTempGenerator().generateTemp();
-                    
-                    Integer param = stack.getIdPosition(function.getParameters().get(i).getName());
-                    tac.addTempQuadToCurrent(new Quadruple(Operation.PLUS, temp1, param, temp));
-                    strings.add(temp);
-                }
-                for (int i = 0; i < strings.size(); i++) {
-                    tac.getTempGenerator().addIntegerTemp(strings.get(i));
-                    tac.addTempQuadToCurrent(new Quadruple(Operation.EQUAL, (String) parameters.get(i).getQuadruple().getResult(), null, Stack.getOutputStack(strings.get(i))));
-                }
-                tac.addTempQuadToCurrent(quad0);
-                tac.addTempQuadToCurrent(quad01);
-                tac.addTempQuadToCurrent(quad02);
-                String temp03 = tac.getTempGenerator().generateIntegerTemp();
-                tac.addTempQuadToCurrent(new Quadruple(Operation.PLUS, temp02, stack.getIdPosition("this"), temp03));
-                tac.addTempQuadToCurrent(new Quadruple(Operation.EQUAL, temp01, null, Stack.getOutputStack(temp03)));
+                    tac.addTempQuadToCurrent(quad);
 
-                tac.addTempQuadToCurrent(quad);
+                    tac.addTempQuadToCurrent(new Quadruple(Operation.TEMP, null, null, function.getName()));
+                    stack.changeCurrent(fatherStack);
 
-                tac.addTempQuadToCurrent(new Quadruple(Operation.TEMP, null, null, function.getName()));
-                stack.changeCurrent(fatherStack);
+                    Integer ret = stack.getIdFromFunction(function.getName(), Stack.RETURN);
+                    if (ret != null) {
+                        String temp = tac.getTempGenerator().generateIntegerTemp();
+                        tac.addTempQuadToCurrent(new Quadruple(Operation.PLUS, Stack.P, ret, temp));
+                        Quadruple quad2 = new Quadruple(Operation.EQUAL, null, null, Stack.getOutputStack(temp));
+                        tac.addTempQuadToCurrent(new Quadruple(Operation.MINUS, Stack.P, stack.getCurrentId(), Stack.P));
 
-                Integer ret = stack.getIdFromFunction(function.getName(), Stack.RETURN);
-                if (ret != null) {
-                    String temp = tac.getTempGenerator().generateIntegerTemp();
-                    tac.addTempQuadToCurrent(new Quadruple(Operation.PLUS, Stack.P, ret, temp));
-                    Quadruple quad2 = new Quadruple(Operation.EQUAL, null, null, Stack.getOutputStack(temp));
+                        tac.acceptAllIdQuas();
+                        return new SynthesizedOpAsst(quad2, function.getType());
+                    }
                     tac.addTempQuadToCurrent(new Quadruple(Operation.MINUS, Stack.P, stack.getCurrentId(), Stack.P));
-
                     tac.acceptAllIdQuas();
-                    return new SynthesizedOpAsst(quad2, function.getType());
-                }
-                tac.addTempQuadToCurrent(new Quadruple(Operation.MINUS, Stack.P, stack.getCurrentId(), Stack.P));
-                tac.acceptAllIdQuas();
 
+                } else {
+                    OutputErrors.functionNotFound(mainFrame.getOutputPannel(), id, s);
+                }
             } else {
-                OutputErrors.functionNotFound(mainFrame.getOutputPannel(), id, s);
+                //OBJECT DOES NOT EXISTE
             }
         } else {
-            //OBJECT DOES NOT EXISTE
+            //
         }
 
         return null;
     }
-    
 
     public SynthesizedOpAsst verifyClass(Object id1, Object id2, Object obId, ArrayList<SynthesizedOpAsst> parameters, Symbol s, TranslateControlerTAC tac) {
         String stringid1 = (String) id1;
@@ -975,11 +1026,12 @@ public class TestManager {
             if (function != null) {
                 fatherStack = stack.getCurrentP();
                 Quadruple quad = new Quadruple(Operation.PLUS, Stack.P, stack.getCurrentId(), Stack.P);
+                String curent = stack.getCurrentId();
                 stack.changeCurrent(function.getName());
                 ArrayList<String> strings = new ArrayList<>();
                 for (int i = 0; i < parameters.size(); i++) {
                     String temp1 = tac.getTempGenerator().generateTemp();
-                    tac.addTempQuadToCurrent(new Quadruple(Operation.PLUS, Stack.P, stack.getCurrentId(), temp1));
+                    tac.addTempQuadToCurrent(new Quadruple(Operation.PLUS, Stack.P, curent, temp1));
                     String temp = tac.getTempGenerator().generateTemp();
                     Integer param = stack.getIdPosition(function.getParameters().get(i).getName());
                     tac.addTempQuadToCurrent(new Quadruple(Operation.PLUS, temp1, param, temp));
@@ -1017,14 +1069,15 @@ public class TestManager {
     }
 
     public SynthesizedOpAsst verifyHeapFunction(String id, String functionName, ArrayList<SynthesizedOpAsst> parameters, Symbol s, TranslateControlerTAC tac) {
-        System.out.println("HEEEAAAP "+id+"  "+functionName);
+        System.out.println("HEAP FUN "+id);
+        System.out.println(functionName);
+        
         String objectType = symbolTable.getObjectClass(id, ambitControler.getCurrentAmbit());
         if (objectType != null) {
             if (parameters == null) {
                 parameters = new ArrayList<>();
             }
             String name = "JAVA_" + objectType + "_" + functionName;
-            System.out.println("NAME "+name);
             Tuple function = null;
             for (int i = 0; i < includedTuples.size(); i++) {
                 if (includedTuples.get(i).getName().contains(name) && parameters.size() == includedTuples.get(i).getParameters().size()) {
@@ -1044,16 +1097,14 @@ public class TestManager {
             int fatherStack = 0;
             if (function != null) {
                 fatherStack = stack.getCurrentP();
-                System.out.println("ID "+stack.getCurrentId());
                 Quadruple quad = new Quadruple(Operation.PLUS, Stack.P, stack.getCurrentId(), Stack.P);
                 String temp0 = tac.getTempGenerator().generateIntegerTemp();
-                System.out.println("POS "+stack.getIdPosition(id));
                 Quadruple quad0 = new Quadruple(Operation.PLUS, Stack.P, stack.getIdPosition(id), temp0);
                 String temp01 = tac.getTempGenerator().generateTemp();
                 Quadruple quad01 = new Quadruple(Operation.EQUAL, Stack.getOutputStack(temp0), null, temp01);
                 String temp02 = tac.getTempGenerator().generateTemp();
                 Quadruple quad02 = new Quadruple(Operation.PLUS, Stack.P, stack.getCurrentId(), temp02);
-               String fun=stack.getCurrentId();
+                String fun = stack.getCurrentId();
                 stack.changeCurrent(function.getName());
 
                 ArrayList<String> strings = new ArrayList<>();
@@ -1095,10 +1146,12 @@ public class TestManager {
                 tac.acceptAllIdQuas();
 
             } else {
+                sma.error=true;
                 OutputErrors.functionNotFound(mainFrame.getOutputPannel(), id, s);
             }
         } else {
-            //OBJECT DOES NOT EXISTE
+            sma.error=true;
+           OutputErrors.functionNotFound2(mainFrame.getOutputPannel(), id, s);
         }
 
         return null;

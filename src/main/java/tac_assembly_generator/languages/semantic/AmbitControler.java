@@ -19,17 +19,21 @@ public class AmbitControler {
     }
 
     public void createFatherAmbit() {
+        System.out.println("FATHER");
         Ambit newAmbit = new Ambit(ambitsExisting++, null);
         currentAmbit = newAmbit;
     }
 
     public void createSonAmbit() {
+        System.out.println("CCREAT "+ambitsExisting+1+"  "+currentAmbit.getId());
         Ambit newAmbit = new Ambit(ambitsExisting++, currentAmbit);
         currentAmbit = newAmbit;
     }
 
     public void finishAmbit() {
+        System.out.println("FINISHUING "+currentAmbit.getId());
         if (currentAmbit.getFather() != null) {
+            System.out.println(currentAmbit.getFather().getId());
             currentAmbit = currentAmbit.getFather();
         }
 

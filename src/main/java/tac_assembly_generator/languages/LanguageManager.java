@@ -57,9 +57,11 @@ public class LanguageManager {
             SyntaxMlgAnalyzer sma= new SyntaxMlgAnalyzer(mlgLexicAnalizer);
             sma.setTestManager(tm);
             sma.setTranslateControlerTAC(controler);
+            tm.setSma(sma);
             sma.parse();
-            if (!sma.getError()) {
-                resultQuads=sma.resultQuads;
+            resultQuads=sma.resultQuads;
+            if (!sma.getError()&& resultQuads!=null) {
+                resultQuads.reduceQuads();
                 resultQuads.setTac(tac);
                 resultQuads.convertQuads();
                 recentError=false;
@@ -124,6 +126,7 @@ public class LanguageManager {
             }else{
                 QuadsToAssemblyManager quadsToAssemblyManager= new QuadsToAssemblyManager(resultQuads, file.getName());
                 quadsToAssemblyManager.translate();
+                mainframe.getAssemblyPannel().setText(quadsToAssemblyManager.getAssemblyObject().toString());
             }
         }
     }

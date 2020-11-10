@@ -77,6 +77,33 @@ public class For {
         code.add(returnQuad);
         compare.changeFatherNoBool(code);
     }
+        public void addCode2(ArrayList<Object> code){
+         tag = tempGenerator.generateTag(); 
+        Quadruple stepQuadruple=null; 
+        if (stepString!=null) {
+            Integer position = stack.getIdPosition(id);
+            String temp = tempGenerator.generateIntegerTemp();
+            code.add(new Quadruple(Operation.PLUS, Stack.P, position, temp));
+            String temp2 = tempGenerator.generateIntegerTemp();
+            code.add(new Quadruple(Operation.EQUAL, Stack.getOutputStack(temp), null, temp2));
+            
+            if (stepString.startsWith("-")) {
+                stepString=stepString.replace("-", "");
+                 stepQuadruple= new Quadruple(Operation.MINUS,temp2, stepString, Stack.getOutputStack(temp));
+            }else{
+                stepQuadruple= new Quadruple(Operation.PLUS,temp2, stepString, Stack.getOutputStack(temp));
+            }  
+            code.add(stepQuadruple);
+        }else{
+            code.addAll(step);
+        }
+         Quadruple returnQuad = new Quadruple(Operation.GO_TO, null,null, tag);
+        
+        code.add(returnQuad);
+        compare.changeFatherYesBool(code);
+    }
+    
+    
     public ArrayList<Object> convertToQuad(){
         ArrayList<Object> quads=new ArrayList<>(); 
         quads.addAll(assigment);

@@ -274,14 +274,14 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem6ActionPerformed
 
     private void stackMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stackMenuActionPerformed
-        StackTable stackTable= new StackTable(fileManager.getFiles().get(tabs.getSelectedIndex()).getLanguageManager().getStack());
+        StackTable stackTable = new StackTable(fileManager.getFiles().get(tabs.getSelectedIndex()).getLanguageManager().getStack());
         stackTable.setVisible(true);
     }//GEN-LAST:event_stackMenuActionPerformed
 
     private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
-        
+
         fileManager.getFiles().get(tabs.getSelectedIndex()).getLanguageManager().generateExitutable(this);
-        
+
     }//GEN-LAST:event_jMenuItem9ActionPerformed
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
@@ -291,7 +291,7 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem7ActionPerformed
 
     private void menuOpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuOpActionPerformed
-        HtmlCreator hc= new HtmlCreator();
+        HtmlCreator hc = new HtmlCreator();
         hc.createHtml(null, null, null);
     }//GEN-LAST:event_menuOpActionPerformed
 
@@ -318,9 +318,10 @@ public class MainFrame extends javax.swing.JFrame {
 
     }
 
-    public void enableOptimizedHtml(){
+    public void enableOptimizedHtml() {
         menuOp.setEnabled(true);
     }
+
     /**
      * @param args the command line arguments
      */
@@ -335,8 +336,6 @@ public class MainFrame extends javax.swing.JFrame {
 
     }
 
- 
-
     public JTextPane getOutputPannel() {
         return fileManager.getOutputPane(tabs.getSelectedIndex());
     }
@@ -347,6 +346,10 @@ public class MainFrame extends javax.swing.JFrame {
 
     public JTextPane getOptimizedPannel() {
         return fileManager.getOptimizedPane(tabs.getSelectedIndex());
+    }
+
+    public JTextPane getAssemblyPannel() {
+        return fileManager.getAssebly(tabs.getSelectedIndex());
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

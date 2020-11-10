@@ -93,6 +93,7 @@ public class StackTable extends javax.swing.JFrame {
 
         for (int i = 0; i < stack.getStacks().size(); i++) {
             model.addRow(new Object[]{"", stack.getStacks().get(i).getId()+","+stack.getStacks().get(i).getLanguaje(), ""});
+            count=0;
             for (int j = 0; j < stack.getStacks().get(i).getTuples().size(); j++) {
                 model.addRow(new Object[]{count, stack.getStacks().get(i).getTuples().get(j).getName(), stack.getStacks().get(i).getTuples().get(j).getSize()});
                 count+=stack.getStacks().get(i).getTuples().get(j).getSize();

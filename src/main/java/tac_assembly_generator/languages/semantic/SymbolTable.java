@@ -29,6 +29,7 @@ public class SymbolTable {
     }
 
     public void insertTuple(Tuple tuple) {
+        
         symbols.add(tuple);
 
     }
@@ -74,16 +75,29 @@ public class SymbolTable {
     public Type getTypeWithAmbit(String id, Ambit ambit, MainFrame mainFrame, Symbol symbol) {
         ArrayList<Tuple> tuplesWithId = new ArrayList<>();
         for (int i = 0; i < symbols.size(); i++) {
+            
             if (symbols.get(i).getName().equals(id) && symbols.get(i).getParameters() == null) {
                 tuplesWithId.add(symbols.get(i));
             }
         }
-
+        if (id.equals("num1")) {
+            System.out.println(id+" ASSSSSSIIII "+tuplesWithId.size());
+        }
+        
         for (int i = 0; i < tuplesWithId.size(); i++) {
+            if (id.equals("num1")) {
+                System.out.println(tuplesWithId.get(i).getName());
+                System.out.println(ambit.getId());
+                System.out.println(ambit.getFather().getId());
+                System.out.println(tuplesWithId.get(i).getAmbit().getId());
+                System.out.println(tuplesWithId.get(i).getAmbit().getFather().getId());
+            }
             if (ambit.isSon(tuplesWithId.get(i).getAmbit())) {
+                System.out.println("PARING");
                 return tuplesWithId.get(i).getType();
             }
         }
+        
         if (tuplesWithId.isEmpty()) {
             OutputErrors.notDeclared(mainFrame.getOutputPannel(), id, symbol);
         } else {
@@ -92,13 +106,18 @@ public class SymbolTable {
         return null;
     }
 
+
+    
     public ArrayList<Tuple> getLanguageFunctions(String language) {
         ArrayList<Tuple> tuplesOfLanguage = new ArrayList<>();
+        System.out.println("SEARCHING "+language);
         for (int i = 0; i < symbols.size(); i++) {
             if (symbols.get(i).getLanguage() != null && symbols.get(i).getLanguage().equals(language) && symbols.get(i).getParameters() != null) {
+                System.out.println("YES "+symbols.get(i).getName());
                 tuplesOfLanguage.add(symbols.get(i));
             }
         }
+        System.out.println("SSSSSSSSSSSSSSSSSSSSSSSS");
         return tuplesOfLanguage;
     }
 
