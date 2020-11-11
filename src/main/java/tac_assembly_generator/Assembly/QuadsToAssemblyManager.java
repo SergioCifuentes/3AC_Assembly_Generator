@@ -31,7 +31,7 @@ public class QuadsToAssemblyManager {
         this.resultQuads = resultQuads;
         this.fileName = fileName;
         assemblyObject = new AssemblyObject();
-        
+        assemblyObject.declareTemps(resultQuads.getTempGenerator());
         currentMain = false;
     }
 
@@ -50,6 +50,8 @@ public class QuadsToAssemblyManager {
                     if (((String) quad.getResult()).startsWith("\"")) {
                         String stringData = assemblyObject.getDataSection().createDB((String) quad.getResult());
                         assemblyObject.getTextSection().createPrint(stringData);
+                    }else{
+                        assemblyObject.getTextSection().createIntegerPrint((String)quad.getResult());
                     }
                 } else if (quad.getOp() == Operation.FUNCTION) {
                     if (quad.getResult().equals("}")) {
@@ -75,17 +77,18 @@ public class QuadsToAssemblyManager {
                 }else if(quad.getOp() == Operation.EQUAL){
                     assemblyObject.getTextSection().addEqual(quad.getResult(),quad.getArg1().toString());
                     
-                }else if(quad.getOp() <= Operation.MINUS){
-                    assemblyObject.getTextSection().addOp(quad.getResult(),quad.getArg1().toString(),quad.getOp());
+                }else if(quad.getOp() <= Operation.MINUS&&quad.getOp() != Operation.MOD){
+                    assemblyObject.getTextSection().addOp(quad.getArg2().toString(),quad.getArg1().toString(),quad.getOp(),quad.getResult());
                     
                 }else if (quad.getOp()<=Operation.EQUAL_BOOL) {
-                    System.out.println("sSSSS ");
-                    System.out.println(quad);
+                    
+                    
                      assemblyObject.getTextSection().addCondicion(quad.getArg1().toString(),quad.getArg2().toString(),quad.getOp(),quad.getResult());
                 }
                 
             }
         }
+        assemblyObject.getTextSection().addPrints();
         createAsmFile(assemblyObject.toString());
     }
     
@@ -102,7 +105,6 @@ public class QuadsToAssemblyManager {
             }
         }
         File file = new File(folder.getPath() + "/" + fileName.replace(".mlg", ".asm"));
-        System.out.println(file.getPath());
         if (!file.exists()) {
             try {
                 file.createNewFile();

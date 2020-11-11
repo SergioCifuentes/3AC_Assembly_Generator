@@ -1549,7 +1549,7 @@ OutputValueC    ::= NumberValueC:val {:ArrayList<Object> printQuad= new ArrayLis
                                     printQuad.add(string);
                                     RESULT=printQuad;:};
 
-Getch ::=GETCH PARENTHESIS_A PARENTHESIS_B;
+Getch ::=GETCH PARENTHESIS_A PARENTHESIS_B{::};
 
 FuntionCall::=FuntionIDsCall:ids PARENTHESIS_A ParametersC:para PARENTHESIS_B{:if(para!=null){
                                                                             SynthesizedOpAsst sao=sma.testManager.verifyFunction((String)ids,(ArrayList<SynthesizedOpAsst>)para,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()),sma.translateControlerTAC);

@@ -5,6 +5,7 @@
  */
 package tac_assembly_generator.languages;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.logging.Level;
@@ -35,6 +36,7 @@ public class LanguageManager {
     private boolean recentError = true;
     private TAC tac;
     private OptimizedManager optimizedManager;
+    private boolean assemblyReady=false;
 
     public LanguageManager(FileMlg file) {
         this.file = file;
@@ -47,6 +49,7 @@ public class LanguageManager {
     public void generateTAC(MainFrame mainframe) {
 
         try {
+            assemblyReady=false;
             tac = new TAC(mainframe);
             TestManager tm = new TestManager(mainframe);
             TranslateControlerTAC controler = new TranslateControlerTAC(tac);
@@ -101,22 +104,31 @@ public class LanguageManager {
 
     public void generateExitutable(MainFrame mainframe) {
         if (recentError) {
-            JOptionPane.showMessageDialog(mainframe, "No se puede optimizar ya que existen errores en el TAC", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(mainframe, "No se puede ejecutar ya que existen errores en el TAC", "Error", JOptionPane.ERROR_MESSAGE);
         } else {
             if (resultQuads == null) {
+                System.out.println("GENER");
+                if (!loopAsst) {
+                    
                 generateTAC(mainframe);
-                generateOptimized(mainframe);
+                generateExitutable(mainframe);
+                loopAsst=true;
+                }else{
+                    loopAsst=false;
+                     JOptionPane.showMessageDialog(mainframe, "No se puede ejecutar assembler", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             } else {
                 ExecutableTACGenerator etacg = new ExecutableTACGenerator(resultQuads, file.getName());
                 etacg.createCFile();
 
                 String comando = " gcc -lm Executable/" + file.getName().replace(".mlg", ".c") + " -o Executable/" + file.getName().replace(".mlg", "");
-                System.out.println("COMAND " + comando);
+                System.out.println(comando);
                 Runtime rt = Runtime.getRuntime();
                 try {
                     rt.exec(comando);
-                    Thread.sleep(500);
+                    Thread.sleep(1000);
                     String comando2 = "gnome-terminal hold -e Executable/" + file.getName().replace(".mlg", "");
+                    System.out.println(comando2);
                     rt.exec(comando2);
                 } catch (IOException ex) {
                     Logger.getLogger(LanguageManager.class.getName()).log(Level.SEVERE, null, ex);
@@ -127,18 +139,67 @@ public class LanguageManager {
             }
         }
     }
+  private boolean loopAsst=false;  
+        public void exeAssembly(MainFrame mainframe) {
+       
+            File file = new File("Executable/"+this.file.getName().replace(".mlg", ".asm"));
+            if (file.exists()) {
+                String comando = "nasm -f elf64 Executable/" + file.getName();
+                
+                String comando2 = "ld Executable/" + file.getName().replace(".asm", ".o")+" ";
+                String comando3 = "gnome-terminal hold -e Executable/a.out";
+                System.out.println(comando);
+                System.out.println(comando2);
+                System.out.println(comando3);
+                Runtime rt = Runtime.getRuntime();
+                try {
+                    rt.exec(comando);
+                    rt.exec(comando2);
+                    Thread.sleep(500);
+                    rt.exec(comando3);
+                    
+                } catch (IOException ex) {
+                    Logger.getLogger(LanguageManager.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(LanguageManager.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
+                
+                
+            }else{
+                if (!loopAsst) {
+                    
+                    if (resultQuads==null) {
+                        System.out.println("TAC");
+                        generateTAC(mainframe);
+                    }
+                    System.out.println("G");
+                    generateAssembly(mainframe);
+                loopAsst=true;
+                System.out.println("EXE");
+                exeAssembly(mainframe);
+                }else{
+                    loopAsst=false;
+                     JOptionPane.showMessageDialog(mainframe, "No se puede ejecutar assembler", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                
+            
+        }
+    }
+    
 
     public void generateAssembly(MainFrame mainframe) {
         if (recentError) {
-            JOptionPane.showMessageDialog(mainframe, "No se puede optimizar ya que existen errores en el TAC", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(mainframe, "No se puede generar assembler ya que existen errores en el TAC", "Error", JOptionPane.ERROR_MESSAGE);
         } else {
             if (resultQuads == null) {
                 generateTAC(mainframe);
-                generateOptimized(mainframe);
+                
             } else {
                 QuadsToAssemblyManager quadsToAssemblyManager = new QuadsToAssemblyManager(resultQuads, file.getName());
                 quadsToAssemblyManager.translate();
-                mainframe.getAssemblyPannel().setText(quadsToAssemblyManager.getAssemblyObject().toString());
+                mainframe.getAssemblyPannel().setText(quadsToAssemblyManager.getAssemblyObject().OutputVal());
+                assemblyReady=true;
             }
         }
     }

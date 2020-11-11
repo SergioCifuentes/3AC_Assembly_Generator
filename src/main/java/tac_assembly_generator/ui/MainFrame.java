@@ -29,7 +29,7 @@ public class MainFrame extends javax.swing.JFrame {
         FileMlg.uiManage();
         initComponents();
         setBackground();
-        fileManager.loadExampleMLG(this);
+        
     }
 
     /**
@@ -188,6 +188,11 @@ public class MainFrame extends javax.swing.JFrame {
 
         jMenuItem11.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         jMenuItem11.setText("Assembly");
+        jMenuItem11.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem11ActionPerformed(evt);
+            }
+        });
         runMenu.add(jMenuItem11);
 
         jMenuBar1.add(runMenu);
@@ -298,6 +303,10 @@ public class MainFrame extends javax.swing.JFrame {
     private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
         fileManager.getFiles().get(tabs.getSelectedIndex()).getLanguageManager().generateAssembly(this);
     }//GEN-LAST:event_jMenuItem8ActionPerformed
+
+    private void jMenuItem11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem11ActionPerformed
+        fileManager.getFiles().get(tabs.getSelectedIndex()).getLanguageManager().exeAssembly(this);
+    }//GEN-LAST:event_jMenuItem11ActionPerformed
     public void addFileMlg(FileMlg newFile) {
         fileManager.addFileMlg(newFile);
         tabs.add(newFile.getName(), newFile);

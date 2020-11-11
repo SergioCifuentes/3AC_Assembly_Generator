@@ -520,6 +520,7 @@ public void acceptLastIdQuad() {
 
     public ArrayList<Object> getch(String id) {
         ArrayList<Object> quads = new ArrayList<>();
+        System.out.println("IIIIIIIIIIIIIIIIIIIIIII "+id);
         if (id != null) {
             quads.add(new Quadruple(Operation.GETCH, null, null, id));
         } else {
@@ -538,6 +539,10 @@ public void acceptLastIdQuad() {
         
     }
 
+    public void addGetch(){
+        currentQuadrupleTable.addQuad(new Quadruple(Operation.GETCH, null, null, null));
+    }
+    
     public ArrayList<Object> createArrayQuads(String id, ArrayList<Object> dimensions) {
         ArrayList<Object> quads = new ArrayList<>();
 //        if (dimensions.size() == 1) {

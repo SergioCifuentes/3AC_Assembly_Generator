@@ -5,6 +5,8 @@
  */
 package tac_assembly_generator.Assembly;
 
+import tac_assembly_generator.TAC.TempGenerator;
+
 /**
  *
  * @author sergio
@@ -24,7 +26,14 @@ public class AssemblyObject {
     public String toString() {
         return dataSection.toString()+bss.toString()+textSection.toString();
     }
-
+    
+    public String OutputVal() {
+        return dataSection.toString()+textSection.toString();
+    }
+public void declareTemps(TempGenerator tempGenerator){
+   bss.addTemps(tempGenerator.getTemps());
+    
+}
     public DataSection getDataSection() {
         return dataSection;
     }

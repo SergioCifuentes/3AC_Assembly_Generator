@@ -36,7 +36,17 @@ public class TempGenerator {
         recentyRemovedTemp.add(value);
         integerTemps.remove(temp);
     }
-    
+    public ArrayList<String> getTemps(){
+        ArrayList<String> temps = new ArrayList<>();
+        int asst=START_POINT+1;
+        
+        while (asst<=currentTemp) {
+            temps.add(PREFIX_TEMP+asst);
+            asst++;
+            
+        }
+        return temps;
+    }
     public void addIntegerTemp(String temp){
         integerTemps.add(temp);
     }
@@ -62,7 +72,9 @@ public class TempGenerator {
         public String generateIntegerTemp() {
         if (currentTemp == START_POINT) {
             currentTemp++;
-            return PREFIX_TEMP + currentTemp;
+            String temp=PREFIX_TEMP + currentTemp;
+            integerTemps.add(temp);
+            return temp;
         }
         if (!recentyRemovedTemp.isEmpty()) {
             int minor = recentyRemovedTemp.get(0);
@@ -109,7 +121,7 @@ public class TempGenerator {
 
     public String addTempDeclarations(String output) {
         int asst=START_POINT+1;
-        System.out.println(currentTemp);
+
         
         while (asst<=currentTemp) {
             if (!recentyRemovedTemp.contains(PREFIX_TEMP+asst)) {
@@ -128,7 +140,9 @@ public class TempGenerator {
     }
     
     public boolean compareIntegerType(String temp){
+        
         for (int i = 0; i < integerTemps.size(); i++) {
+            
             if (integerTemps.get(i).equals(temp)) {
                 integerTemps.remove(i);
                 return true;

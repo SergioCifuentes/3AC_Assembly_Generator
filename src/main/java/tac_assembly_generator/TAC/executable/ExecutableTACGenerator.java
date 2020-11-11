@@ -59,8 +59,9 @@ public class ExecutableTACGenerator {
         output+="int "+Stack.P+";\n";
         output+="int "+Stack.H+";\n";
         output=resultQuads.getTempGenerator().addTempDeclarations(output);
-        
+       
         for (int i = 0; i < resultQuads.getQuadruples().size(); i++) {
+            
             output+=resultQuads.getTac().translateQuad(resultQuads.getQuadruples().get(i), resultQuads.getStack());
         }
         try {

@@ -175,13 +175,13 @@ public class FileManager {
     }
     
     
-public void loadExampleMLG(MainFrame frame){
-        File file = new File("/home/sergio/AA/A.mlg");
-        FileMlg newMlg = new FileMlg(file.getName(), file);
-        newMlg.addMlgText(readFile(file));
-                frame.addFileMlg(newMlg);
-        
-    }
+//public void loadExampleMLG(MainFrame frame){
+//        File file = new File("/home/sergio/AA/prueba.mlg");
+//        FileMlg newMlg = new FileMlg(file.getName(), file);
+//        newMlg.addMlgText(readFile(file));
+//                frame.addFileMlg(newMlg);
+//        
+//    }
 
     public JTextPane getAssebly(int selectedIndex) {
         return files.get(selectedIndex).getAssemblerText();

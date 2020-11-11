@@ -1033,11 +1033,15 @@ public class TestManager {
             if (parameters == null) {
                 parameters = new ArrayList<>();
             }
+            System.out.println("SAME");
             Tuple function = null;
             String constructorName = "JAVA_" + id1 + "_" + id1;
             for (int i = 0; i < includedTuples.size(); i++) {
+
                 if (includedTuples.get(i).getName().contains(constructorName) && parameters.size() == includedTuples.get(i).getParameters().size()) {
                     boolean mismosTipos = true;
+                    System.out.println("INCLUDED");
+                    
                     for (int j = 0; j < parameters.size(); j++) {
                         if (!(parameters.get(j).getType().getNumber() == includedTuples.get(i).getParameters().get(j).getType().getNumber()) && !parameters.get(j).getType().isFather(includedTuples.get(i).getParameters().get(j).getType())) {
                             mismosTipos = false;
@@ -1098,8 +1102,6 @@ public class TestManager {
     }
 
     public SynthesizedOpAsst verifyHeapFunction(String id, String functionName, ArrayList<SynthesizedOpAsst> parameters, Symbol s, TranslateControlerTAC tac) {
-        System.out.println("HEAP FUN "+id);
-        System.out.println(functionName);
         
         String objectType = symbolTable.getObjectClass(id, ambitControler.getCurrentAmbit());
         if (objectType != null) {
@@ -1130,6 +1132,7 @@ public class TestManager {
                 String temp0 = tac.getTempGenerator().generateIntegerTemp();
                 Quadruple quad0 = new Quadruple(Operation.PLUS, Stack.P, stack.getIdPosition(id), temp0);
                 String temp01 = tac.getTempGenerator().generateTemp();
+                
                 Quadruple quad01 = new Quadruple(Operation.EQUAL, Stack.getOutputStack(temp0), null, temp01);
                 String temp02 = tac.getTempGenerator().generateTemp();
                 Quadruple quad02 = new Quadruple(Operation.PLUS, Stack.P, stack.getCurrentId(), temp02);

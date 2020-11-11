@@ -141,7 +141,7 @@ public class TAC {
         } else if (quad.getClass().equals(Quadruple.class)) {
             
             Quadruple quadAsst = (Quadruple) quad;
-            System.out.println(quadAsst);
+            
             if (quadAsst.getOp() == null) {
                 return quadAsst.getResult() + ":\n";
                 
@@ -192,7 +192,7 @@ public class TAC {
                 }
                 return scanf;
             } else if (quadAsst.getOp() == Operation.GETCH) {
-                
+                System.out.println("GGGGGGGGGGGG "+quadAsst.getResult());
                 if (quadAsst.getResult() != null) {
                     return quadAsst.getResult()+" = getchar();\n";
                     
