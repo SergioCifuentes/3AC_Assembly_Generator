@@ -6,6 +6,7 @@
 package tac_assembly_generator.Assembly;
 
 import java.util.ArrayList;
+import tac_assembly_generator.TAC.TempGenerator;
 
 /**
  *
@@ -15,13 +16,17 @@ public class DataSection {
     private static final String NAME="section .data";
     private static final String DB="db";
     private static final String EQU="equ $-";
-
+    private static final String STACK="\tstack times 1000 db 0";
+    private static final String HEAP="\theap times 1000 db 0";
     private ArrayList<String> lines;
+    private ArrayList<String> tempLines;
     private LabelGenerator lb;
     
     public DataSection() {
         lines=new ArrayList<>();
         lb= new LabelGenerator();
+        lines.add(STACK);
+        lines.add(HEAP);
     }
     @Override
     public String toString() {
@@ -32,6 +37,11 @@ public class DataSection {
         return s;
     
     }
+    public void addTemp(TempGenerator temp){
+        
+        tempLines.add("\t");
+    }
+    
     
     public String createDB(String text){
         String label=lb.generateLabelText();

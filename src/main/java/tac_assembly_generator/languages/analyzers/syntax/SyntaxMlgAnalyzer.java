@@ -1794,6 +1794,7 @@ public void setTranslateControlerTAC(TranslateControlerTAC translateControlerTAC
             String lexema = s.value.toString();
             int fila = s.right;
             int columna = s.left;
+            error=true;
             OutputErrors.syntacticRecovered(testManager.getMainFrame().getOutputPannel(), lexema, columna, fila, s);
         } catch (Exception e) {
             System.out.println("error");

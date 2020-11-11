@@ -30,6 +30,7 @@ public class UniquenessTable {
             String s1= (String)uniques.get(i);
             String s2= (String)newObject;
             if (s1.equals(s2)) {
+                
                 OutputErrors.alreadyDeclaredCase(pane, s2, symbol);
                return false; 
             }

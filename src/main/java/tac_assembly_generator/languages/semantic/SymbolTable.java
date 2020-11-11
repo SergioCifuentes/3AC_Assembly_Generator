@@ -12,6 +12,7 @@ import javax.swing.JTextPane;
 import tac_assembly_generator.languages.semantic.type.Type;
 import tac_assembly_generator.languages.semantic.type.TypeManager;
 import tac_assembly_generator.languages.semantic.verification.ParameterControl;
+import tac_assembly_generator.languages.semantic.verification.TestManager;
 import tac_assembly_generator.ui.MainFrame;
 import tac_assembly_generator.ui.backend.OutputErrors;
 import tac_assembly_generator.ui.backend.OutputText;
@@ -23,7 +24,7 @@ import tac_assembly_generator.ui.backend.OutputText;
 public class SymbolTable {
 
     private ArrayList<Tuple> symbols;
-
+    private TestManager test;
     public SymbolTable() {
         symbols = new ArrayList<>();
     }
@@ -32,6 +33,10 @@ public class SymbolTable {
         
         symbols.add(tuple);
 
+    }
+
+    public void setTest(TestManager test) {
+        this.test = test;
     }
 
     public ArrayList<Tuple> getSymbols() {
@@ -99,8 +104,12 @@ public class SymbolTable {
         }
         
         if (tuplesWithId.isEmpty()) {
+            test.getSma().error=true;
+            
             OutputErrors.notDeclared(mainFrame.getOutputPannel(), id, symbol);
         } else {
+            test.getSma().error=true;
+            
             OutputErrors.declaredOutOfAmbit(mainFrame.getOutputPannel(), id, symbol);
         }
         return null;
@@ -142,6 +151,7 @@ public class SymbolTable {
         }
         for (int i = 0; i < tuplesWithId.size(); i++) {
             if (compateParameters(tuplesWithId.get(i).getParameters(), parameterControl.getTypes())) {
+                test.getSma().error=true;
                 OutputErrors.alreadyDeclaredFunctions(textPane, id, symbol);
                 return null;
             }
@@ -187,6 +197,7 @@ public class SymbolTable {
             }
         }
         if (existe) {
+            test.getSma().error=true;
             OutputErrors.alreadyDeclared(textPane, id, symbol);
         } else {
             Tuple tuple = new Tuple(id, null, null, 0, symbol, ambit);

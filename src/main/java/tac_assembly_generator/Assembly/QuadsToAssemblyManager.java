@@ -72,6 +72,16 @@ public class QuadsToAssemblyManager {
                 }else if(quad.getOp() == Operation.GO_TO){
                     assemblyObject.getTextSection().addJump(quad.getResult());
                     
+                }else if(quad.getOp() == Operation.EQUAL){
+                    assemblyObject.getTextSection().addEqual(quad.getResult(),quad.getArg1().toString());
+                    
+                }else if(quad.getOp() <= Operation.MINUS){
+                    assemblyObject.getTextSection().addOp(quad.getResult(),quad.getArg1().toString(),quad.getOp());
+                    
+                }else if (quad.getOp()<=Operation.EQUAL_BOOL) {
+                    System.out.println("sSSSS ");
+                    System.out.println(quad);
+                     assemblyObject.getTextSection().addCondicion(quad.getArg1().toString(),quad.getArg2().toString(),quad.getOp(),quad.getResult());
                 }
                 
             }

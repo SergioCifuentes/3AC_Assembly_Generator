@@ -50,12 +50,17 @@ public class TestManager {
         typeManager.loadTypes(TypeManager.VB_TYPES);
         preTupleSymbols = new ArrayList<>();
         symbolTable = new SymbolTable();
+        symbolTable.setTest(this);
         semanticError = false;
         semanticRecoverableError = false;
         ambitControler = new AmbitControler();
         this.mainFrame = mainFrame;
         includedTuples = new ArrayList<>();
         parameterControl = new ParameterControl(typeManager);
+    }
+
+    public SyntaxMlgAnalyzer getSma() {
+        return sma;
     }
 
     public Tuple getCurrentClass() {
@@ -126,6 +131,7 @@ public class TestManager {
                     tAC.acceptLastIdQuad();
 
                 } else {
+                    sma.error=true;
                     OutputErrors.assignmentError(mainFrame.getOutputPannel(), so.getType().getName(), typeManager.getOutputType(typeNumber), symbol);
 
                 }
@@ -133,6 +139,7 @@ public class TestManager {
             } else {
                 Tuple findExisting = symbolTable.getTupleWithAmbit(preTupleSymbols.get(i).getName(), ambitControler.getCurrentAmbit());
                 if (findExisting != null) {
+                    sma.error=true;
                     OutputErrors.alreadyDeclared(mainFrame.getOutputPannel(), preTupleSymbols.get(i).getName(), symbol);
 
                 } else {
@@ -309,8 +316,10 @@ public class TestManager {
                 types += 1;
             }
             if (types > 1) {
+                sma.error=true;
                 OutputErrors.multipleMasks(mainFrame.getOutputPannel(), id, symbol);
             } else if (types == 0) {
+                sma.error=true;
                 OutputErrors.noMasks(mainFrame.getOutputPannel(), id, symbol);
             } else {
                 if (verifyType(type.getNumber(), inputType, symbol, id)) {
@@ -330,12 +339,15 @@ public class TestManager {
         Tuple tuple = symbolTable.getTupleWithAmbit(id, ambitControler.getCurrentAmbit());
         ArrayList<Object> dimension = (ArrayList<Object>) dimensions;
         if (tuple == null) {
+            sma.error=true;
             OutputErrors.notDeclared(mainFrame.getOutputPannel(), id, symbol);
         } else {
             if (tuple.getDimensions() == 0) {
+                sma.error=true;
                 OutputErrors.notArray(mainFrame.getOutputPannel(), id, symbol);
             } else {
                 if (tuple.getDimension().size() != dimension.size()) {
+                    sma.error=true;
                     OutputErrors.arrayOutOfBounds(mainFrame.getOutputPannel(), id, tuple.getDimension().size(), dimension.size(), symbol);
                 } else {
                     ArrayList<Object> quads = new ArrayList<Object>();
@@ -468,7 +480,7 @@ public class TestManager {
             return true;
 
         } else {
-
+            sma.error=true;
             OutputErrors.typeOpError(mainFrame.getOutputPannel(), typeManager.getOutputType(type), typeManager.getOutputType(sc.getType()), s);
         }
         return false;
@@ -500,6 +512,7 @@ public class TestManager {
         if (soa.getType().equals(typeManager.getType(TypeManager.INTEGER_TYPE))) {
             return true;
         } else {
+            sma.error=true;
             OutputErrors.notIntegerType(mainFrame.getOutputPannel(), typeManager.getOutputType(soa.getType().getNumber()), s);
             return false;
         }
@@ -525,6 +538,7 @@ public class TestManager {
             for (int j = i + 1; j < parameterControl.getIds().size(); j++) {
 
                 if (i != j && parameterControl.getIds().get(i).equals(parameterControl.getIds().get(j))) {
+                    sma.error=true;
                     OutputErrors.alreadyDeclaredParameter(mainFrame.getOutputPannel(), parameterControl.getIds().get(i), parameterControl.getSymbols().get(i));
                     return null;
                 }
@@ -559,6 +573,7 @@ public class TestManager {
             for (int j = i + 1; j < parameterControl.getIds().size(); j++) {
 
                 if (i != j && parameterControl.getIds().get(i).equals(parameterControl.getIds().get(j))) {
+                    sma.error=true;
                     OutputErrors.alreadyDeclaredParameter(mainFrame.getOutputPannel(), parameterControl.getIds().get(i), parameterControl.getSymbols().get(i));
                     return null;
                 }
@@ -592,6 +607,7 @@ public class TestManager {
         if (tuple != null) {
             return tuple.getType();
         } else {
+            sma.error=true;
             OutputErrors.notDeclaredThisId(mainFrame.getOutputPannel(), id, className, s);
         }
         return null;
@@ -628,6 +644,7 @@ public class TestManager {
     public boolean checkExistence(String id, Symbol s) {
 
         if (symbolTable.getTupleWithAmbit(id, ambitControler.getCurrentAmbit()) != null) {
+            sma.error=true;
             OutputErrors.alreadyDeclared(mainFrame.getOutputPannel(), id, s);
             return true;
         } else {
@@ -655,6 +672,7 @@ public class TestManager {
     }
 
     public void callNumericError(String id, Type type, Symbol symbol) {
+        sma.error=true;
         OutputErrors.typeNotNumeric(mainFrame.getOutputPannel(), id, typeManager.getOutputType(type.getNumber()), symbol);
     }
 
@@ -662,6 +680,7 @@ public class TestManager {
         Type type = typeManager.operateTypes(type1, type2);
         if (type == null) {
             //Type Error
+            sma.error=true;
             OutputErrors.typeOpError(mainFrame.getOutputPannel(), typeManager.getOutputType(type1), typeManager.getOutputType(type2), symbol);
         }
         return type;
@@ -672,6 +691,7 @@ public class TestManager {
         Type type = typeManager.operateBoolTypes(type1, type2);
         if (type == null) {
             //Type Error
+            sma.error=true;
             OutputErrors.typeOpBoolError(mainFrame.getOutputPannel(), typeManager.getOutputType(type1), typeManager.getOutputType(type2), symbol);
         }
         return type;
@@ -688,6 +708,7 @@ public class TestManager {
 
                     return true;
                 }
+                sma.error=true;
                 OutputErrors.typeOpError(mainFrame.getOutputPannel(),TypeManager.getOutputTypeStatic(soa.getType().getNumber()), TypeManager.getOutputTypeStatic(idType.getNumber()), symbol);
             }
             
@@ -703,6 +724,7 @@ public class TestManager {
         if (type1.equals(type2) || typeManager.getType(type2).isFather(typeManager.getType(type1))) {
             return true;
         }
+        sma.error=true;
         OutputErrors.typeOpError(mainFrame.getOutputPannel(), typeManager.getOutputType(type1), typeManager.getOutputType(type2), id, symbol);
         return false;
     }
@@ -725,6 +747,7 @@ public class TestManager {
             } else {
                 ArrayList<Tuple> tu = symbolTable.getLanguageFunctions(language, functions);
                 if (tu.isEmpty()) {
+                    sma.error=true;
                     OutputErrors.wrongImport(mainFrame.getOutputPannel(), functions, language, s);
                 }
                 includedTuples.addAll(tu);
@@ -736,6 +759,7 @@ public class TestManager {
             } else {
                 ArrayList<Tuple> tu = symbolTable.getLanguageFunctions(language, functions);
                 if (tu.isEmpty()) {
+                    sma.error=true;
                     OutputErrors.wrongImport(mainFrame.getOutputPannel(), functions, language, s);
                 }
                 includedTuples.addAll(tu);
@@ -747,6 +771,7 @@ public class TestManager {
             } else {
                 ArrayList<Tuple> tu = symbolTable.getLanguageFunctions(language, functions);
                 if (tu.isEmpty()) {
+                    sma.error=true;
                     OutputErrors.wrongImport(mainFrame.getOutputPannel(), functions, language, s);
                 }
                 includedTuples.addAll(tu);
@@ -880,6 +905,7 @@ public class TestManager {
                 tac.acceptAllIdQuas();
                 return null;
             } else {
+                sma.error=true;
                 OutputErrors.functionNotFound(mainFrame.getOutputPannel(), id, s);
             }
 
@@ -898,6 +924,7 @@ public class TestManager {
                 tac.addTempQuadToCurrent(quad);
                 return new SynthesizedOpAsst(quad, function.getType());
             } else {
+                sma.error=true;
                 OutputErrors.functionNotFound(mainFrame.getOutputPannel(), id, s);
             }
         }
@@ -986,6 +1013,7 @@ public class TestManager {
                     tac.acceptAllIdQuas();
 
                 } else {
+                    sma.error=true;
                     OutputErrors.functionNotFound(mainFrame.getOutputPannel(), id, s);
                 }
             } else {
@@ -1058,6 +1086,7 @@ public class TestManager {
                 return new SynthesizedOpAsst(quad2, function.getType());
 
             } else {
+                sma.error=true;
                 OutputErrors.functionNotFound(mainFrame.getOutputPannel(), stringid1, s);
             }
         } else {

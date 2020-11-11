@@ -147,7 +147,7 @@ public class Stack {
     }
 public String getCurrentClassName(){
     String[] fun =getCurrentId().split("_");
-    if (fun.length>=1) {
+    if (fun.length>1) {
         
         String className=fun[0]+"_"+fun[1];
         if (fun[0].equals("JAVA")) {
