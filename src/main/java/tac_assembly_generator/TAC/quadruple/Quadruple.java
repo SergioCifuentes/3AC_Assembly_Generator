@@ -35,6 +35,10 @@ public class Quadruple {
         return constante;
     }
 
+    public void setArg2(Object arg2) {
+        this.arg2 = arg2;
+    }
+
     public void setConstante(boolean constante) {
         this.constante = constante;
     }

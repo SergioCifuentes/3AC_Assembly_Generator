@@ -29,6 +29,7 @@ public class MainFrame extends javax.swing.JFrame {
         FileMlg.uiManage();
         initComponents();
         setBackground();
+        fileManager.loadExampleMLG(this);
         
     }
 
@@ -335,7 +336,7 @@ public class MainFrame extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     private void setBackground() {
-        System.out.println(BG.getImage());
+        
         JLabel backgroundLbl = new JLabel();
         backgroundLbl.setSize(1920, 1200);
         backgroundLbl.setLocation(0, 0);

@@ -40,8 +40,6 @@ public class Switch {
 
     public void addCases(String compare,ArrayList<Object> lines) {     
         BoolQuad boolQuad= control.createCaseBool(id, compare, lines);
-        System.out.println("=======ADDING "+boolQuad);
-        System.out.println("current "+fatherCases);
         Quadruple quad= (Quadruple)boolQuad.getQuadruple().get(boolQuad.getQuadruple().size()-1);
         if (quad.getArg2().equals(ELSE)) {
             fatherCases.changeFatherNoBool(lines);
@@ -50,7 +48,7 @@ public class Switch {
                 fatherCases=boolQuad;
             }else{
                 fatherCases=control.operateBoolQuad(fatherCases, boolQuad, Operation.CASE);
-                System.out.println("OOOOOOPPPP "+fatherCases);
+                
             }
         }
     }

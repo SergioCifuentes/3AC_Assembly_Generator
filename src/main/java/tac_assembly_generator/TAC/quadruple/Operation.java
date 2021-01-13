@@ -63,7 +63,7 @@ public class Operation {
             case LESS_THAN_EQUAL:
                 return "<=";
             case EQUAL_BOOL:
-                return "=";
+                return "==";
             case GO_TO:
                 return "goto";
             case PRINT:

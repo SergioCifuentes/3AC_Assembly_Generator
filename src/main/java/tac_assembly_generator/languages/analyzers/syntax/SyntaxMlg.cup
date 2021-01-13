@@ -72,10 +72,6 @@ public void setTranslateControlerTAC(TranslateControlerTAC translateControlerTAC
          }
     }
 
-    public void syntaxerrorhelp(){
-
-
-    }
 :}
 
 action code{:
@@ -127,23 +123,21 @@ PRINTF, CLRSCR, GETCH, SCAN_F, MAIN ;
     
 //Non-terminals Common or StartUp*/
 non terminal Inicio, VB, Java, Python,
-VbCode, JavaCode, PythonCode, Program,VbSeperator, PythonSeperator,
-OpLogic, Type, Public, JavaSeperator, ProgramSeperator;
+VbCode, JavaCode, PythonCode, Program,VbSeperator, PythonSeperator, Type, Public, JavaSeperator, ProgramSeperator;
 
 //Non-terminals VB*/
 non terminal FunctionVB, FunctionVbHeader, ByVal, Funct, SubVb, SubVbHeader, Parameters, Parameter, InstructionsFunctionVb, InstructionsFunctionVb2, LnInstructionsVb, Lines,
-OutputVb, ValuesVb, ValueVb, AsType, CycleVb, ForVb, ForVbHeader, ForVbHeaderStart, For, Step, NumberValue,
+OutputVb, ValuesVb, ValueVb, CycleVb, ForVb, ForVbHeader, ForVbHeaderStart, For, Step, NumberValue,
 Number2, Number3, WhileVb, WhileVbHeader, OpBool, OpBool2, OpBool3, BoolValueVb, ExBoolVb, DoWhileVb, DoHeader, DeclarationVb,
 DeTypeVb, IdsVb, AssiVb, AssignmentVb, ConditionVb, IfVb, IfVbHeader, ElseVb, ElseHeader, ElseIfHeader,  ThenVb, SwitchVb, SwitchVbHeader,
 CasesVb, CasesVbHeader, CaseValue;
 
 //Non-terminals JAVA*/
 non terminal ClaseJ, ClaseJHeader,ConstructorJHeader, ParametersJ, ParameterJ, JavaClassCode, ClassCodeJ,
-FunctionJ, FunctionJHeader, ProcessJ, ProcessJHeader, LineCodesJ, LineCodeJ3, LineCodesJ2, StringValue,
-ValuesOutputJ, ValJ, LineCodeJ, OutputJ, InputJ, JavaClassCode1,
+FunctionJ, FunctionJHeader, ProcessJ, ProcessJHeader, LineCodesJ, LineCodeJ3, LineCodesJ2,
+ValuesOutputJ, ValJ, LineCodeJ, InputJ, OutputJ, JavaClassCode1,
 CycleJ, ForJHeader, ForJHeaderStarter, AssignmentStepJ, WhileJHeader , DeclarationJ, AssignmentJ, ConditionJ,
-IfJHeader, ElseJ, ElseIfJHeader, ElseJHeader, SwitchJHeader, CasesJ1, CaseJHeader, CasesJ2, CaseJ, BreakJ,
-ExBoolJ, BoolValueJ, ConstructorJ, FunctionCallJ; 
+IfJHeader, ElseJ, ElseIfJHeader, ElseJHeader, SwitchJHeader, CasesJ1, CaseJHeader, CasesJ2, CaseJ, BreakJ, ConstructorJ, FunctionCallJ; 
 
 //Non-terminals PY*/
 non terminal FunctionPY, FunctionLinesPY1, FunctionPYHeader, ParametersPY, IdsPY, FunctionLinesPY, LinesPY,
@@ -152,12 +146,12 @@ WhilePY, WhilePYHeader, AssignmentPY, ConditionPY, IfPY, IfPYHeader, Elif, ElifH
 
 
 // non Terminals MAIN
-non terminal Library, Main, MainHeader, MainCode1, ClaseInstance, InputC, Constantes, Constante, Dimensions, ArrayValues,
-Nums, Rows, Globals, Include, MainCode, MainLineCode, DeclarationC, DeclarationGlobalC,IdsC,
+non terminal Library, Main, MainHeader, MainCode1, ClaseInstance, Constantes, Constante, Dimensions,
+ Globals, Global, Include, MainCode, MainLineCode, DeclarationC,IdsC,
 AssiC, AssignmentC, ConditionC, IfCHeader, ElseC, ElseCHeader, ElseIfCHeader, SwitchCHeader, CaseElseCHeader, CaseCHeader,
  CasesC, CasesC2, CaseValueC, AssignmentStepC, ForCHeaderStart,NumberValueC,
-Number2C, Number3C,CaseC, CycleC, ForCHeader, WhileCHeader, StepC, OutputC, OutputValuesC, OutputValueC,
-Getch, Input, FuntionCall, FuntionIDs, ParametersC, ValueC, BoolValueC,FuntionIDsCall,
+Number2C, Number3C,CaseC, CycleC, ForCHeader, WhileCHeader, OutputC, OutputValuesC, OutputValueC,
+Getch, Input, FuntionCall, FuntionIDs, ParametersC, BoolValueC,FuntionIDsCall,
 OpBoolC, OpBoolC2, OpBoolC3, ArrayVal,NumConstC,NumConst2,NumConst3,DimensionsDec, NumDecC, NumDecC2, NumDecC3;
 
 start with Inicio;
@@ -256,8 +250,8 @@ LnInstructionsVb::= Input:in   {:if(in!=null){
                                 :}  
 				|OutputVb 
 				|CycleVb 
-				|DeclarationVb  {:System.out.println("DECLARACION");:}
-				|AssignmentVb   {:System.out.println("ASIGNACION");:}
+				|DeclarationVb  {::}
+				|AssignmentVb   {::}
                 |ConditionVb  
 				|error;
 Input			::= INTINPUT PARENTHESIS_A STRING:string PARENTHESIS_B {:RESULT= new SyntaxInputAsst(TypeManager.INTEGER_TYPE,string);:}
@@ -371,6 +365,7 @@ NumberValue::= NumberValue:num1 PLUS  Number2:num2 {:if(num1!=null &&num2!=null)
                                                                 RESULT=null;
                                                             }:}
                 |Number2:asst {:RESULT=asst;:}
+                
                 |error {:mostrarErrores(3,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()),sma);:};               
 
 Number2     ::=Number2:num1 MULTIPLICATION  Number3:num2 {:if(num1!=null &&num2!=null){ 
@@ -420,6 +415,13 @@ Number3     ::=NUMBER:val{: Type type =sma.testManager.getTypeManager().operateT
                 |DECIMAL:val{:Type type =sma.testManager.getTypeManager().operateTypes(TypeManager.FLOAT_TYPE,null);
                             Quadruple quadruple=sma.translateControlerTAC.creatTempIdQuad(Operation.EQUAL,val,null,null);
 		                    RESULT=new SynthesizedOpAsst(quadruple,type);:}
+                |MINUS NUMBER:val{: Type type =sma.testManager.getTypeManager().operateTypes(TypeManager.INTEGER_TYPE,null);
+                            Quadruple quadruple=sma.translateControlerTAC.creatTempIdQuad(Operation.EQUAL,"-"+val,null,null);
+		                    RESULT=new SynthesizedOpAsst(quadruple,type);:}
+
+                |MINUS DECIMAL:val{:Type type =sma.testManager.getTypeManager().operateTypes(TypeManager.FLOAT_TYPE,null);
+                            Quadruple quadruple=sma.translateControlerTAC.creatTempIdQuad(Operation.EQUAL,"-"+val,null,null);
+		                    RESULT=new SynthesizedOpAsst(quadruple,type);:}            
                 |CHAR :val{:Type type =sma.testManager.getTypeManager().operateTypes(TypeManager.CHAR_TYPE,null);
                             Quadruple quadruple=sma.translateControlerTAC.creatTempIdQuad(Operation.EQUAL,val,null,null);
 		                    RESULT=new SynthesizedOpAsst(quadruple,type);:}
@@ -556,7 +558,7 @@ IdsVb           ::= IdsVb COMMA  ID:id AssiVb:val{:sma.testManager.insertPreTupl
                                         sma.translateControlerTAC.nextIdQuad();:}; 
 
 AssiVb            ::= EQUAL NumberValue:val {:RESULT = val;:}
-                    |{:System.out.println("ASSI VACIO");:};
+                    |{::};
 
 AssignmentVb      ::=ID:id EQUAL NumberValue:val {:boolean bool= sma.testManager.assigValue(id,val,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
                                                 if(bool){sma.translateControlerTAC.createTempIdQuadAssign(val,id);
@@ -916,7 +918,13 @@ AssignmentJ     ::= ID:id EQUAL NumberValue:val{:boolean bool= sma.testManager.a
                         }
                     }
                 }:} 
-                    |THIS POINT ID:id EQUAL Input:in;
+                    |THIS POINT ID:id EQUAL Input:in{:Type type = sma.testManager.getTypeFromST(id,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
+                                            if(type!=null&&in!=null){
+                                                SyntaxInputAsst sia= (SyntaxInputAsst) in;
+                                                if(sma.testManager.verifyType(type.getNumber(),sia.getType(),((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()),id)){
+                                                    sma.translateControlerTAC.addQuadsToCurrent(sma.translateControlerTAC.createInputQuads(id,sia.getString()));
+                                                }
+                                            }:};
 
 
 ConditionJ      ::= IfJHeader:ifBool LEFT_CB LineCodesJ:lines RIGHT_CB ElseJ:elseBool {:BoolQuad bool=(BoolQuad)ifBool;
@@ -943,7 +951,8 @@ ElseIfJHeader    ::= ELSE IF PARENTHESIS_A OpBool:op PARENTHESIS_B {:sma.testMan
                                         sma.translateControlerTAC.createNewQuadrupleBlock();
                                         RESULT =op;:};
 
-SwitchJHeader   ::= SWITCH_J PARENTHESIS_A ID:id PARENTHESIS_B {:sma.translateControlerTAC.createSwitchAsst(id);:};
+SwitchJHeader   ::= SWITCH_J PARENTHESIS_A NumberValueC:id PARENTHESIS_B {:SynthesizedOpAsst soa = (SynthesizedOpAsst) val;
+                                                                            sma.translateControlerTAC.createSwitchAsst(id);:};
 CasesJ1          ::=CasesJ2 CaseJ
                 |CasesJ2 CaseElseCHeader:caseJ COLON LineCodesJ:lines BreakJ {:UniquenessTable ut=sma.testManager.createNewUniquenessTable();
                                                                         if(caseJ!=null){
@@ -954,7 +963,17 @@ CasesJ1          ::=CasesJ2 CaseJ
                                                                             sma.translateControlerTAC.getSwitchAsst().addCases((String)caseJ,(ArrayList<Object>)lines);}
                                                                             }
                                                                         RESULT=ut;:}
-                |CaseJ;
+                |CaseJ
+                |CasesJ2 CaseElseCHeader:caseJ COLON LEFT_CB LineCodesJ:lines BreakJ RIGHT_CB {:UniquenessTable ut=sma.testManager.createNewUniquenessTable();
+                                                                        if(caseJ!=null){
+                                                                            
+                                                                            boolean verified =ut.add(caseJ,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
+                                                                            if(verified){
+                                                                            
+                                                                            sma.translateControlerTAC.getSwitchAsst().addCases((String)caseJ,(ArrayList<Object>)lines);}
+                                                                            }
+                                                                        RESULT=ut;:}
+                ;
 
 CasesJ2         ::= CasesJ2 CaseJ
                     | CaseJ;
@@ -966,11 +985,21 @@ CaseJ           ::= CaseJHeader:caseJ COLON LineCodesJ:lines BreakJ {:Uniqueness
                                                                             
                                                                             sma.translateControlerTAC.getSwitchAsst().addCases((String)caseJ,(ArrayList<Object>)lines);}
                                                                             }
+                                                                        RESULT=ut;:}
+                    |CaseJHeader:caseJ COLON LEFT_CB LineCodesJ:lines BreakJ RIGHT_CB {:UniquenessTable ut=sma.testManager.createNewUniquenessTable();
+                                                                        if(caseJ!=null){
+                                                                            
+                                                                            boolean verified =ut.add(caseJ,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
+                                                                            if(verified){
+                                                                            
+                                                                            sma.translateControlerTAC.getSwitchAsst().addCases((String)caseJ,(ArrayList<Object>)lines);}
+                                                                            }
                                                                         RESULT=ut;:};
-CaseJHeader ::=CASE ValJ:val{:RESULT=val;
+CaseJHeader ::=CASE CaseValueC:val{:RESULT=val;
                                             sma.testManager.creatSonAmbit();
                                         sma.translateControlerTAC.createNewQuadrupleBlock();:};
-BreakJ         ::= BREAK SEMICOLON;
+BreakJ         ::= BREAK SEMICOLON
+                    |;
 /*
     Python
 */
@@ -1144,7 +1173,7 @@ Constante::=CONST Type:type ID:id EQUAL NumConstC:val{:
                                                        }
                                         
                                         :};
-            //|CONST Type ID Dimensions EQUAL ArrayValues;
+            
 NumConstC ::=  NumConstC:num1 PLUS  NumConst2: num2 {:if(num1!=null &&num2!=null){ 
                                                                RESULT=sma.testManager.operateConstAsst(num1,num2,Operation.PLUS,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
                                                             }:}
@@ -1281,15 +1310,12 @@ Dimensions ::= Dimensions:dims LEFT_BRACKET NumberValueC:val RIGHT_BRACKET{:if(d
                                                                     dim.add(soa.getQuadruple().getResult());
                                                                 RESULT =dim;}
                                                                 }:};
-/*ArrayValues ::= LEFT_CB Nums RIGHT_CB
-                | LEFT_CB Rows RIGHT_CB;
-Nums        ::= Nums COMMA NumberValueC
-                |NumberValueC;
-Rows        ::= Rows COMMA LEFT_CB Nums RIGHT_BRACKET
-                |LEFT_CB Nums RIGHT_BRACKET;*/
 
-Globals     ::=Globals  DeclarationC SEMICOLON {::}
+Globals     ::=Globals  Global {::}
                 |;
+Global     ::=  DeclarationC SEMICOLON
+                |FuntionCall SEMICOLON{:sma.translateControlerTAC.acceptAllIdQuas();:}
+                |ClaseInstance SEMICOLON;
 
 DimensionsDec ::= DimensionsDec:dims LEFT_BRACKET NumDecC:val RIGHT_BRACKET{:if(dims!=null){
                                                                             ArrayList<Object> dim=new ArrayList<>();
@@ -1360,7 +1386,9 @@ MainLineCode ::= DeclarationC SEMICOLON
 ClaseInstance   ::= ID:idClass ID:id EQUAL NEW ID:idClass2 PARENTHESIS_A ParametersC:para PARENTHESIS_B{:SynthesizedOpAsst sao=sma.testManager.verifyClass(idClass, idClass2,id, (ArrayList<SynthesizedOpAsst>)para, ((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()), sma.translateControlerTAC);
                 if(sao!=null){sma.translateControlerTAC.createTempIdQuadAssign(sao,id);
                                                         sma.translateControlerTAC.acceptAllIdQuas();}:}
-                    | ID:idClass ID:id EQUAL NEW ID:idClass2 PARENTHESIS_A  PARENTHESIS_B{:sma.testManager.verifyClass(idClass, idClass2, id,null, ((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()), sma.translateControlerTAC);:};
+                    | ID:idClass ID:id EQUAL NEW ID:idClass2 PARENTHESIS_A  PARENTHESIS_B{:sma.testManager.verifyClass(idClass, idClass2, id,null, ((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()), sma.translateControlerTAC);
+                            if(sao!=null){sma.translateControlerTAC.createTempIdQuadAssign(sao,id);
+                                                        sma.translateControlerTAC.acceptAllIdQuas();}:};
 InputJ  ::= SCAN_F PARENTHESIS_A STRING:string COMMA AMPERSON ID:id PARENTHESIS_B{: String split= sma.testManager.testInput(id, string, ((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
                                                                         if(split!=null){
                                                                                 sma.translateControlerTAC.addQuadsToCurrent(sma.translateControlerTAC.createInputQuads(string,id,split));
@@ -1394,7 +1422,7 @@ IdsC           ::=IdsC   ID:id AssiC:val COMMA {:sma.testManager.insertPreTuple(
                                                         sma.translateControlerTAC.nextIdQuad();:} ; 
 AssiC            ::= EQUAL NumberValueC:val{:RESULT =val;:}
                    // |Dimensions EQUAL ArrayValues
-                    |{:System.out.println("ASSI VACIO");:};
+                    |{::};
 
 AssignmentC::= ID:id EQUAL NumberValueC:val {:boolean bool= sma.testManager.assigValue(id,val,((Symbol) CUP$SyntaxMlgAnalyzer$stack.peek()));
                                                 if(bool){sma.translateControlerTAC.createTempIdQuadAssign(val,id);
@@ -1461,7 +1489,7 @@ CaseCHeader ::=  CASE CaseValueC:val{:RESULT=val;
 CaseElseCHeader ::=  DEFAULT{:RESULT=Switch.ELSE;
                     sma.testManager.creatSonAmbit();
                                         sma.translateControlerTAC.createNewQuadrupleBlock();:};
-
+                    
 CaseValueC  ::=NUMBER:num {:RESULT=num;:}
                     |DECIMAL:dec {:RESULT=dec;:}
                     |CHAR:ch  {:RESULT=ch;:}

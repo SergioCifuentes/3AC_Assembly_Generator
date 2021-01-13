@@ -284,4 +284,13 @@ public class OutputErrors {
         }
     }
 
+        public static void printsParameters2(JTextPane textPane, Symbol symbol) {
+        OutputText.appendToPane(textPane, "SEMANTIC ERROR:\n", Color.red, false);
+        OutputText.appendToPane(textPane, "\t El print debe llevar \"%d\" para variables enteros \n", Color.white, false);
+        OutputText.appendToPane(textPane, "\t Fila: ", Color.white, false);
+        OutputText.appendToPane(textPane, (symbol.right + 1) + "\n", Color.YELLOW, false);
+        OutputText.appendToPane(textPane, "\t Columna: ", Color.white, false);
+        OutputText.appendToPane(textPane, (symbol.left + 1) + "\n", Color.YELLOW, false);
+    }
+
 }

@@ -110,7 +110,7 @@ public class TextSection {
                 lines.add("\t" + MOV + " [" + ob1 + "],al");
             }
         } else {
-            if (ob2.contains("stack")) {
+            if (ob2.contains("stack")|| ob2.startsWith("heap")) {
 
                 ob2 = getStackValue(ob2);
             } else {

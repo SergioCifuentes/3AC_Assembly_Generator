@@ -85,20 +85,10 @@ public class SymbolTable {
                 tuplesWithId.add(symbols.get(i));
             }
         }
-        if (id.equals("num1")) {
-            System.out.println(id+" ASSSSSSIIII "+tuplesWithId.size());
-        }
         
         for (int i = 0; i < tuplesWithId.size(); i++) {
-            if (id.equals("num1")) {
-                System.out.println(tuplesWithId.get(i).getName());
-                System.out.println(ambit.getId());
-                System.out.println(ambit.getFather().getId());
-                System.out.println(tuplesWithId.get(i).getAmbit().getId());
-                System.out.println(tuplesWithId.get(i).getAmbit().getFather().getId());
-            }
             if (ambit.isSon(tuplesWithId.get(i).getAmbit())) {
-                System.out.println("PARING");
+           
                 return tuplesWithId.get(i).getType();
             }
         }
@@ -119,14 +109,14 @@ public class SymbolTable {
     
     public ArrayList<Tuple> getLanguageFunctions(String language) {
         ArrayList<Tuple> tuplesOfLanguage = new ArrayList<>();
-        System.out.println("SEARCHING "+language);
+        
         for (int i = 0; i < symbols.size(); i++) {
             if (symbols.get(i).getLanguage() != null && symbols.get(i).getLanguage().equals(language) && symbols.get(i).getParameters() != null) {
-                System.out.println("YES "+symbols.get(i).getName());
+                
                 tuplesOfLanguage.add(symbols.get(i));
             }
         }
-        System.out.println("SSSSSSSSSSSSSSSSSSSSSSSS");
+        
         return tuplesOfLanguage;
     }
 
@@ -172,8 +162,7 @@ public class SymbolTable {
         }
         
         for (int i = 0; i < tuplesWithId.size(); i++) {
-           
-            if (tuplesWithId.get(i).getAmbit().equals(ambit)||tuplesWithId.get(i).getAmbit().isSon(ambit) ) {
+            if (tuplesWithId.get(i).getAmbit().equals(ambit)||ambit.isSon(tuplesWithId.get(i).getAmbit()) ) {
                 return tuplesWithId.get(i).getObjectType();
             }
         }

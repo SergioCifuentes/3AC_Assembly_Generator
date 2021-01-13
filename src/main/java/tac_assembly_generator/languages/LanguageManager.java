@@ -122,13 +122,12 @@ public class LanguageManager {
                 etacg.createCFile();
 
                 String comando = " gcc -lm Executable/" + file.getName().replace(".mlg", ".c") + " -o Executable/" + file.getName().replace(".mlg", "");
-                System.out.println(comando);
+                
                 Runtime rt = Runtime.getRuntime();
                 try {
                     rt.exec(comando);
-                    Thread.sleep(1000);
+                    Thread.sleep(2000);
                     String comando2 = "gnome-terminal hold -e Executable/" + file.getName().replace(".mlg", "");
-                    System.out.println(comando2);
                     rt.exec(comando2);
                 } catch (IOException ex) {
                     Logger.getLogger(LanguageManager.class.getName()).log(Level.SEVERE, null, ex);
@@ -147,10 +146,7 @@ public class LanguageManager {
                 String comando = "nasm -f elf64 Executable/" + file.getName();
                 
                 String comando2 = "ld Executable/" + file.getName().replace(".asm", ".o")+" ";
-                String comando3 = "gnome-terminal hold -e Executable/a.out";
-                System.out.println(comando);
-                System.out.println(comando2);
-                System.out.println(comando3);
+                    String comando3 = "gnome-terminal hold -e Executable/a.out";
                 Runtime rt = Runtime.getRuntime();
                 try {
                     rt.exec(comando);
@@ -170,13 +166,13 @@ public class LanguageManager {
                 if (!loopAsst) {
                     
                     if (resultQuads==null) {
-                        System.out.println("TAC");
+                
                         generateTAC(mainframe);
                     }
-                    System.out.println("G");
+                
                     generateAssembly(mainframe);
                 loopAsst=true;
-                System.out.println("EXE");
+                
                 exeAssembly(mainframe);
                 }else{
                     loopAsst=false;
@@ -196,6 +192,9 @@ public class LanguageManager {
                 generateTAC(mainframe);
                 
             } else {
+                for (int i = 0; i < resultQuads.getQuadruples().size(); i++) {
+                    
+                }
                 QuadsToAssemblyManager quadsToAssemblyManager = new QuadsToAssemblyManager(resultQuads, file.getName());
                 quadsToAssemblyManager.translate();
                 mainframe.getAssemblyPannel().setText(quadsToAssemblyManager.getAssemblyObject().OutputVal());

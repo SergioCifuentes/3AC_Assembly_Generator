@@ -48,6 +48,7 @@ public class TempGenerator {
         return temps;
     }
     public void addIntegerTemp(String temp){
+        
         integerTemps.add(temp);
     }
 
@@ -96,8 +97,8 @@ public class TempGenerator {
     }
 
     public void removeTag(String tag) {
-        int value = Integer.parseInt(tag.replace(PREFIX_TAG, ""));
-        recentyRemovedTag.add(value);
+        //int value = Integer.parseInt(tag.replace(PREFIX_TAG, ""));
+        //recentyRemovedTag.add(value);
     }
 
     public String generateTag() {

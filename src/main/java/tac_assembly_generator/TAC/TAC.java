@@ -83,11 +83,16 @@ public class TAC {
                 
                 
             } else if (quadAsst.getOp() <= Operation.MINUS) {
+                
+                
                 if ((quadAsst.getOp() == Operation.PLUS || quadAsst.getOp() == Operation.MINUS) && quadAsst.getResult().equals(Stack.P)) {
+                    
                     OutputText.appendToPane(jtextPane, Stack.P + " = " + Stack.P + " " + Operation.getIntOpOutput(quadAsst.getOp()) + " " + stack.getFunctionSize(quadAsst.getArg2().toString()) + ";\n", Color.white, false);
                 } else if ((quadAsst.getOp() == Operation.PLUS || quadAsst.getOp() == Operation.MINUS) && quadAsst.getArg1().equals(Stack.P) && quadAsst.getArg2().getClass().equals(String.class)) {
+                    
                     OutputText.appendToPane(jtextPane, quadAsst.getResult() + " = " + Stack.P + " " + Operation.getIntOpOutput(quadAsst.getOp()) + " " + stack.getFunctionSize(quadAsst.getArg2().toString()) + ";\n", Color.white, false);
                 } else {
+                    
                     String tacQuad = quadAsst.getResult() + "=" + quadAsst.getArg1() + Operation.getIntOpOutput(quadAsst.getOp()) + quadAsst.getArg2();
                     OutputText.appendToPane(jtextPane, tacQuad + ";\n", Color.white, false);
 
@@ -170,7 +175,7 @@ public class TAC {
                 
             } else if (quadAsst.getOp() == Operation.PRINT) {
                 
-                if (quadAsst.getResult().matches("t[0-9]+")) {
+                if (quadAsst.getResult().matches("t[0-9]+")||quadAsst.getResult().startsWith("stack")) {
                     return Operation.getIntOpOutput(quadAsst.getOp()) + "f (\"%f\"," + quadAsst.getResult() + ");\n";
                 }else{
                     return Operation.getIntOpOutput(quadAsst.getOp()) + "f (" + quadAsst.getResult() + ");\n";
@@ -178,7 +183,7 @@ public class TAC {
                 
                 
             } else if (quadAsst.getOp() == Operation.CLRSCR) {
-                return "clrscr();\n";
+                return "printf(\"\\e[1;1H\\e[2J\");\n";
                 
             } else if (quadAsst.getOp() == Operation.READ) {
                 String scanf="scanf (";
@@ -192,18 +197,18 @@ public class TAC {
                 }
                 return scanf;
             } else if (quadAsst.getOp() == Operation.GETCH) {
-                System.out.println("GGGGGGGGGGGG "+quadAsst.getResult());
+                
                 if (quadAsst.getResult() != null) {
                     return quadAsst.getResult()+" = getchar();\n";
                     
                 } else {
-                   return "getchar();\n";
+                   return "getchar();\ngetchar();\n";
                 }
             } else if (quadAsst.getOp() == Operation.ARRAY) {
                 return  quadAsst.getResult() + "[ " + quadAsst.getArg1() + "];\n";
                 
             } else if (quadAsst.getOp() == Operation.TEMP) {
-                System.out.println("TEMPP "+quadAsst.getResult());
+                
                 return  quadAsst.getResult() + "();\n";
                 
             } else if (quadAsst.getOp() == Operation.INCLUDE) {

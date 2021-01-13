@@ -32,6 +32,7 @@ public class FileManager {
 
     public FileManager() {
         this.files = new ArrayList<>();
+        
     }
 
     public void addFileMlg(FileMlg fileMlg) {
@@ -175,13 +176,13 @@ public class FileManager {
     }
     
     
-//public void loadExampleMLG(MainFrame frame){
-//        File file = new File("/home/sergio/AA/prueba.mlg");
-//        FileMlg newMlg = new FileMlg(file.getName(), file);
-//        newMlg.addMlgText(readFile(file));
-//                frame.addFileMlg(newMlg);
-//        
-//    }
+public void loadExampleMLG(MainFrame frame){
+        File file = new File("/home/sergio/AA/pro2.mlg");
+        FileMlg newMlg = new FileMlg(file.getName(), file);
+        newMlg.addMlgText(readFile(file));
+                frame.addFileMlg(newMlg);
+        
+    }
 
     public JTextPane getAssebly(int selectedIndex) {
         return files.get(selectedIndex).getAssemblerText();

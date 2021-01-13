@@ -33,6 +33,7 @@ public class QuadsToAssemblyManager {
         assemblyObject = new AssemblyObject();
         assemblyObject.declareTemps(resultQuads.getTempGenerator());
         currentMain = false;
+        resultQuads.getStack().changeFunctionNames(resultQuads.getQuadruples());
     }
 
     public AssemblyObject getAssemblyObject() {
@@ -44,6 +45,7 @@ public class QuadsToAssemblyManager {
             
             if (resultQuads.getQuadruples().get(i).getClass().equals(Quadruple.class)) {
                 Quadruple quad = (Quadruple) resultQuads.getQuadruples().get(i);
+                
                 if (quad.getOp()==null) {
                     assemblyObject.getTextSection().openLable(quad.getResult());
                 }else if (quad.getOp() == Operation.PRINT) {
@@ -62,6 +64,7 @@ public class QuadsToAssemblyManager {
                             assemblyObject.getTextSection().closeLabel();
                         }
                     } else if (quad.getResult().contains("main")) {
+                        
                         assemblyObject.getTextSection().startLabel();
                         currentMain=true;
                     }else {

@@ -10,13 +10,15 @@ package tac_assembly_generator.languages.semantic;
  * @author sergio
  */
 public class Ambit {
+
     private int id;
     private Ambit father;
     private boolean function;
+
     public Ambit(int id, Ambit father) {
         this.id = id;
         this.father = father;
-        function=false;
+        function = false;
     }
 
     public boolean isFunction() {
@@ -27,7 +29,6 @@ public class Ambit {
         this.function = function;
     }
 
-    
     public Ambit getFather() {
         return father;
     }
@@ -35,14 +36,14 @@ public class Ambit {
     public int getId() {
         return id;
     }
-        
-        public boolean isSon(Ambit ambitFatherbit){
-        if (id==ambitFatherbit.id) {
+
+    public boolean isSon(Ambit ambitFatherbit) {
+        if (id == ambitFatherbit.id) {
             return true;
-        }else{
-            if (father!=null) {
+        } else {
+            if (father != null) {
                 return father.isSon(ambitFatherbit);
-            }else{
+            } else {
                 return false;
             }
         }

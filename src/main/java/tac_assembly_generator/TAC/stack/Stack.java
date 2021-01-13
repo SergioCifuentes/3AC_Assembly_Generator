@@ -6,6 +6,7 @@
 package tac_assembly_generator.TAC.stack;
 
 import java.util.ArrayList;
+import tac_assembly_generator.TAC.quadruple.Quadruple;
 import tac_assembly_generator.languages.semantic.Tuple;
 
 /**
@@ -21,6 +22,7 @@ public class Stack {
     public static final String RETURN = "return";
     public static final String STACK_NAME = "stack";
     public static final String HEAP_NAME = "heap";
+    
     
     public Stack() {
         currentP = 0;
@@ -81,11 +83,11 @@ public class Stack {
     public void endClassFunction() {
         stacks.get(currentP).endFunction();
     }
-    
+    public boolean aux=false;
     public Integer getIdPosition(String id) {
         
         Integer space = 0;
-        
+
         for (int i = 0; i < stacks.get(currentP).getTuples().size(); i++) {
             
             if (stacks.get(currentP).getTuples().get(i).getName().equals(id)) {
@@ -98,11 +100,17 @@ public class Stack {
         String x=getCurrentClassName();
         if (x!=null) {
             space=getIdFromFunction(x, id);
+            aux=true;
             return space;
         }
         
         
         return null;
+    }
+    public boolean getAux(){
+        boolean aux2 = aux;
+        aux=false;
+        return aux2;
     }
     
     public static String getOutputStack(String id) {
@@ -206,16 +214,6 @@ public Integer getIdIndexCurrentClass(String id){
             }
         }
         return asst;
-//        for (int i = 0; i < stacks.size(); i++) {
-//            System.out.println("IDD "+stacks.get(i).getId());
-//            if (name.contains(stacks.get(i).getId())&&name.contains(stacks.get(i).getLanguaje())) {
-//                return asst;
-//            }else{
-//                for (int j = 0; j < stacks.get(i).getTuples().size(); j++) {
-//                    asst+=stacks.get(i).getTuples().get(j).getSize();
-//                }
-//            }
-//        }
     }
     
     public String getCurrentId() {
@@ -229,15 +227,18 @@ public Integer getIdIndexCurrentClass(String id){
             asst += stacks.get(currentP).getTuples().get(i).getSize();
         }
         return asst;
-//        for (int i = 0; i < stacks.size(); i++) {
-//            System.out.println("IDD "+stacks.get(i).getId());
-//            if (name.contains(stacks.get(i).getId())&&name.contains(stacks.get(i).getLanguaje())) {
-//                return asst;
-//            }else{
-//                for (int j = 0; j < stacks.get(i).getTuples().size(); j++) {
-//                    asst+=stacks.get(i).getTuples().get(j).getSize();
-//                }
-//            }
-//        }
+
     }
+    public void changeFunctionNames(ArrayList<Object> quadruples){
+        for (int i = 0; i < quadruples.size(); i++) {
+            
+            if (quadruples.get(i).getClass().equals(Quadruple.class)) {
+                Quadruple quad= (Quadruple)quadruples.get(i);
+                if (quad.getArg2()!=null&&quad.getArg2().getClass().equals(String.class)) {
+                    quad.setArg2(getFunctionSize(quad.getArg2().toString()));
+                }
+            }
+        }
+    }
+    
 }
