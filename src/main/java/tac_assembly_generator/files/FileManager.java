@@ -177,10 +177,10 @@ public class FileManager {
     
     
 public void loadExampleMLG(MainFrame frame){
-        File file = new File("/home/sergio/AA/pro2.mlg");
-        FileMlg newMlg = new FileMlg(file.getName(), file);
-        newMlg.addMlgText(readFile(file));
-                frame.addFileMlg(newMlg);
+//        File file = new File("/home/sergio/AA/pro2.mlg");
+//        FileMlg newMlg = new FileMlg(file.getName(), file);
+//        newMlg.addMlgText(readFile(file));
+//                frame.addFileMlg(newMlg);
         
     }
 
